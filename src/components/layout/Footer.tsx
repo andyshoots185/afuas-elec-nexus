@@ -126,7 +126,7 @@ export function Footer() {
       <Separator className="opacity-20" />
 
       {/* Bottom Footer */}
-      <div className="py-6">
+      <div className="py-6 bg-slate-200">
         <div className="container mx-auto container-padding">
           <div className="flex flex-col md:flex-row justify-between items-center text-sm">
             <div className="mb-4 md:mb-0 opacity-80">
