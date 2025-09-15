@@ -222,22 +222,22 @@ export function Header() {
               </DropdownMenuContent>
             </DropdownMenu>
             
-            <Link to="/TVs & Entertainmen" className="text-sm font-medium hover:text-primary transition-colors">
+            <Link to="/Shop/TVs & Entertainmen" className="text-sm font-medium hover:text-primary transition-colors">
               TVs & Entertainmen
             </Link>
-            <Link to="/Refrigerators" className="text-sm font-medium hover:text-primary transition-colors">
+            <Link to="/Shop/Refrigerators" className="text-sm font-medium hover:text-primary transition-colors">
               Refrigerators
             </Link>
-            <Link to="/Washing Machines" className="text-sm font-medium hover:text-primary transition-colors">
+            <Link to="/Shop/Washing Machines" className="text-sm font-medium hover:text-primary transition-colors">
               Washing Machines 
             </Link>
-            <Link to="/ Sound Systems" className="text-sm font-medium hover:text-primary transition-colors">
+            <Link to="/Shop/ Sound Systems" className="text-sm font-medium hover:text-primary transition-colors">
               Sound Systems 
             </Link>
-            <Link to="/Cooking Appliances" className="text-sm font-medium hover:text-primary transition-colors">
+            <Link to="/Shop/Cooking Appliances" className="text-sm font-medium hover:text-primary transition-colors">
               Cooking Appliances
             </Link>
-             <Link to="/Irons & Garment Care" className="text-sm font-medium hover:text-primary transition-colors">
+             <Link to="/Shop/Irons & Garment Care" className="text-sm font-medium hover:text-primary transition-colors">
               Irons & Garment Care
             </Link>
           </nav>
