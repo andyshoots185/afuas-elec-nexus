@@ -34,7 +34,7 @@ export const products: Product[] = [
     name: 'Samsung 55" 4K UHD Smart TV',
     price: 85000,
     originalPrice: 95000,
-    image: '/api/placeholder/400/300',
+    image: '/https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.thebrick.com%2Fproducts%2Fsamsung-55-q80d-4k-qled-smart-tv-with-tizen-os&psig=AOvVaw2SPqqsX9gGY_tTgw8jHzFh&ust=1758054301198000&source=images&cd=vfe&opi=89978449&ved=0CBUQjRxqFwoTCIjnn-vM248DFQAAAAAdAAAAABAE',
     category: 'tvs',
     brand: 'Samsung',
     description: 'Experience stunning 4K UHD picture quality with this Samsung Smart TV featuring Crystal Processor 4K and smart connectivity.',
