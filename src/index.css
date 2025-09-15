@@ -2,39 +2,76 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
-All colors MUST be HSL.
+/* Afua's Electronics Design System - Modern Blue/Black/White Theme
+All colors MUST be HSL. Clean, professional e-commerce aesthetic.
 */
 
 @layer base {
   :root {
+    /* Core Theme - Modern Blue Electronics Brand */
     --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    --foreground: 220 25% 15%;
 
+    /* Brand Colors - Professional Blue Palette */
+    --primary: 215 85% 45%;          /* Afua's Electronics Blue */
+    --primary-foreground: 0 0% 98%;
+    --primary-hover: 215 85% 40%;
+    --primary-light: 215 85% 90%;
+    --primary-dark: 215 85% 35%;
+
+    /* Secondary - Elegant Black/Grey */
+    --secondary: 220 15% 95%;
+    --secondary-foreground: 220 25% 15%;
+    --secondary-dark: 220 15% 20%;
+
+    /* Interactive Elements */
+    --accent: 35 95% 55%;            /* Orange for CTAs/Sale items */
+    --accent-foreground: 0 0% 98%;
+    --accent-light: 35 95% 90%;
+
+    /* Surface Colors */
     --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
-
+    --card-foreground: 220 25% 15%;
     --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover-foreground: 220 25% 15%;
 
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
+    /* State Colors */
+    --muted: 220 15% 97%;
+    --muted-foreground: 220 15% 50%;
+    --destructive: 0 85% 55%;
+    --destructive-foreground: 0 0% 98%;
+    --success: 135 65% 40%;
+    --success-foreground: 0 0% 98%;
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    /* Form & Border */
+    --border: 220 15% 88%;
+    --input: 220 15% 95%;
+    --ring: 215 85% 45%;
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
-
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    /* E-commerce Specific */
+    --sale-badge: 0 85% 55%;         /* Red for sale/discount */
+    --price: 135 65% 35%;            /* Green for pricing */
+    --rating: 45 95% 50%;            /* Gold for stars */
+    
+    /* Layout & Spacing */
+    --header-height: 4rem;
+    --sidebar-width: 16rem;
+    
+    /* Gradients */
+    --gradient-hero: linear-gradient(135deg, hsl(215 85% 45%), hsl(215 85% 35%));
+    --gradient-card: linear-gradient(145deg, hsl(0 0% 100%), hsl(220 15% 98%));
+    --gradient-cta: linear-gradient(135deg, hsl(35 95% 55%), hsl(35 95% 45%));
+    
+    /* Shadows */
+    --shadow-sm: 0 2px 8px hsl(220 25% 15% / 0.1);
+    --shadow-md: 0 4px 24px hsl(220 25% 15% / 0.12);
+    --shadow-lg: 0 8px 32px hsl(220 25% 15% / 0.15);
+    --shadow-hover: 0 12px 40px hsl(220 25% 15% / 0.18);
+    
+    /* Transitions */
+    --transition-fast: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-bounce: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 
     --radius: 0.5rem;
 
@@ -56,41 +93,31 @@ All colors MUST be HSL.
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
+    --background: 220 25% 8%;
+    --foreground: 220 15% 95%;
 
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
+    --card: 220 25% 10%;
+    --card-foreground: 220 15% 95%;
 
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
+    --primary: 215 85% 55%;
+    --primary-foreground: 220 25% 8%;
+    --primary-hover: 215 85% 50%;
 
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 220 15% 15%;
+    --secondary-foreground: 220 15% 85%;
 
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
+    --muted: 220 15% 15%;
+    --muted-foreground: 220 15% 65%;
 
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
+    --accent: 35 95% 60%;
+    --accent-foreground: 220 25% 8%;
 
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
+    --border: 220 15% 20%;
+    --input: 220 15% 18%;
+    --ring: 215 85% 55%;
 
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --gradient-hero: linear-gradient(135deg, hsl(215 85% 55%), hsl(215 85% 45%));
+    --gradient-card: linear-gradient(145deg, hsl(220 25% 10%), hsl(220 25% 12%));
   }
 }
 
@@ -100,6 +127,70 @@ All colors MUST be HSL.
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground antialiased;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-semibold tracking-tight;
+  }
+
+  /* E-commerce specific utilities */
+  .price-text {
+    @apply text-lg font-bold text-[hsl(var(--price))];
+  }
+
+  .sale-price {
+    @apply text-lg font-bold text-[hsl(var(--sale-badge))];
+  }
+
+  .original-price {
+    @apply text-sm text-muted-foreground line-through;
+  }
+
+  .category-card {
+    @apply bg-[var(--gradient-card)] border border-border rounded-lg p-4 
+           shadow-[var(--shadow-sm)] hover:shadow-[var(--shadow-md)] 
+           transition-[var(--transition-smooth)] cursor-pointer;
+  }
+
+  .product-card {
+    @apply bg-card border border-border rounded-lg overflow-hidden 
+           shadow-[var(--shadow-sm)] hover:shadow-[var(--shadow-hover)] 
+           transition-[var(--transition-smooth)] group;
+  }
+
+  .btn-primary {
+    @apply bg-[hsl(var(--primary))] text-primary-foreground 
+           hover:bg-[hsl(var(--primary-hover))] 
+           transition-[var(--transition-fast)] rounded-md px-4 py-2 font-medium;
+  }
+
+  .btn-cta {
+    @apply bg-[var(--gradient-cta)] text-accent-foreground 
+           hover:opacity-90 transition-[var(--transition-fast)] 
+           rounded-md px-6 py-3 font-semibold;
+  }
+
+  .hero-section {
+    @apply bg-[var(--gradient-hero)] text-primary-foreground;
+  }
+
+  .rating-stars {
+    @apply text-[hsl(var(--rating))];
+  }
+}
+
+@layer utilities {
+  .container-padding {
+    @apply px-4 sm:px-6 lg:px-8;
+  }
+
+  .section-spacing {
+    @apply py-8 md:py-12 lg:py-16;
+  }
+
+  .grid-auto-fit {
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   }
 }
