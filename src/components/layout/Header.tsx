@@ -44,7 +44,7 @@ export function Header() {
               </div>
               <div className="hidden sm:flex items-center space-x-1">
                 <MapPin className="h-3 w-3" />
-                <span>Kenya Wide Delivery</span>
+                <span>Uganda Wide Delivery</span>
               </div>
             </div>
             <div className="hidden md:block">
