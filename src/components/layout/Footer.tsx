@@ -3,16 +3,13 @@ import { Facebook, Instagram, Twitter, Mail, Phone, MapPin, Clock } from 'lucide
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
-
 export function Footer() {
   const handleNewsletterSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     // Handle newsletter subscription
     console.log('Newsletter subscription');
   };
-
-  return (
-    <footer className="bg-secondary-dark text-secondary-foreground mt-16">
+  return <footer className="bg-secondary-dark text-secondary-foreground mt-16">
       {/* Newsletter Section */}
       <div className="bg-primary text-primary-foreground py-12">
         <div className="container mx-auto container-padding">
@@ -22,12 +19,7 @@ export function Footer() {
               Get exclusive deals, new product announcements, and tech tips delivered to your inbox.
             </p>
             <form onSubmit={handleNewsletterSubmit} className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
-              <Input
-                type="email"
-                placeholder="Enter your email address"
-                className="flex-1 bg-white text-foreground"
-                required
-              />
+              <Input type="email" placeholder="Enter your email address" className="flex-1 bg-white text-foreground" required />
               <Button type="submit" variant="secondary" className="px-8">
                 Subscribe
               </Button>
@@ -37,7 +29,7 @@ export function Footer() {
       </div>
 
       {/* Main Footer Content */}
-      <div className="py-12">
+      <div className="py-12 bg-yellow-50">
         <div className="container mx-auto container-padding">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             {/* Company Info */}
@@ -151,6 +143,5 @@ export function Footer() {
           </div>
         </div>
       </div>
-    </footer>
-  );
+    </footer>;
 }
