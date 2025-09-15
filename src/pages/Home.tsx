@@ -6,21 +6,14 @@ import { Badge } from '@/components/ui/badge';
 import { ProductCard } from '@/components/shared/ProductCard';
 import { featuredProducts, categories, getProductsByCategory } from '@/data/products';
 import heroBanner from '@/assets/hero-banner.jpg';
-
 export default function Home() {
   const tvs = getProductsByCategory('tvs').slice(0, 2);
   const appliances = getProductsByCategory('refrigerators').slice(0, 2);
-
-  return (
-    <div className="min-h-screen">
+  return <div className="min-h-screen">
       {/* Hero Section */}
       <section className="relative hero-section overflow-hidden">
         <div className="absolute inset-0">
-          <img
-            src={heroBanner}
-            alt="Quality Electronics at Afua's Electronics"
-            className="w-full h-full object-cover opacity-20"
-          />
+          <img src={heroBanner} alt="Quality Electronics at Afua's Electronics" className="w-full h-full object-cover opacity-20" />
         </div>
         <div className="relative container mx-auto container-padding section-spacing">
           <div className="max-w-2xl">
@@ -32,7 +25,7 @@ export default function Home() {
                 Your All-in-One Destination for 
                 <span className="text-accent"> Quality Electronics</span>
               </h1>
-              <p className="text-lg opacity-90 leading-relaxed">
+              <p className="text-lg opacity-90 leading-relaxed text-gray-950">
                 Discover the latest TVs, refrigerators, washing machines, sound systems, 
                 and more at unbeatable prices. Quality you can trust, service you can count on.
               </p>
@@ -108,20 +101,14 @@ export default function Home() {
           </div>
           
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            {categories.map((category) => (
-              <Link
-                key={category.id}
-                to={`/shop?category=${category.id}`}
-                className="category-card group"
-              >
+            {categories.map(category => <Link key={category.id} to={`/shop?category=${category.id}`} className="category-card group">
                 <div className="text-center">
                   <div className="mx-auto w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mb-4 group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
                     <Zap className="h-8 w-8" />
                   </div>
                   <h3 className="font-semibold text-sm">{category.name}</h3>
                 </div>
-              </Link>
-            ))}
+              </Link>)}
           </div>
         </div>
       </section>
@@ -142,9 +129,7 @@ export default function Home() {
           </div>
           
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {featuredProducts.map((product) => (
-              <ProductCard key={product.id} product={product} />
-            ))}
+            {featuredProducts.map(product => <ProductCard key={product.id} product={product} />)}
           </div>
         </div>
       </section>
@@ -160,46 +145,29 @@ export default function Home() {
                 <h3 className="text-2xl font-bold">Trending TVs</h3>
               </div>
               <div className="space-y-6">
-                {tvs.map((product) => (
-                  <div key={product.id} className="flex gap-4 p-4 border border-border rounded-lg hover:shadow-md transition-shadow">
+                {tvs.map(product => <div key={product.id} className="flex gap-4 p-4 border border-border rounded-lg hover:shadow-md transition-shadow">
                     <div className="w-24 h-20 bg-muted rounded-md overflow-hidden flex-shrink-0">
-                      <img
-                        src={product.image}
-                        alt={product.name}
-                        className="w-full h-full object-cover"
-                      />
+                      <img src={product.image} alt={product.name} className="w-full h-full object-cover" />
                     </div>
                     <div className="flex-1 min-w-0">
                       <h4 className="font-semibold text-sm mb-1 line-clamp-2">{product.name}</h4>
                       <div className="flex items-center gap-1 mb-2">
                         <div className="flex">
-                          {[1, 2, 3, 4, 5].map((star) => (
-                            <Star
-                              key={star}
-                              className={`h-3 w-3 ${
-                                star <= Math.floor(product.rating)
-                                  ? 'fill-rating text-rating'
-                                  : 'text-muted-foreground'
-                              }`}
-                            />
-                          ))}
+                          {[1, 2, 3, 4, 5].map(star => <Star key={star} className={`h-3 w-3 ${star <= Math.floor(product.rating) ? 'fill-rating text-rating' : 'text-muted-foreground'}`} />)}
                         </div>
                         <span className="text-xs text-muted-foreground">({product.reviewCount})</span>
                       </div>
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2">
                           <span className="price-text text-base">KSh {product.price.toLocaleString()}</span>
-                          {product.originalPrice && (
-                            <span className="original-price text-xs">KSh {product.originalPrice.toLocaleString()}</span>
-                          )}
+                          {product.originalPrice && <span className="original-price text-xs">KSh {product.originalPrice.toLocaleString()}</span>}
                         </div>
                         <Button asChild size="sm" variant="outline">
                           <Link to={`/product/${product.id}`}>View</Link>
                         </Button>
                       </div>
                     </div>
-                  </div>
-                ))}
+                  </div>)}
               </div>
             </div>
 
@@ -210,46 +178,29 @@ export default function Home() {
                 <h3 className="text-2xl font-bold">Top Appliances</h3>
               </div>
               <div className="space-y-6">
-                {appliances.map((product) => (
-                  <div key={product.id} className="flex gap-4 p-4 border border-border rounded-lg hover:shadow-md transition-shadow">
+                {appliances.map(product => <div key={product.id} className="flex gap-4 p-4 border border-border rounded-lg hover:shadow-md transition-shadow">
                     <div className="w-24 h-20 bg-muted rounded-md overflow-hidden flex-shrink-0">
-                      <img
-                        src={product.image}
-                        alt={product.name}
-                        className="w-full h-full object-cover"
-                      />
+                      <img src={product.image} alt={product.name} className="w-full h-full object-cover" />
                     </div>
                     <div className="flex-1 min-w-0">
                       <h4 className="font-semibold text-sm mb-1 line-clamp-2">{product.name}</h4>
                       <div className="flex items-center gap-1 mb-2">
                         <div className="flex">
-                          {[1, 2, 3, 4, 5].map((star) => (
-                            <Star
-                              key={star}
-                              className={`h-3 w-3 ${
-                                star <= Math.floor(product.rating)
-                                  ? 'fill-rating text-rating'
-                                  : 'text-muted-foreground'
-                              }`}
-                            />
-                          ))}
+                          {[1, 2, 3, 4, 5].map(star => <Star key={star} className={`h-3 w-3 ${star <= Math.floor(product.rating) ? 'fill-rating text-rating' : 'text-muted-foreground'}`} />)}
                         </div>
                         <span className="text-xs text-muted-foreground">({product.reviewCount})</span>
                       </div>
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2">
                           <span className="price-text text-base">KSh {product.price.toLocaleString()}</span>
-                          {product.originalPrice && (
-                            <span className="original-price text-xs">KSh {product.originalPrice.toLocaleString()}</span>
-                          )}
+                          {product.originalPrice && <span className="original-price text-xs">KSh {product.originalPrice.toLocaleString()}</span>}
                         </div>
                         <Button asChild size="sm" variant="outline">
                           <Link to={`/product/${product.id}`}>View</Link>
                         </Button>
                       </div>
                     </div>
-                  </div>
-                ))}
+                  </div>)}
               </div>
             </div>
           </div>
@@ -281,6 +232,5 @@ export default function Home() {
           </div>
         </div>
       </section>
-    </div>
-  );
+    </div>;
 }
