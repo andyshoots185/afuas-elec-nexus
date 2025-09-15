@@ -83,7 +83,7 @@ export function ProductCard({ product, className = '' }: ProductCardProps) {
     : 0;
 
   return (
-    <Card className={`product-card ${className}`}>
+    <Card className={`product-card group ${className}`}>
       <Link to={`/product/${product.id}`} className="block">
         <div className="relative">
           <div className="aspect-square bg-muted overflow-hidden">

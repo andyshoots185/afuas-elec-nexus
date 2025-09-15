@@ -157,7 +157,7 @@ All colors MUST be HSL. Clean, professional e-commerce aesthetic.
   .product-card {
     @apply bg-card border border-border rounded-lg overflow-hidden 
            shadow-[var(--shadow-sm)] hover:shadow-[var(--shadow-hover)] 
-           transition-[var(--transition-smooth)] group;
+           transition-[var(--transition-smooth)];
   }
 
   .btn-primary {
