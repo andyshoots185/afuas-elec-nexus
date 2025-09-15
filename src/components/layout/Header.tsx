@@ -48,7 +48,7 @@ export function Header() {
               </div>
             </div>
             <div className="hidden md:block">
-              <span>Free delivery on orders over KSh 50,000</span>
+              <span>Free delivery on orders over UGX 200,000</span>
             </div>
           </div>
         </div>
@@ -73,15 +73,15 @@ export function Header() {
             <form onSubmit={handleSearch} className="relative">
               <Input
                 type="text"
-                placeholder="Search for electronics..."
+                placeholder="I am searching for..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pr-12 h-12 rounded-full border-2 border-muted focus:border-primary"
+                className="w-full pr-12 h-12 rounded-lg border-2 border-red-200 focus:border-red-500 placeholder:text-muted-foreground"
               />
               <Button
                 type="submit"
                 size="sm"
-                className="absolute right-1 top-1 rounded-full h-10 w-10 p-0"
+                className="absolute right-1 top-1 rounded-lg h-10 w-10 p-0 bg-red-500 hover:bg-red-600"
               >
                 <Search className="h-4 w-4" />
               </Button>

@@ -75,7 +75,7 @@ export function ProductCard({ product, className = '' }: ProductCardProps) {
   };
 
   const formatPrice = (price: number) => {
-    return `KSh ${price.toLocaleString()}`;
+    return `UGX ${price.toLocaleString()}`;
   };
 
   const discountPercentage = product.originalPrice 
@@ -86,7 +86,7 @@ export function ProductCard({ product, className = '' }: ProductCardProps) {
     <Card className={`product-card group ${className}`}>
       <Link to={`/product/${product.id}`} className="block">
         <div className="relative">
-          <div className="aspect-square bg-muted overflow-hidden">
+          <div className="aspect-square bg-muted overflow-hidden rounded-t-lg">
             <img
               src={product.image}
               alt={product.name}
@@ -96,61 +96,58 @@ export function ProductCard({ product, className = '' }: ProductCardProps) {
           </div>
           
           {/* Badges */}
-          <div className="absolute top-2 left-2 flex flex-col gap-1">
+          <div className="absolute top-1 left-1 flex flex-col gap-1">
             {discountPercentage > 0 && (
-              <Badge className="bg-sale text-white">-{discountPercentage}%</Badge>
+              <Badge className="bg-red-500 text-white text-xs px-1 py-0.5 rounded">-{discountPercentage}%</Badge>
             )}
             {product.isNew && (
-              <Badge className="bg-success text-white">New</Badge>
+              <Badge className="bg-green-500 text-white text-xs px-1 py-0.5 rounded">New</Badge>
             )}
             {!product.inStock && (
-              <Badge variant="secondary">Out of Stock</Badge>
+              <Badge variant="secondary" className="text-xs px-1 py-0.5">Out of Stock</Badge>
             )}
           </div>
 
-          {/* Quick Actions */}
-          <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
+          {/* Quick Actions - Only show on desktop */}
+          <div className="absolute top-1 right-1 opacity-0 group-hover:opacity-100 transition-opacity hidden md:flex">
             <div className="flex flex-col gap-1">
               <Button
                 variant="secondary"
                 size="icon"
-                className="h-8 w-8 rounded-full"
+                className="h-6 w-6 rounded-full"
                 onClick={handleToggleWishlist}
               >
                 <Heart 
-                  className={`h-4 w-4 ${isInWishlist(product.id) ? 'fill-current text-red-500' : ''}`} 
+                  className={`h-3 w-3 ${isInWishlist(product.id) ? 'fill-current text-red-500' : ''}`} 
                 />
               </Button>
               <Button
                 variant="secondary"
                 size="icon"
-                className="h-8 w-8 rounded-full"
+                className="h-6 w-6 rounded-full"
                 asChild
               >
                 <Link to={`/product/${product.id}`}>
-                  <Eye className="h-4 w-4" />
+                  <Eye className="h-3 w-3" />
                 </Link>
               </Button>
             </div>
           </div>
         </div>
 
-        <CardContent className="p-4">
-          <div className="space-y-2">
-            <div className="text-xs text-muted-foreground uppercase tracking-wide">
-              {product.brand}
-            </div>
-            <h3 className="font-semibold text-sm line-clamp-2 group-hover:text-primary transition-colors">
+        <CardContent className="p-2 sm:p-3">
+          <div className="space-y-1">
+            <h3 className="font-medium text-xs sm:text-sm line-clamp-2 group-hover:text-primary transition-colors">
               {product.name}
             </h3>
             
-            {/* Rating */}
-            <div className="flex items-center gap-1">
+            {/* Rating - Hidden on mobile for space */}
+            <div className="hidden sm:flex items-center gap-1">
               <div className="flex">
                 {[1, 2, 3, 4, 5].map((star) => (
                   <Star
                     key={star}
-                    className={`h-3 w-3 ${
+                    className={`h-2.5 w-2.5 ${
                       star <= Math.floor(product.rating)
                         ? 'fill-rating text-rating'
                         : 'text-muted-foreground'
@@ -164,12 +161,12 @@ export function ProductCard({ product, className = '' }: ProductCardProps) {
             </div>
 
             {/* Price */}
-            <div className="flex items-center gap-2">
-              <span className="price-text">
+            <div className="flex items-center gap-1 sm:gap-2">
+              <span className="font-bold text-xs sm:text-sm text-red-600">
                 {formatPrice(product.price)}
               </span>
               {product.originalPrice && (
-                <span className="original-price">
+                <span className="text-xs text-muted-foreground line-through">
                   {formatPrice(product.originalPrice)}
                 </span>
               )}
@@ -178,15 +175,16 @@ export function ProductCard({ product, className = '' }: ProductCardProps) {
         </CardContent>
       </Link>
 
-      <CardFooter className="p-4 pt-0">
+      <CardFooter className="p-2 pt-0 sm:p-3 sm:pt-0">
         <Button 
           onClick={handleAddToCart}
           disabled={!product.inStock}
-          className="w-full"
+          className="w-full h-7 sm:h-8 text-xs sm:text-sm"
           size="sm"
         >
-          <ShoppingCart className="h-4 w-4 mr-2" />
-          {product.inStock ? 'Add to Cart' : 'Out of Stock'}
+          <ShoppingCart className="h-3 w-3 mr-1 sm:mr-2" />
+          <span className="hidden sm:inline">{product.inStock ? 'Add to Cart' : 'Out of Stock'}</span>
+          <span className="sm:hidden">{product.inStock ? 'Add' : 'Out'}</span>
         </Button>
       </CardFooter>
     </Card>

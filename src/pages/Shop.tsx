@@ -200,8 +200,8 @@ export default function Shop() {
             className="w-full"
           />
           <div className="flex items-center justify-between text-sm text-muted-foreground">
-            <span>KSh {priceRange[0].toLocaleString()}</span>
-            <span>KSh {priceRange[1].toLocaleString()}</span>
+            <span>UGX {priceRange[0].toLocaleString()}</span>
+            <span>UGX {priceRange[1].toLocaleString()}</span>
           </div>
         </div>
       </div>
@@ -365,7 +365,7 @@ export default function Shop() {
             {filteredProducts.length > 0 ? (
               <div className={
                 viewMode === 'grid' 
-                  ? 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6'
+                  ? 'grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 md:gap-6'
                   : 'space-y-4'
               }>
                 {filteredProducts.map((product) => (
