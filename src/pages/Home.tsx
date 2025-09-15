@@ -21,7 +21,7 @@ export default function Home() {
               <Badge className="bg-accent text-accent-foreground">
                 🔥 New Year Sale - Up to 40% Off
               </Badge>
-              <h1 className="text-4xl lg:text-6xl font-bold leading-tight">
+              <h1 className="text-4xl lg:text-6xl font-bold leading-tight text-slate-900">
                 Your All-in-One Destination for 
                 <span className="text-accent"> Quality Electronics</span>
               </h1>
@@ -56,7 +56,7 @@ export default function Home() {
                   <Truck className="h-6 w-6 text-primary" />
                 </div>
                 <h3 className="font-semibold mb-2">Free Delivery</h3>
-                <p className="text-sm text-muted-foreground">Free delivery on orders over UGX 200,000</p>
+                <p className="text-sm text-muted-foreground">Free delivery on orders over KSh 50,000</p>
               </CardContent>
             </Card>
             <Card className="text-center border-0 shadow-none bg-transparent">
@@ -100,33 +100,15 @@ export default function Home() {
             </p>
           </div>
           
-          {/* Mobile Category Tabs - Horizontal scroll like Kilimall */}
-          <div className="block md:hidden mb-6">
-            <div className="flex space-x-2 overflow-x-auto pb-2">
-              {['ALL', 'TVs', 'Appliances', 'Kitchen', 'Home', 'Phones'].map((cat) => (
-                <Link 
-                  key={cat}
-                  to={cat === 'ALL' ? '/shop' : `/shop?category=${cat.toLowerCase()}`}
-                  className="flex-shrink-0 px-4 py-2 bg-secondary text-secondary-foreground rounded-full text-sm font-medium hover:bg-primary hover:text-primary-foreground transition-colors"
-                >
-                  {cat}
-                </Link>
-              ))}
-            </div>
-          </div>
-
-          {/* Category Grid - Compact mobile layout like Kilimall */}
-          <div className="grid grid-cols-5 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-6">
-            {categories.slice(0, 10).map(category => (
-              <Link key={category.id} to={`/shop?category=${category.id}`} className="category-card group">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            {categories.map(category => <Link key={category.id} to={`/shop?category=${category.id}`} className="category-card group">
                 <div className="text-center">
-                  <div className="mx-auto w-10 h-10 md:w-16 md:h-16 bg-primary/10 rounded-lg md:rounded-full flex items-center justify-center mb-2 md:mb-4 group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
-                    <Zap className="h-4 w-4 md:h-8 md:w-8" />
+                  <div className="mx-auto w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mb-4 group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
+                    <Zap className="h-8 w-8" />
                   </div>
-                  <h3 className="font-medium text-xs md:text-sm leading-tight">{category.name}</h3>
+                  <h3 className="font-semibold text-sm">{category.name}</h3>
                 </div>
-              </Link>
-            ))}
+              </Link>)}
           </div>
         </div>
       </section>
@@ -146,15 +128,7 @@ export default function Home() {
             </Button>
           </div>
           
-          {/* Flash Sale Section - Mobile optimized like Kilimall */}
-          <div className="mb-6">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-bold text-red-600">Flash Sale</h3>
-              <div className="text-sm text-muted-foreground">Ends in 00:15:45</div>
-            </div>
-          </div>
-          
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 md:gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {featuredProducts.map(product => <ProductCard key={product.id} product={product} />)}
           </div>
         </div>
@@ -185,8 +159,8 @@ export default function Home() {
                       </div>
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2">
-                           <span className="price-text text-base">UGX {product.price.toLocaleString()}</span>
-                           {product.originalPrice && <span className="original-price text-xs">UGX {product.originalPrice.toLocaleString()}</span>}
+                          <span className="price-text text-base">KSh {product.price.toLocaleString()}</span>
+                          {product.originalPrice && <span className="original-price text-xs">KSh {product.originalPrice.toLocaleString()}</span>}
                         </div>
                         <Button asChild size="sm" variant="outline">
                           <Link to={`/product/${product.id}`}>View</Link>
@@ -218,8 +192,8 @@ export default function Home() {
                       </div>
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2">
-                           <span className="price-text text-base">UGX {product.price.toLocaleString()}</span>
-                           {product.originalPrice && <span className="original-price text-xs">UGX {product.originalPrice.toLocaleString()}</span>}
+                          <span className="price-text text-base">KSh {product.price.toLocaleString()}</span>
+                          {product.originalPrice && <span className="original-price text-xs">KSh {product.originalPrice.toLocaleString()}</span>}
                         </div>
                         <Button asChild size="sm" variant="outline">
                           <Link to={`/product/${product.id}`}>View</Link>
