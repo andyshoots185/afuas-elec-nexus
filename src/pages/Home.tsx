@@ -15,7 +15,7 @@ export default function Home() {
         <div className="absolute inset-0">
           <img src={heroBanner} alt="Quality Electronics at Afua's Electronics" className="w-full h-full object-cover opacity-20" />
         </div>
-        <div className="relative container mx-auto container-padding section-spacing">
+        <div className="relative container mx-auto container-padding section-spacing bg-gray-200">
           <div className="max-w-2xl">
             <div className="space-y-6">
               <Badge className="bg-accent text-accent-foreground">
