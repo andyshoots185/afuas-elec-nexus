@@ -222,20 +222,23 @@ export function Header() {
               </DropdownMenuContent>
             </DropdownMenu>
             
-            <Link to="/shop" className="text-sm font-medium hover:text-primary transition-colors">
-              Shop
+            <Link to="/TVs & Entertainmen" className="text-sm font-medium hover:text-primary transition-colors">
+              TVs & Entertainmen
             </Link>
-            <Link to="/blog" className="text-sm font-medium hover:text-primary transition-colors">
-              Tech Tips
+            <Link to="/Refrigerators" className="text-sm font-medium hover:text-primary transition-colors">
+              Refrigerators
             </Link>
-            <Link to="/about" className="text-sm font-medium hover:text-primary transition-colors">
-              About Us
+            <Link to="/Washing Machines" className="text-sm font-medium hover:text-primary transition-colors">
+              Washing Machines 
             </Link>
-            <Link to="/contact" className="text-sm font-medium hover:text-primary transition-colors">
-              Contact
+            <Link to="/ Sound Systems" className="text-sm font-medium hover:text-primary transition-colors">
+              Sound Systems 
             </Link>
-            <Link to="/help" className="text-sm font-medium hover:text-primary transition-colors">
-              Help Center
+            <Link to="/Cooking Appliances" className="text-sm font-medium hover:text-primary transition-colors">
+              Cooking Appliances
+            </Link>
+             <Link to="/Irons & Garment Care" className="text-sm font-medium hover:text-primary transition-colors">
+              Irons & Garment Care
             </Link>
           </nav>
         </div>
