@@ -222,7 +222,7 @@ export function Header() {
               </DropdownMenuContent>
             </DropdownMenu>
             
-            <Link to="/Shop/TVs & Entertainmen" className="text-sm font-medium hover:text-primary transition-colors">
+{/*             <Link to="/Shop/TVs & Entertainmen" className="text-sm font-medium hover:text-primary transition-colors">
               TVs & Entertainmen
             </Link>
             <Link to="/Shop/Refrigerators" className="text-sm font-medium hover:text-primary transition-colors">
@@ -239,7 +239,7 @@ export function Header() {
             </Link>
              <Link to="/Shop/Irons & Garment Care" className="text-sm font-medium hover:text-primary transition-colors">
               Irons & Garment Care
-            </Link>
+            </Link> */}
           </nav>
         </div>
       </div>
