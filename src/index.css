@@ -2,6 +2,17 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Custom scrollbar hiding for mobile carousels */
+@layer utilities {
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+}
+
 /* Afua's Electronics Design System - Modern Blue/Black/White Theme
 All colors MUST be HSL. Clean, professional e-commerce aesthetic.
 */

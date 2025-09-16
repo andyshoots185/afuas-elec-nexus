@@ -6,6 +6,7 @@ import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import { useCart } from '@/contexts/CartContext';
 import { useWishlist } from '@/contexts/WishlistContext';
 import { useToast } from '@/hooks/use-toast';
+import { formatUGX } from '@/utils/formatUGX';
 import type { Product } from '@/data/products';
 
 interface ProductCardProps {
@@ -74,9 +75,8 @@ export function ProductCard({ product, className = '' }: ProductCardProps) {
     }
   };
 
-  const formatPrice = (price: number) => {
-    return `UGX ${price.toLocaleString()}`;
-  };
+  // Use centralized UGX formatter
+  const formatPrice = formatUGX;
 
   const discountPercentage = product.originalPrice 
     ? Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)
@@ -86,6 +86,7 @@ export function ProductCard({ product, className = '' }: ProductCardProps) {
     <Card className={`product-card group ${className}`}>
       <Link to={`/product/${product.id}`} className="block">
         <div className="relative">
+          {/* Mobile-optimized image container */}
           <div className="aspect-square bg-muted overflow-hidden rounded-t-lg">
             <img
               src={product.image}
@@ -95,20 +96,26 @@ export function ProductCard({ product, className = '' }: ProductCardProps) {
             />
           </div>
           
-          {/* Badges */}
-          <div className="absolute top-1 left-1 flex flex-col gap-1">
+          {/* Compact badges for mobile */}
+          <div className="absolute top-1 left-1 flex flex-col gap-0.5">
             {discountPercentage > 0 && (
-              <Badge className="bg-red-500 text-white text-xs px-1 py-0.5 rounded">-{discountPercentage}%</Badge>
+              <Badge className="bg-red-500 text-white text-[10px] px-1 py-0 rounded h-4 flex items-center">
+                -{discountPercentage}%
+              </Badge>
             )}
             {product.isNew && (
-              <Badge className="bg-green-500 text-white text-xs px-1 py-0.5 rounded">New</Badge>
+              <Badge className="bg-green-500 text-white text-[10px] px-1 py-0 rounded h-4 flex items-center">
+                New
+              </Badge>
             )}
             {!product.inStock && (
-              <Badge variant="secondary" className="text-xs px-1 py-0.5">Out of Stock</Badge>
+              <Badge variant="secondary" className="text-[10px] px-1 py-0 h-4 flex items-center">
+                Out
+              </Badge>
             )}
           </div>
 
-          {/* Quick Actions - Only show on desktop */}
+          {/* Quick Actions - Desktop only */}
           <div className="absolute top-1 right-1 opacity-0 group-hover:opacity-100 transition-opacity hidden md:flex">
             <div className="flex flex-col gap-1">
               <Button
@@ -135,13 +142,15 @@ export function ProductCard({ product, className = '' }: ProductCardProps) {
           </div>
         </div>
 
-        <CardContent className="p-2 sm:p-3">
+        {/* Mobile-optimized content */}
+        <CardContent className="p-2">
           <div className="space-y-1">
-            <h3 className="font-medium text-xs sm:text-sm line-clamp-2 group-hover:text-primary transition-colors">
+            {/* Compact title for mobile */}
+            <h3 className="font-medium text-xs leading-tight line-clamp-2 group-hover:text-primary transition-colors">
               {product.name}
             </h3>
             
-            {/* Rating - Hidden on mobile for space */}
+            {/* Rating - Hidden on mobile, visible on desktop */}
             <div className="hidden sm:flex items-center gap-1">
               <div className="flex">
                 {[1, 2, 3, 4, 5].map((star) => (
@@ -160,9 +169,9 @@ export function ProductCard({ product, className = '' }: ProductCardProps) {
               </span>
             </div>
 
-            {/* Price */}
-            <div className="flex items-center gap-1 sm:gap-2">
-              <span className="font-bold text-xs sm:text-sm text-red-600">
+            {/* Price - Kilimall style with red accent */}
+            <div className="flex items-center gap-1">
+              <span className="font-bold text-sm text-red-600">
                 {formatPrice(product.price)}
               </span>
               {product.originalPrice && (
@@ -175,14 +184,15 @@ export function ProductCard({ product, className = '' }: ProductCardProps) {
         </CardContent>
       </Link>
 
-      <CardFooter className="p-2 pt-0 sm:p-3 sm:pt-0">
+      {/* Compact footer for mobile */}
+      <CardFooter className="p-2 pt-0">
         <Button 
           onClick={handleAddToCart}
           disabled={!product.inStock}
-          className="w-full h-7 sm:h-8 text-xs sm:text-sm"
+          className="w-full h-7 text-xs bg-red-500 hover:bg-red-600"
           size="sm"
         >
-          <ShoppingCart className="h-3 w-3 mr-1 sm:mr-2" />
+          <ShoppingCart className="h-3 w-3 mr-1" />
           <span className="hidden sm:inline">{product.inStock ? 'Add to Cart' : 'Out of Stock'}</span>
           <span className="sm:hidden">{product.inStock ? 'Add' : 'Out'}</span>
         </Button>

@@ -7,6 +7,7 @@ import { CartProvider } from "@/contexts/CartContext";
 import { WishlistProvider } from "@/contexts/WishlistContext";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
+import { BottomNavMobile } from "@/components/mobile/BottomNavMobile";
 
 import Home from "./pages/Home";
 import Shop from "./pages/Shop";
@@ -29,7 +30,7 @@ const App = () => (
           <BrowserRouter>
             <div className="flex flex-col min-h-screen">
               <Header />
-              <main className="flex-1">
+              <main className="flex-1 pb-16 md:pb-0">
                 <Routes>
                   <Route path="/" element={<Home />} />
                   <Route path="/shop" element={<Shop />} />
@@ -45,6 +46,7 @@ const App = () => (
                 </Routes>
               </main>
               <Footer />
+              <BottomNavMobile />
             </div>
             <Toaster />
             <Sonner />
