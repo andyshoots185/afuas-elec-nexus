@@ -1,23 +1,37 @@
-import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { Search, ShoppingCart, User, Menu, Heart, Phone, MapPin } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Badge } from '@/components/ui/badge';
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import {
+  Search,
+  ShoppingCart,
+  User,
+  Menu,
+  Heart,
+  Phone,
+  MapPin,
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
-import { useCart } from '@/contexts/CartContext';
-import { useWishlist } from '@/contexts/WishlistContext';
-import { categories } from '@/data/products';
+} from "@/components/ui/dropdown-menu";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
+import { useCart } from "@/contexts/CartContext";
+import { useWishlist } from "@/contexts/WishlistContext";
+import { categories } from "@/data/products";
 
 export function Header() {
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const navigate = useNavigate();
   const { itemCount } = useCart();
@@ -27,7 +41,7 @@ export function Header() {
     e.preventDefault();
     if (searchQuery.trim()) {
       navigate(`/shop?search=${encodeURIComponent(searchQuery.trim())}`);
-      setSearchQuery('');
+      setSearchQuery("");
     }
   };
 
@@ -64,7 +78,9 @@ export function Header() {
             </div>
             <div className="hidden sm:block">
               <div className="font-semibold text-lg">Electronics</div>
-              <div className="text-xs text-muted-foreground">Quality You Can Trust</div>
+              <div className="text-xs text-muted-foreground">
+                Quality You Can Trust
+              </div>
             </div>
           </Link>
 
@@ -81,8 +97,7 @@ export function Header() {
               <Button
                 type="submit"
                 size="sm"
-                className="absolute right-1 top-1 rounded-lg h-10 w-10 p-0 bg-red-500 hover:bg-red-600"
-              >
+                className="absolute right-1 top-1 rounded-lg h-10 w-10 p-0 bg-red-500 hover:bg-red-600">
                 <Search className="h-4 w-4" />
               </Button>
             </form>
@@ -91,7 +106,7 @@ export function Header() {
           {/* Right Side Actions */}
           <div className="flex items-center space-x-4">
             {/* Mobile Search */}
-            <Sheet>
+            {/* <Sheet>
               <SheetTrigger asChild>
                 <Button variant="ghost" size="icon" className="md:hidden">
                   <Search className="h-5 w-5" />
@@ -110,13 +125,16 @@ export function Header() {
                       onChange={(e) => setSearchQuery(e.target.value)}
                       className="w-full pr-12"
                     />
-                    <Button type="submit" size="sm" className="absolute right-1 top-1">
+                    <Button
+                      type="submit"
+                      size="sm"
+                      className="absolute right-1 top-1">
                       <Search className="h-4 w-4" />
                     </Button>
                   </div>
                 </form>
               </SheetContent>
-            </Sheet>
+            </Sheet> */}
 
             {/* Wishlist */}
             <Link to="/wishlist">
@@ -131,7 +149,7 @@ export function Header() {
             </Link>
 
             {/* Cart */}
-            <Link to="/cart">
+            {/* <Link to="/cart">
               <Button variant="ghost" size="icon" className="relative">
                 <ShoppingCart className="h-5 w-5" />
                 {itemCount > 0 && (
@@ -140,7 +158,7 @@ export function Header() {
                   </Badge>
                 )}
               </Button>
-            </Link>
+            </Link> */}
 
             {/* User Account */}
             <DropdownMenu>
@@ -167,7 +185,7 @@ export function Header() {
             </DropdownMenu>
 
             {/* Mobile Menu */}
-            <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
+            {/* <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
               <SheetTrigger asChild>
                 <Button variant="ghost" size="icon" className="lg:hidden">
                   <Menu className="h-5 w-5" />
@@ -184,8 +202,7 @@ export function Header() {
                         <Link
                           to={`/shop?category=${category.id}`}
                           className="block py-2 px-4 rounded-md hover:bg-muted transition-colors"
-                          onClick={() => setMobileMenuOpen(false)}
-                        >
+                          onClick={() => setMobileMenuOpen(false)}>
                           {category.name}
                         </Link>
                       </li>
@@ -193,7 +210,7 @@ export function Header() {
                   </ul>
                 </nav>
               </SheetContent>
-            </Sheet>
+            </Sheet> */}
           </div>
         </div>
       </div>
@@ -213,16 +230,15 @@ export function Header() {
                   <DropdownMenuItem key={category.id} asChild>
                     <Link
                       to={`/shop?category=${category.id}`}
-                      className="w-full flex items-center space-x-2"
-                    >
+                      className="w-full flex items-center space-x-2">
                       <span>{category.name}</span>
                     </Link>
                   </DropdownMenuItem>
                 ))}
               </DropdownMenuContent>
             </DropdownMenu>
-            
-{/*             <Link to="/Shop/TVs & Entertainmen" className="text-sm font-medium hover:text-primary transition-colors">
+
+            {/*             <Link to="/Shop/TVs & Entertainmen" className="text-sm font-medium hover:text-primary transition-colors">
               TVs & Entertainmen
             </Link>
             <Link to="/Shop/Refrigerators" className="text-sm font-medium hover:text-primary transition-colors">

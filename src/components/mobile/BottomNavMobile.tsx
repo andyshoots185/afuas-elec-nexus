@@ -1,7 +1,7 @@
-import { Link, useLocation } from 'react-router-dom';
-import { Home, Grid3X3, MessageCircle, ShoppingCart, User } from 'lucide-react';
-import { Badge } from '@/components/ui/badge';
-import { useCart } from '@/contexts/CartContext';
+import { Link, useLocation } from "react-router-dom";
+import { Home, Grid3X3, MessageCircle, ShoppingCart, User } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { useCart } from "@/contexts/CartContext";
 
 export function BottomNavMobile() {
   const location = useLocation();
@@ -9,42 +9,44 @@ export function BottomNavMobile() {
 
   const navItems = [
     {
-      id: 'home',
-      label: 'Home',
+      id: "home",
+      label: "Home",
       icon: Home,
-      path: '/',
-      isActive: location.pathname === '/'
+      path: "/",
+      isActive: location.pathname === "/",
     },
     {
-      id: 'categories',
-      label: 'Categories',
+      id: "categories",
+      label: "Categories",
       icon: Grid3X3,
-      path: '/shop',
-      isActive: location.pathname === '/shop'
+      path: "/shop",
+      isActive: location.pathname === "/shop",
     },
     {
-      id: 'messages',
-      label: 'Messages',
+      id: "messages",
+      label: "Messages",
       icon: MessageCircle,
-      path: '/contact',
-      isActive: location.pathname === '/contact',
-      badge: 0 // Placeholder for message count
+      path: "/Massages",
+      isActive: location.pathname === "/Massages",
+      badge: 0, // Placeholder for message count
     },
     {
-      id: 'cart',
-      label: 'Cart',
+      id: "cart",
+      label: "Cart",
       icon: ShoppingCart,
-      path: '/cart',
-      isActive: location.pathname === '/cart',
-      badge: itemCount
+      path: "/cart",
+      isActive: location.pathname === "/cart",
+      badge: itemCount,
     },
     {
-      id: 'profile',
-      label: 'Profile',
+      id: "profile",
+      label: "Profile",
       icon: User,
-      path: '/about',
-      isActive: location.pathname === '/about' || location.pathname === '/wishlist'
-    }
+      path: "/User Account",
+      isActive:
+        location.pathname === "/User Account" ||
+        location.pathname === "/wishlist",
+    },
   ];
 
   return (
@@ -58,15 +60,14 @@ export function BottomNavMobile() {
               to={item.path}
               className={`flex flex-col items-center py-1 px-2 relative ${
                 item.isActive
-                  ? 'text-red-500'
-                  : 'text-muted-foreground hover:text-foreground'
-              }`}
-            >
+                  ? "text-red-500"
+                  : "text-muted-foreground hover:text-foreground"
+              }`}>
               <div className="relative">
                 <IconComponent className="h-6 w-6" />
                 {item.badge && item.badge > 0 && (
                   <Badge className="absolute -top-2 -right-2 h-5 w-5 p-0 flex items-center justify-center text-xs bg-red-500">
-                    {item.badge > 99 ? '99+' : item.badge}
+                    {item.badge > 99 ? "99+" : item.badge}
                   </Badge>
                 )}
               </div>

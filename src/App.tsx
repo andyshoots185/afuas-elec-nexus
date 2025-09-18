@@ -9,6 +9,9 @@ import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { BottomNavMobile } from "@/components/mobile/BottomNavMobile";
 
+// import AllCategories from "./pages/AllCategories";
+// import CategoryPage from "./pages/CategoryPage";
+
 import Home from "./pages/Home";
 import Shop from "./pages/Shop";
 import ProductDetail from "./pages/ProductDetail";
@@ -41,6 +44,10 @@ const App = () => (
                   <Route path="/about" element={<About />} />
                   <Route path="/contact" element={<Contact />} />
                   <Route path="/help" element={<Help />} />
+                  {/* <Route path="/categories" element={<AllCategories />} />
+                  <Route path="/shop/:category" element={<CategoryPage />} /> */}
+                  {/* <Route path="/shop/:category" element={<CategoryPage />} /> */}
+
                   {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                   <Route path="*" element={<NotFound />} />
                 </Routes>

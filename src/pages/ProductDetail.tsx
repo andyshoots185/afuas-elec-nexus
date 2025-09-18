@@ -1,27 +1,43 @@
-import { useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
-import { Heart, ShoppingCart, Star, Share2, Truck, Shield, RotateCcw, Headphones, Plus, Minus, Check } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Separator } from '@/components/ui/separator';
-import { Progress } from '@/components/ui/progress';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { ProductCard } from '@/components/shared/ProductCard';
-import { useCart } from '@/contexts/CartContext';
-import { useWishlist } from '@/contexts/WishlistContext';
-import { useToast } from '@/hooks/use-toast';
-import { getProductById, products } from '@/data/products';
+import { useState } from "react";
+import { useParams, Link } from "react-router-dom";
+import {
+  Heart,
+  ShoppingCart,
+  Star,
+  Share2,
+  Truck,
+  Shield,
+  RotateCcw,
+  Headphones,
+  Plus,
+  Minus,
+  Check,
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Separator } from "@/components/ui/separator";
+import { Progress } from "@/components/ui/progress";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { ProductCard } from "@/components/shared/ProductCard";
+import { useCart } from "@/contexts/CartContext";
+import { useWishlist } from "@/contexts/WishlistContext";
+import { useToast } from "@/hooks/use-toast";
+import { getProductById, products } from "@/data/products";
 
 export default function ProductDetail() {
   const { id } = useParams<{ id: string }>();
   const product = id ? getProductById(id) : null;
   const [quantity, setQuantity] = useState(1);
   const [selectedImage, setSelectedImage] = useState(0);
-  
+
   const { addItem } = useCart();
-  const { addItem: addToWishlist, removeItem: removeFromWishlist, isInWishlist } = useWishlist();
+  const {
+    addItem: addToWishlist,
+    removeItem: removeFromWishlist,
+    isInWishlist,
+  } = useWishlist();
   const { toast } = useToast();
 
   if (!product) {
@@ -29,7 +45,9 @@ export default function ProductDetail() {
       <div className="min-h-screen bg-background">
         <div className="container mx-auto container-padding py-16 text-center">
           <h1 className="text-2xl font-bold mb-4">Product not found</h1>
-          <p className="text-muted-foreground mb-6">The product you're looking for doesn't exist.</p>
+          <p className="text-muted-foreground mb-6">
+            The product you're looking for doesn't exist.
+          </p>
           <Button asChild>
             <Link to="/shop">Back to Shop</Link>
           </Button>
@@ -40,33 +58,33 @@ export default function ProductDetail() {
 
   // Mock related products (same category, different products)
   const relatedProducts = products
-    .filter(p => p.category === product.category && p.id !== product.id)
+    .filter((p) => p.category === product.category && p.id !== product.id)
     .slice(0, 4);
 
   // Mock reviews
   const reviews = [
     {
       id: 1,
-      name: 'John Doe',
+      name: "John Doe",
       rating: 5,
-      date: '2024-01-15',
-      comment: 'Excellent product! Works perfectly and great value for money.',
+      date: "2024-01-15",
+      comment: "Excellent product! Works perfectly and great value for money.",
       verified: true,
     },
     {
       id: 2,
-      name: 'Jane Smith',
+      name: "Jane Smith",
       rating: 4,
-      date: '2024-01-10',
-      comment: 'Good quality but delivery took longer than expected.',
+      date: "2024-01-10",
+      comment: "Good quality but delivery took longer than expected.",
       verified: true,
     },
     {
       id: 3,
-      name: 'Mike Johnson',
+      name: "Mike Johnson",
       rating: 5,
-      date: '2024-01-05',
-      comment: 'Amazing! Exactly as described. Highly recommend.',
+      date: "2024-01-05",
+      comment: "Amazing! Exactly as described. Highly recommend.",
       verified: false,
     },
   ];
@@ -74,9 +92,9 @@ export default function ProductDetail() {
   const handleAddToCart = () => {
     if (!product.inStock) {
       toast({
-        title: 'Out of Stock',
-        description: 'This product is currently out of stock.',
-        variant: 'destructive',
+        title: "Out of Stock",
+        description: "This product is currently out of stock.",
+        variant: "destructive",
       });
       return;
     }
@@ -94,7 +112,7 @@ export default function ProductDetail() {
     }
 
     toast({
-      title: 'Added to Cart',
+      title: "Added to Cart",
       description: `${quantity} × ${product.name} added to your cart.`,
     });
   };
@@ -103,7 +121,7 @@ export default function ProductDetail() {
     if (isInWishlist(product.id)) {
       removeFromWishlist(product.id);
       toast({
-        title: 'Removed from Wishlist',
+        title: "Removed from Wishlist",
         description: `${product.name} has been removed from your wishlist.`,
       });
     } else {
@@ -117,14 +135,16 @@ export default function ProductDetail() {
         inStock: product.inStock,
       });
       toast({
-        title: 'Added to Wishlist',
+        title: "Added to Wishlist",
         description: `${product.name} has been added to your wishlist.`,
       });
     }
   };
 
-  const discountPercentage = product.originalPrice 
-    ? Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)
+  const discountPercentage = product.originalPrice
+    ? Math.round(
+        ((product.originalPrice - product.price) / product.originalPrice) * 100
+      )
     : 0;
 
   // Mock multiple images (using the same image for demo)
@@ -135,9 +155,13 @@ export default function ProductDetail() {
       <div className="container mx-auto container-padding py-6">
         {/* Breadcrumb */}
         <nav className="text-sm text-muted-foreground mb-6">
-          <Link to="/" className="hover:text-primary">Home</Link>
+          <Link to="/" className="hover:text-primary">
+            Home
+          </Link>
           <span className="mx-2">/</span>
-          <Link to="/shop" className="hover:text-primary">Shop</Link>
+          <Link to="/shop" className="hover:text-primary">
+            Shop
+          </Link>
           <span className="mx-2">/</span>
           <span className="capitalize">{product.category}</span>
           <span className="mx-2">/</span>
@@ -160,9 +184,10 @@ export default function ProductDetail() {
                   key={index}
                   onClick={() => setSelectedImage(index)}
                   className={`w-20 h-20 bg-muted rounded-md overflow-hidden flex-shrink-0 border-2 ${
-                    selectedImage === index ? 'border-primary' : 'border-transparent'
-                  }`}
-                >
+                    selectedImage === index
+                      ? "border-primary"
+                      : "border-transparent"
+                  }`}>
                   <img
                     src={image}
                     alt={`${product.name} ${index + 1}`}
@@ -178,7 +203,7 @@ export default function ProductDetail() {
             <div>
               <Badge className="mb-2">{product.brand}</Badge>
               <h1 className="text-3xl font-bold mb-4">{product.name}</h1>
-              
+
               {/* Rating */}
               <div className="flex items-center gap-4 mb-4">
                 <div className="flex items-center gap-1">
@@ -188,26 +213,28 @@ export default function ProductDetail() {
                         key={star}
                         className={`h-5 w-5 ${
                           star <= Math.floor(product.rating)
-                            ? 'fill-rating text-rating'
-                            : 'text-muted-foreground'
+                            ? "fill-rating text-rating"
+                            : "text-muted-foreground"
                         }`}
                       />
                     ))}
                   </div>
                   <span className="font-medium">{product.rating}</span>
-                  <span className="text-muted-foreground">({product.reviewCount} reviews)</span>
+                  <span className="text-muted-foreground">
+                    ({product.reviewCount} reviews)
+                  </span>
                 </div>
               </div>
 
               {/* Price */}
               <div className="flex items-center gap-4 mb-6">
                 <span className="text-3xl font-bold text-price">
-                  KSh {product.price.toLocaleString()}
+                  UGX {product.price.toLocaleString()}
                 </span>
                 {product.originalPrice && (
                   <>
                     <span className="text-xl text-muted-foreground line-through">
-                      KSh {product.originalPrice.toLocaleString()}
+                      UGX {product.originalPrice.toLocaleString()}
                     </span>
                     <Badge className="bg-sale text-white">
                       Save {discountPercentage}%
@@ -224,7 +251,9 @@ export default function ProductDetail() {
                     <span className="font-medium">In Stock</span>
                   </div>
                 ) : (
-                  <div className="text-destructive font-medium">Out of Stock</div>
+                  <div className="text-destructive font-medium">
+                    Out of Stock
+                  </div>
                 )}
               </div>
 
@@ -241,21 +270,19 @@ export default function ProductDetail() {
                       variant="ghost"
                       size="sm"
                       onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                      disabled={quantity <= 1}
-                    >
+                      disabled={quantity <= 1}>
                       <Minus className="h-4 w-4" />
                     </Button>
                     <span className="px-4 py-2 font-medium">{quantity}</span>
                     <Button
                       variant="ghost"
                       size="sm"
-                      onClick={() => setQuantity(quantity + 1)}
-                    >
+                      onClick={() => setQuantity(quantity + 1)}>
                       <Plus className="h-4 w-4" />
                     </Button>
                   </div>
                   <span className="text-sm text-muted-foreground">
-                    Total: KSh {(product.price * quantity).toLocaleString()}
+                    Total: UGX {(product.price * quantity).toLocaleString()}
                   </span>
                 </div>
 
@@ -264,17 +291,21 @@ export default function ProductDetail() {
                     onClick={handleAddToCart}
                     disabled={!product.inStock}
                     className="flex-1"
-                    size="lg"
-                  >
+                    size="lg">
                     <ShoppingCart className="h-5 w-5 mr-2" />
                     Add to Cart
                   </Button>
                   <Button
                     variant="outline"
                     size="lg"
-                    onClick={handleToggleWishlist}
-                  >
-                    <Heart className={`h-5 w-5 ${isInWishlist(product.id) ? 'fill-current text-red-500' : ''}`} />
+                    onClick={handleToggleWishlist}>
+                    <Heart
+                      className={`h-5 w-5 ${
+                        isInWishlist(product.id)
+                          ? "fill-current text-red-500"
+                          : ""
+                      }`}
+                    />
                   </Button>
                   <Button variant="outline" size="lg">
                     <Share2 className="h-5 w-5" />
@@ -288,28 +319,36 @@ export default function ProductDetail() {
                   <Truck className="h-5 w-5 text-primary" />
                   <div>
                     <div className="font-medium text-sm">Free Delivery</div>
-                    <div className="text-xs text-muted-foreground">On orders over KSh 50,000</div>
+                    <div className="text-xs text-muted-foreground">
+                      On orders over Ugx 500,000
+                    </div>
                   </div>
                 </div>
                 <div className="flex items-center gap-3">
                   <Shield className="h-5 w-5 text-primary" />
                   <div>
                     <div className="font-medium text-sm">Warranty</div>
-                    <div className="text-xs text-muted-foreground">2 years comprehensive</div>
+                    <div className="text-xs text-muted-foreground">
+                      2 years comprehensive
+                    </div>
                   </div>
                 </div>
                 <div className="flex items-center gap-3">
                   <RotateCcw className="h-5 w-5 text-primary" />
                   <div>
                     <div className="font-medium text-sm">Easy Returns</div>
-                    <div className="text-xs text-muted-foreground">30-day return policy</div>
+                    <div className="text-xs text-muted-foreground">
+                      30-day return policy
+                    </div>
                   </div>
                 </div>
                 <div className="flex items-center gap-3">
                   <Headphones className="h-5 w-5 text-primary" />
                   <div>
                     <div className="font-medium text-sm">24/7 Support</div>
-                    <div className="text-xs text-muted-foreground">Expert customer service</div>
+                    <div className="text-xs text-muted-foreground">
+                      Expert customer service
+                    </div>
                   </div>
                 </div>
               </div>
@@ -323,9 +362,11 @@ export default function ProductDetail() {
             <TabsList className="grid w-full grid-cols-3">
               <TabsTrigger value="specifications">Specifications</TabsTrigger>
               <TabsTrigger value="features">Features</TabsTrigger>
-              <TabsTrigger value="reviews">Reviews ({product.reviewCount})</TabsTrigger>
+              <TabsTrigger value="reviews">
+                Reviews ({product.reviewCount})
+              </TabsTrigger>
             </TabsList>
-            
+
             <TabsContent value="specifications" className="mt-6">
               <Card>
                 <CardHeader>
@@ -333,12 +374,18 @@ export default function ProductDetail() {
                 </CardHeader>
                 <CardContent>
                   <div className="grid gap-4">
-                    {Object.entries(product.specifications).map(([key, value]) => (
-                      <div key={key} className="grid grid-cols-3 gap-4 py-2 border-b border-border last:border-0">
-                        <span className="font-medium">{key}</span>
-                        <span className="col-span-2 text-muted-foreground">{value}</span>
-                      </div>
-                    ))}
+                    {Object.entries(product.specifications).map(
+                      ([key, value]) => (
+                        <div
+                          key={key}
+                          className="grid grid-cols-3 gap-4 py-2 border-b border-border last:border-0">
+                          <span className="font-medium">{key}</span>
+                          <span className="col-span-2 text-muted-foreground">
+                            {value}
+                          </span>
+                        </div>
+                      )
+                    )}
                   </div>
                 </CardContent>
               </Card>
@@ -370,30 +417,37 @@ export default function ProductDetail() {
                   </CardHeader>
                   <CardContent>
                     <div className="text-center mb-6">
-                      <div className="text-4xl font-bold mb-2">{product.rating}</div>
+                      <div className="text-4xl font-bold mb-2">
+                        {product.rating}
+                      </div>
                       <div className="flex justify-center mb-2">
                         {[1, 2, 3, 4, 5].map((star) => (
                           <Star
                             key={star}
                             className={`h-5 w-5 ${
                               star <= Math.floor(product.rating)
-                                ? 'fill-rating text-rating'
-                                : 'text-muted-foreground'
+                                ? "fill-rating text-rating"
+                                : "text-muted-foreground"
                             }`}
                           />
                         ))}
                       </div>
-                      <p className="text-muted-foreground">{product.reviewCount} reviews</p>
+                      <p className="text-muted-foreground">
+                        {product.reviewCount} reviews
+                      </p>
                     </div>
-                    
+
                     <div className="space-y-3">
                       {[5, 4, 3, 2, 1].map((rating) => (
                         <div key={rating} className="flex items-center gap-2">
                           <span className="text-sm">{rating}</span>
                           <Star className="h-3 w-3 text-rating" />
-                          <Progress value={rating === 5 ? 70 : rating === 4 ? 25 : 5} className="flex-1" />
+                          <Progress
+                            value={rating === 5 ? 70 : rating === 4 ? 25 : 5}
+                            className="flex-1"
+                          />
                           <span className="text-xs text-muted-foreground w-8">
-                            {rating === 5 ? '70%' : rating === 4 ? '25%' : '5%'}
+                            {rating === 5 ? "70%" : rating === 4 ? "25%" : "5%"}
                           </span>
                         </div>
                       ))}
@@ -407,13 +461,20 @@ export default function ProductDetail() {
                       <CardContent className="pt-6">
                         <div className="flex items-start gap-4">
                           <Avatar>
-                            <AvatarFallback>{review.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
+                            <AvatarFallback>
+                              {review.name
+                                .split(" ")
+                                .map((n) => n[0])
+                                .join("")}
+                            </AvatarFallback>
                           </Avatar>
                           <div className="flex-1">
                             <div className="flex items-center gap-2 mb-2">
                               <span className="font-medium">{review.name}</span>
                               {review.verified && (
-                                <Badge variant="secondary" className="text-xs">Verified Purchase</Badge>
+                                <Badge variant="secondary" className="text-xs">
+                                  Verified Purchase
+                                </Badge>
                               )}
                             </div>
                             <div className="flex items-center gap-2 mb-3">
@@ -423,15 +484,19 @@ export default function ProductDetail() {
                                     key={star}
                                     className={`h-4 w-4 ${
                                       star <= review.rating
-                                        ? 'fill-rating text-rating'
-                                        : 'text-muted-foreground'
+                                        ? "fill-rating text-rating"
+                                        : "text-muted-foreground"
                                     }`}
                                   />
                                 ))}
                               </div>
-                              <span className="text-sm text-muted-foreground">{review.date}</span>
+                              <span className="text-sm text-muted-foreground">
+                                {review.date}
+                              </span>
                             </div>
-                            <p className="text-muted-foreground">{review.comment}</p>
+                            <p className="text-muted-foreground">
+                              {review.comment}
+                            </p>
                           </div>
                         </div>
                       </CardContent>
