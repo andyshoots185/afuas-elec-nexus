@@ -39,7 +39,7 @@ export function Footer() {
                   Afua
                 </div>
                 <div>
-                  <div className="font-semibold text-lg text-white">Electronics</div>
+                  <div className="font-semibold text-lg text-white bg-stone-500">Electronics</div>
                 </div>
               </div>
               <p className="text-sm opacity-80">
