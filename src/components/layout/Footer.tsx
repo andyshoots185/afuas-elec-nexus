@@ -87,7 +87,7 @@ export function Footer() {
 
             {/* Contact Info */}
             <div className="space-y-4">
-              <h4 className="text-lg font-semibold text-white">Get in Touch</h4>
+              <h4 className="text-lg font-semibold text-gray-500">Get in Touch</h4>
               <div className="space-y-3 text-sm">
                 <div className="flex items-start space-x-3">
                   <Phone className="h-4 w-4 mt-0.5 text-primary" />
