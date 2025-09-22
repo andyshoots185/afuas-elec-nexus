@@ -3,6 +3,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { AuthProvider } from "@/contexts/AuthContext";
 import { CartProvider } from "@/contexts/CartContext";
 import { WishlistProvider } from "@/contexts/WishlistContext";
 import { Header } from "@/components/layout/Header";
@@ -22,15 +23,19 @@ import Contact from "./pages/Contact";
 import Wishlist from "./pages/Wishlist";
 import Help from "./pages/Help";
 import NotFound from "./pages/NotFound";
+import Auth from "./pages/Auth";
+import AdminDashboard from "./pages/AdminDashboard";
+import Messages from "./pages/Messages";
 
 const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
-      <CartProvider>
-        <WishlistProvider>
-          <BrowserRouter>
+      <AuthProvider>
+        <CartProvider>
+          <WishlistProvider>
+            <BrowserRouter>
             <div className="flex flex-col min-h-screen">
               <Header />
               <main className="flex-1 pb-16 md:pb-0">
@@ -44,6 +49,9 @@ const App = () => (
                   <Route path="/about" element={<About />} />
                   <Route path="/contact" element={<Contact />} />
                   <Route path="/help" element={<Help />} />
+                  <Route path="/auth" element={<Auth />} />
+                  <Route path="/admin" element={<AdminDashboard />} />
+                  <Route path="/messages" element={<Messages />} />
                   {/* <Route path="/categories" element={<AllCategories />} />
                   <Route path="/shop/:category" element={<CategoryPage />} /> */}
                   {/* <Route path="/shop/:category" element={<CategoryPage />} /> */}
@@ -60,8 +68,9 @@ const App = () => (
           </BrowserRouter>
         </WishlistProvider>
       </CartProvider>
-    </TooltipProvider>
-  </QueryClientProvider>
+    </AuthProvider>
+  </TooltipProvider>
+</QueryClientProvider>
 );
 
 export default App;

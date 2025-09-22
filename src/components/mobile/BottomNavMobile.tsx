@@ -26,8 +26,8 @@ export function BottomNavMobile() {
       id: "messages",
       label: "Messages",
       icon: MessageCircle,
-      path: "/Massages",
-      isActive: location.pathname === "/Massages",
+      path: "/messages",
+      isActive: location.pathname === "/messages",
       badge: 0, // Placeholder for message count
     },
     {
