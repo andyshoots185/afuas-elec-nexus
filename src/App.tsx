@@ -24,6 +24,7 @@ import Wishlist from "./pages/Wishlist";
 import Help from "./pages/Help";
 import NotFound from "./pages/NotFound";
 import Auth from "./pages/Auth";
+import Profile from "./pages/Profile";
 import AdminDashboard from "./pages/AdminDashboard";
 import Messages from "./pages/Messages";
 import { ProtectedRoute } from "./components/auth/ProtectedRoute";
@@ -51,6 +52,7 @@ const App = () => (
                   <Route path="/contact" element={<Contact />} />
                   <Route path="/help" element={<Help />} />
                   <Route path="/auth" element={<Auth />} />
+                  <Route path="/profile" element={<Profile />} />
                   <Route path="/admin" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>} />
                   <Route path="/messages" element={<ProtectedRoute><Messages /></ProtectedRoute>} />
                   {/* <Route path="/categories" element={<AllCategories />} />

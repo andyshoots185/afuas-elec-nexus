@@ -242,6 +242,23 @@ export default function Auth() {
                 </form>
               </TabsContent>
             </Tabs>
+
+            {/* Admin Access */}
+            <div className="mt-6 pt-4 border-t border-border">
+              <Button
+                variant="outline"
+                size="sm"
+                asChild
+                className="w-full"
+              >
+                <Link to="/admin" className="flex items-center gap-2">
+                  <span>Admin Dashboard</span>
+                </Link>
+              </Button>
+              <p className="text-xs text-muted-foreground text-center mt-2">
+                Admin access required
+              </p>
+            </div>
           </CardContent>
         </Card>
       </div>
