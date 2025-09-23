@@ -26,6 +26,7 @@ import NotFound from "./pages/NotFound";
 import Auth from "./pages/Auth";
 import AdminDashboard from "./pages/AdminDashboard";
 import Messages from "./pages/Messages";
+import { ProtectedRoute } from "./components/auth/ProtectedRoute";
 
 const queryClient = new QueryClient();
 
@@ -43,15 +44,15 @@ const App = () => (
                   <Route path="/" element={<Home />} />
                   <Route path="/shop" element={<Shop />} />
                   <Route path="/product/:id" element={<ProductDetail />} />
-                  <Route path="/cart" element={<Cart />} />
-                  <Route path="/checkout" element={<Checkout />} />
-                  <Route path="/wishlist" element={<Wishlist />} />
+                  <Route path="/cart" element={<ProtectedRoute><Cart /></ProtectedRoute>} />
+                  <Route path="/checkout" element={<ProtectedRoute><Checkout /></ProtectedRoute>} />
+                  <Route path="/wishlist" element={<ProtectedRoute><Wishlist /></ProtectedRoute>} />
                   <Route path="/about" element={<About />} />
                   <Route path="/contact" element={<Contact />} />
                   <Route path="/help" element={<Help />} />
                   <Route path="/auth" element={<Auth />} />
-                  <Route path="/admin" element={<AdminDashboard />} />
-                  <Route path="/messages" element={<Messages />} />
+                  <Route path="/admin" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>} />
+                  <Route path="/messages" element={<ProtectedRoute><Messages /></ProtectedRoute>} />
                   {/* <Route path="/categories" element={<AllCategories />} />
                   <Route path="/shop/:category" element={<CategoryPage />} /> */}
                   {/* <Route path="/shop/:category" element={<CategoryPage />} /> */}
