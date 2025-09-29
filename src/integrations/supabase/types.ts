@@ -71,6 +71,42 @@ export type Database = {
         }
         Relationships: []
       }
+      admin_logs: {
+        Row: {
+          action: string
+          admin_id: string
+          created_at: string
+          details: Json | null
+          id: string
+          ip_address: unknown | null
+          resource_id: string | null
+          resource_type: string
+          user_agent: string | null
+        }
+        Insert: {
+          action: string
+          admin_id: string
+          created_at?: string
+          details?: Json | null
+          id?: string
+          ip_address?: unknown | null
+          resource_id?: string | null
+          resource_type: string
+          user_agent?: string | null
+        }
+        Update: {
+          action?: string
+          admin_id?: string
+          created_at?: string
+          details?: Json | null
+          id?: string
+          ip_address?: unknown | null
+          resource_id?: string | null
+          resource_type?: string
+          user_agent?: string | null
+        }
+        Relationships: []
+      }
       admin_roles: {
         Row: {
           created_at: string
@@ -226,36 +262,72 @@ export type Database = {
           },
         ]
       }
+      conversations: {
+        Row: {
+          buyer_id: string
+          created_at: string
+          id: string
+          product_id: string
+          seller_id: string | null
+          status: string | null
+          updated_at: string
+        }
+        Insert: {
+          buyer_id: string
+          created_at?: string
+          id?: string
+          product_id: string
+          seller_id?: string | null
+          status?: string | null
+          updated_at?: string
+        }
+        Update: {
+          buyer_id?: string
+          created_at?: string
+          id?: string
+          product_id?: string
+          seller_id?: string | null
+          status?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       messages: {
         Row: {
           content: string
+          conversation_id: string | null
           created_at: string
           id: string
           is_read: boolean | null
           message_type: string | null
           product_id: string | null
+          read_at: string | null
           receiver_id: string
           sender_id: string
           updated_at: string
         }
         Insert: {
           content: string
+          conversation_id?: string | null
           created_at?: string
           id?: string
           is_read?: boolean | null
           message_type?: string | null
           product_id?: string | null
+          read_at?: string | null
           receiver_id: string
           sender_id: string
           updated_at?: string
         }
         Update: {
           content?: string
+          conversation_id?: string | null
           created_at?: string
           id?: string
           is_read?: boolean | null
           message_type?: string | null
           product_id?: string | null
+          read_at?: string | null
           receiver_id?: string
           sender_id?: string
           updated_at?: string
@@ -497,6 +569,7 @@ export type Database = {
           is_featured: boolean | null
           meta_description: string | null
           meta_title: string | null
+          metadata: Json | null
           name: string
           price_ugx: number
           short_description: string | null
@@ -504,6 +577,7 @@ export type Database = {
           slug: string
           status: string | null
           stock_quantity: number | null
+          tags: string[] | null
           track_inventory: boolean | null
           updated_at: string
           weight: number | null
@@ -525,6 +599,7 @@ export type Database = {
           is_featured?: boolean | null
           meta_description?: string | null
           meta_title?: string | null
+          metadata?: Json | null
           name: string
           price_ugx: number
           short_description?: string | null
@@ -532,6 +607,7 @@ export type Database = {
           slug: string
           status?: string | null
           stock_quantity?: number | null
+          tags?: string[] | null
           track_inventory?: boolean | null
           updated_at?: string
           weight?: number | null
@@ -553,6 +629,7 @@ export type Database = {
           is_featured?: boolean | null
           meta_description?: string | null
           meta_title?: string | null
+          metadata?: Json | null
           name?: string
           price_ugx?: number
           short_description?: string | null
@@ -560,6 +637,7 @@ export type Database = {
           slug?: string
           status?: string | null
           stock_quantity?: number | null
+          tags?: string[] | null
           track_inventory?: boolean | null
           updated_at?: string
           weight?: number | null
@@ -589,6 +667,7 @@ export type Database = {
           first_name: string | null
           gender: string | null
           id: string
+          is_banned: boolean | null
           last_name: string | null
           phone: string | null
           role: string | null
@@ -601,6 +680,7 @@ export type Database = {
           first_name?: string | null
           gender?: string | null
           id: string
+          is_banned?: boolean | null
           last_name?: string | null
           phone?: string | null
           role?: string | null
@@ -613,6 +693,7 @@ export type Database = {
           first_name?: string | null
           gender?: string | null
           id?: string
+          is_banned?: boolean | null
           last_name?: string | null
           phone?: string | null
           role?: string | null
@@ -774,6 +855,15 @@ export type Database = {
       generate_order_number: {
         Args: Record<PropertyKey, never>
         Returns: string
+      }
+      log_admin_action: {
+        Args: {
+          p_action: string
+          p_details?: Json
+          p_resource_id?: string
+          p_resource_type: string
+        }
+        Returns: undefined
       }
     }
     Enums: {
