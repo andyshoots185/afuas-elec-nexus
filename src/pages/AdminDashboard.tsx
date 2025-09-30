@@ -10,6 +10,8 @@ import { Plus, Package, ShoppingCart, Users, TrendingUp, Loader2 } from 'lucide-
 import { formatUGX } from '@/utils/formatUGX';
 import { ProductManagement } from '@/components/admin/ProductManagement';
 import { OrderManagement } from '@/components/admin/OrderManagement';
+import { UserManagement } from '@/components/admin/UserManagement';
+import { AdminLogs } from '@/components/admin/AdminLogs';
 
 interface DashboardStats {
   totalProducts: number;
@@ -145,9 +147,11 @@ export default function AdminDashboard() {
 
         {/* Main Content */}
         <Tabs defaultValue="products" className="space-y-4">
-          <TabsList>
+          <TabsList className="grid w-full grid-cols-4">
             <TabsTrigger value="products">Products</TabsTrigger>
             <TabsTrigger value="orders">Orders</TabsTrigger>
+            <TabsTrigger value="users">Users</TabsTrigger>
+            <TabsTrigger value="logs">Activity Logs</TabsTrigger>
           </TabsList>
 
           <TabsContent value="products">
@@ -156,6 +160,14 @@ export default function AdminDashboard() {
 
           <TabsContent value="orders">
             <OrderManagement />
+          </TabsContent>
+
+          <TabsContent value="users">
+            <UserManagement />
+          </TabsContent>
+
+          <TabsContent value="logs">
+            <AdminLogs />
           </TabsContent>
         </Tabs>
       </div>

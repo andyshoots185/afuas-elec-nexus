@@ -25,6 +25,8 @@ import { useCart } from "@/contexts/CartContext";
 import { useWishlist } from "@/contexts/WishlistContext";
 import { useToast } from "@/hooks/use-toast";
 import { getProductById, products } from "@/data/products";
+import { ChatComponent } from "@/components/chat/ChatComponent";
+import { useAuth } from "@/contexts/AuthContext";
 
 export default function ProductDetail() {
   const { id } = useParams<{ id: string }>();
@@ -39,6 +41,7 @@ export default function ProductDetail() {
     isInWishlist,
   } = useWishlist();
   const { toast } = useToast();
+  const { user } = useAuth();
 
   if (!product) {
     return (
@@ -359,12 +362,13 @@ export default function ProductDetail() {
         {/* Product Details Tabs */}
         <div className="mt-16">
           <Tabs defaultValue="specifications" className="w-full">
-            <TabsList className="grid w-full grid-cols-3">
+            <TabsList className="grid w-full grid-cols-4">
               <TabsTrigger value="specifications">Specifications</TabsTrigger>
               <TabsTrigger value="features">Features</TabsTrigger>
               <TabsTrigger value="reviews">
                 Reviews ({product.reviewCount})
               </TabsTrigger>
+              <TabsTrigger value="contact">Contact Seller</TabsTrigger>
             </TabsList>
 
             <TabsContent value="specifications" className="mt-6">
@@ -504,6 +508,34 @@ export default function ProductDetail() {
                   ))}
                 </div>
               </div>
+            </TabsContent>
+
+            <TabsContent value="contact" className="mt-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Contact Seller</CardTitle>
+                  <p className="text-sm text-muted-foreground">
+                    Have questions about this product? Chat directly with the seller.
+                  </p>
+                </CardHeader>
+                <CardContent>
+                  {user ? (
+                    <ChatComponent 
+                      productId={product.id}
+                      sellerId="admin" // Replace with actual seller ID from product
+                    />
+                  ) : (
+                    <div className="text-center py-8">
+                      <p className="text-muted-foreground mb-4">
+                        Please sign in to contact the seller
+                      </p>
+                      <Button asChild>
+                        <Link to="/auth">Sign In</Link>
+                      </Button>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
             </TabsContent>
           </Tabs>
         </div>

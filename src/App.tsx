@@ -28,6 +28,7 @@ import Profile from "./pages/Profile";
 import AdminDashboard from "./pages/AdminDashboard";
 import Messages from "./pages/Messages";
 import { ProtectedRoute } from "./components/auth/ProtectedRoute";
+import { AdminRoute } from "./components/auth/AdminRoute";
 
 const queryClient = new QueryClient();
 
@@ -52,8 +53,8 @@ const App = () => (
                   <Route path="/contact" element={<Contact />} />
                   <Route path="/help" element={<Help />} />
                   <Route path="/auth" element={<Auth />} />
-                  <Route path="/profile" element={<Profile />} />
-                  <Route path="/admin" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>} />
+                  <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+                  <Route path="/admin" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
                   <Route path="/messages" element={<ProtectedRoute><Messages /></ProtectedRoute>} />
                   {/* <Route path="/categories" element={<AllCategories />} />
                   <Route path="/shop/:category" element={<CategoryPage />} /> */}
