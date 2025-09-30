@@ -42,8 +42,14 @@ export function UserManagement() {
 
       if (profilesError) throw profilesError;
 
-      // Get user emails from auth.users (admin only can access this)
-      const { data: authUsers, error: authError } = await supabase.auth.admin.listUsers();
+      // Try to get user emails from auth (may fail if not admin)
+      let authUsers: any = { users: [] };
+      try {
+        const result = await supabase.auth.admin.listUsers();
+        authUsers = result.data || { users: [] };
+      } catch {
+        // If fails, continue without emails (user is not admin)
+      }
       
       // Get order statistics for each user
       const { data: orderStats, error: orderError } = await supabase

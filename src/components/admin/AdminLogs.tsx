@@ -37,17 +37,29 @@ export function AdminLogs() {
 
   const fetchLogs = async () => {
     try {
-      const { data, error } = await supabase
+      const { data: logsData, error } = await supabase
         .from('admin_logs')
-        .select(`
-          *,
-          admin_profile:profiles!admin_logs_admin_id_fkey(first_name, last_name)
-        `)
+        .select('*')
         .order('created_at', { ascending: false })
         .limit(100);
 
       if (error) throw error;
-      setLogs(data || []);
+
+      // Fetch profiles separately
+      const adminIds = [...new Set(logsData?.map(log => log.admin_id) || [])];
+      const { data: profiles } = await supabase
+        .from('profiles')
+        .select('id, first_name, last_name')
+        .in('id', adminIds);
+
+      // Merge profiles with logs
+      const logsWithProfiles = logsData?.map(log => ({
+        ...log,
+        ip_address: log.ip_address as string || '',
+        admin_profile: profiles?.find(p => p.id === log.admin_id)
+      })) || [];
+
+      setLogs(logsWithProfiles as AdminLog[]);
     } catch (error) {
       console.error('Error fetching admin logs:', error);
       toast.error('Failed to fetch admin logs');

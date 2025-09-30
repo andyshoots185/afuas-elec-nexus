@@ -150,15 +150,28 @@ export function ChatComponent({ productId, sellerId, onClose }: ChatComponentPro
       // Fetch existing messages
       const { data: messagesData, error: messagesError } = await supabase
         .from('messages')
-        .select(`
-          *,
-          sender_profile:profiles!messages_sender_id_fkey(first_name, last_name, avatar_url)
-        `)
+        .select('*')
         .eq('conversation_id', conversation.id)
         .order('created_at', { ascending: true });
 
       if (messagesError) throw messagesError;
-      setMessages(messagesData || []);
+
+      // Fetch sender profiles separately
+      const senderIds = [...new Set(messagesData?.map(m => m.sender_id).filter(id => id !== 'bot') || [])];
+      const { data: profiles } = await supabase
+        .from('profiles')
+        .select('id, first_name, last_name, avatar_url')
+        .in('id', senderIds);
+
+      // Merge profiles with messages
+      const messagesWithProfiles = messagesData?.map(msg => ({
+        ...msg,
+        sender_profile: msg.sender_id === 'bot' 
+          ? { first_name: 'AfricaneFusion', last_name: 'Bot', avatar_url: undefined }
+          : profiles?.find(p => p.id === msg.sender_id)
+      })) || [];
+
+      setMessages(messagesWithProfiles as Message[]);
 
       // Mark unread messages as read
       const unreadMessages = messagesData?.filter(m => !m.is_read && m.sender_id !== user!.id) || [];
@@ -200,15 +213,22 @@ export function ChatComponent({ productId, sellerId, onClose }: ChatComponentPro
           conversation_id: conversationId,
           message_type: 'text'
         })
-        .select(`
-          *,
-          sender_profile:profiles!messages_sender_id_fkey(first_name, last_name, avatar_url)
-        `)
+        .select()
         .single();
 
       if (error) throw error;
 
-      setMessages(prev => [...prev, data]);
+      // Fetch sender profile
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('first_name, last_name, avatar_url')
+        .eq('id', user.id)
+        .single();
+
+      setMessages(prev => [...prev, {
+        ...data,
+        sender_profile: profile
+      } as Message]);
       setNewMessage('');
 
       // Check if message triggers bot response
