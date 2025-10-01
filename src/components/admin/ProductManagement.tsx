@@ -12,6 +12,7 @@ import { Badge } from '@/components/ui/badge';
 import { Plus, Edit, Trash2, Eye, Loader2 } from 'lucide-react';
 import { formatUGX } from '@/utils/formatUGX';
 import { toast } from 'sonner';
+import { ImageUpload } from './ImageUpload';
 
 interface Product {
   id: string;
@@ -50,9 +51,10 @@ export function ProductManagement() {
     category_id: '',
     brand_id: '',
     stock_quantity: '',
-    status: 'draft',
+    status: 'active',
     sku: '',
-    slug: ''
+    slug: '',
+    image_url: ''
   });
 
   useEffect(() => {
@@ -109,6 +111,8 @@ export function ProductManagement() {
         slug: formData.slug || formData.name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')
       };
 
+      let productId = editingProduct?.id;
+
       if (editingProduct) {
         const { error } = await supabase
           .from('products')
@@ -116,14 +120,44 @@ export function ProductManagement() {
           .eq('id', editingProduct.id);
         
         if (error) throw error;
+        
+        // Log admin action
+        await supabase.rpc('log_admin_action', {
+          p_action: 'update_product',
+          p_resource_type: 'product',
+          p_resource_id: editingProduct.id,
+          p_details: { product_name: formData.name }
+        });
+        
         toast.success('Product updated successfully');
       } else {
-        const { error } = await supabase
+        const { data, error } = await supabase
           .from('products')
-          .insert([productData]);
+          .insert([productData])
+          .select()
+          .single();
         
         if (error) throw error;
-        toast.success('Product created successfully');
+        productId = data.id;
+        
+        // Log admin action
+        await supabase.rpc('log_admin_action', {
+          p_action: 'create_product',
+          p_resource_type: 'product',
+          p_resource_id: productId,
+          p_details: { product_name: formData.name }
+        });
+        
+        toast.success('Product created successfully - now visible on homepage!');
+      }
+
+      // Save product image if uploaded
+      if (formData.image_url && productId) {
+        await supabase.from('product_images').insert([{
+          product_id: productId,
+          image_url: formData.image_url,
+          sort_order: 0
+        }]);
       }
 
       setIsDialogOpen(false);
@@ -146,7 +180,8 @@ export function ProductManagement() {
       stock_quantity: product.stock_quantity?.toString() || '0',
       status: product.status,
       sku: product.sku || '',
-      slug: product.slug || ''
+      slug: product.slug || '',
+      image_url: ''
     });
     setIsDialogOpen(true);
   };
@@ -155,12 +190,23 @@ export function ProductManagement() {
     if (!confirm('Are you sure you want to delete this product?')) return;
 
     try {
+      const product = products.find(p => p.id === productId);
+      
       const { error } = await supabase
         .from('products')
         .delete()
         .eq('id', productId);
 
       if (error) throw error;
+      
+      // Log admin action
+      await supabase.rpc('log_admin_action', {
+        p_action: 'delete_product',
+        p_resource_type: 'product',
+        p_resource_id: productId,
+        p_details: { product_name: product?.name }
+      });
+      
       toast.success('Product deleted successfully');
       fetchData();
     } catch (error: any) {
@@ -177,9 +223,10 @@ export function ProductManagement() {
       category_id: '',
       brand_id: '',
       stock_quantity: '',
-      status: 'draft',
+      status: 'active',
       sku: '',
-      slug: ''
+      slug: '',
+      image_url: ''
     });
     setEditingProduct(null);
   };
@@ -228,6 +275,16 @@ export function ProductManagement() {
               </DialogHeader>
               
               <form onSubmit={handleSubmit} className="space-y-4">
+                <div className="space-y-2">
+                  <Label>Product Image</Label>
+                  <ImageUpload
+                    onImagesUploaded={(urls) => setFormData(prev => ({ ...prev, image_url: urls[0] || '' }))}
+                  />
+                  {formData.image_url && (
+                    <p className="text-sm text-muted-foreground">Image uploaded successfully</p>
+                  )}
+                </div>
+
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="name">Product Name</Label>

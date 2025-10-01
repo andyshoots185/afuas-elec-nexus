@@ -59,11 +59,11 @@ export default function About() {
         <section className="text-center section-spacing">
           <div className="max-w-3xl mx-auto">
             <h1 className="text-4xl lg:text-5xl font-bold mb-6">
-              About Afua's Electronics
+              About Afuwah's Electronics
             </h1>
             <p className="text-lg text-muted-foreground leading-relaxed">
-              Your trusted partner for quality electronics in Kenya. Since our founding, we've been 
-              committed to bringing the latest technology and home appliances to families across the country 
+              Your trusted partner for quality electronics in Uganda. Since our founding, we've been 
+              committed to bringing the latest technology and home appliances to families across the country
               at prices they can afford.
             </p>
           </div>
@@ -76,8 +76,8 @@ export default function About() {
               <h2 className="text-3xl font-bold mb-6">Our Story</h2>
               <div className="space-y-4 text-muted-foreground leading-relaxed">
                 <p>
-                  Afua's Electronics was born from a simple vision: to make quality electronics accessible 
-                  to every Kenyan family. Founded by Afua Sebikaaka, our journey began with a commitment 
+                  Afuwah's Electronics was born from a simple vision: to make quality electronics accessible 
+                  to every Ugandan family. Founded by Afuwah Sebikaaka, our journey began with a commitment 
                   to bridge the gap between cutting-edge technology and affordability.
                 </p>
                 <p>
@@ -180,7 +180,7 @@ export default function About() {
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold mb-4">Meet Our Team</h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
-              The passionate people behind Afua's Electronics, working together to serve you better.
+              The passionate people behind Afuwah's Electronics, working together to serve you better.
             </p>
           </div>
           

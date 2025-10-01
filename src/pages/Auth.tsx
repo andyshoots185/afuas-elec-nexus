@@ -96,9 +96,9 @@ export default function Auth() {
         <Card className="shadow-lg">
           <CardHeader className="text-center">
             <div className="bg-primary text-primary-foreground px-3 py-2 rounded-lg font-bold text-xl w-fit mx-auto mb-2">
-              Afua
+              Afuwah
             </div>
-            <CardTitle>Welcome to Afua's Electronics</CardTitle>
+            <CardTitle>Welcome to Afuwah's Electronics</CardTitle>
             <CardDescription>
               Sign in to your account or create a new one
             </CardDescription>

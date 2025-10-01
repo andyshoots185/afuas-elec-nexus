@@ -152,13 +152,13 @@ export default function Checkout() {
         <form onSubmit={handleSubmitOrder}>
           <div className="grid lg:grid-cols-3 gap-8">
             {/* Shipping Information */}
-            <div className="lg:col-span-2 space-y-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Shipping Information</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="grid grid-cols-2 gap-4">
+          <div className="lg:col-span-2 space-y-6 max-w-2xl">
+            <Card>
+              <CardHeader>
+                <CardTitle>Shipping Information</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                       <Label htmlFor="firstName">First Name *</Label>
                       <Input
@@ -223,9 +223,9 @@ export default function Checkout() {
                     />
                   </div>
 
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <Label htmlFor="city">City/Town *</Label>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="city">City/Town *</Label>
                       <Input
                         id="city"
                         value={shippingInfo.city}
@@ -270,8 +270,9 @@ export default function Checkout() {
                 <CardContent>
                   <RadioGroup
                     value={paymentMethod}
-                    onValueChange={setPaymentMethod}>
-                    <div className="flex items-center space-x-2 p-4 border border-border rounded-lg">
+                    onValueChange={setPaymentMethod}
+                    className="space-y-3">
+                    <div className="flex items-center space-x-2 p-3 sm:p-4 border border-border rounded-lg">
                       <RadioGroupItem value="mpesa" id="mpesa" />
                       <Label
                         htmlFor="mpesa"

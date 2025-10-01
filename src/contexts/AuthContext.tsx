@@ -99,19 +99,44 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     if (error) {
       toast.error(error.message);
-    } else {
-      toast.success('Welcome back!');
+      return { error };
     }
 
+    // Handle remember me: set session persistence
+    if (rememberMe) {
+      // Session persists in localStorage (default behavior)
+      localStorage.setItem('supabase.remember', 'true');
+    } else {
+      // Use session storage for temporary sessions
+      localStorage.removeItem('supabase.remember');
+    }
+
+    toast.success('Welcome back!');
     return { error };
   };
 
   const signOut = async () => {
-    const { error } = await supabase.auth.signOut();
-    if (error) {
-      toast.error(error.message);
-    } else {
+    try {
+      // Clear all auth-related storage
+      const { error } = await supabase.auth.signOut();
+      
+      if (error) {
+        toast.error(error.message);
+        return;
+      }
+
+      // Clear local state
+      setUser(null);
+      setSession(null);
+      setProfile(null);
+      
+      // Clear remember me preference
+      localStorage.removeItem('supabase.remember');
+      
       toast.success('Signed out successfully');
+    } catch (error: any) {
+      console.error('Sign out error:', error);
+      toast.error('Failed to sign out');
     }
   };
 

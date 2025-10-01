@@ -82,6 +82,39 @@ export default function Messages() {
     }
   }, [user]);
 
+  // Set up real-time subscription for new messages
+  useEffect(() => {
+    if (!selectedConversation || !user) return;
+
+    const channel = supabase
+      .channel('messages-realtime')
+      .on(
+        'postgres_changes',
+        {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'messages',
+          filter: `receiver_id=eq.${user.id}`
+        },
+        (payload) => {
+          // Reload messages if they're for the current conversation
+          if (
+            selectedConversation &&
+            (payload.new.sender_id === selectedConversation.other_user_id ||
+              payload.new.receiver_id === selectedConversation.other_user_id)
+          ) {
+            loadMessages(selectedConversation);
+          }
+          loadConversations();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [selectedConversation, user]);
+
   // Auto-scroll to bottom when new messages arrive
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });

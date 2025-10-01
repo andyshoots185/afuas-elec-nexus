@@ -27,15 +27,17 @@ export default function Home() {
       {/* Category Scroller */}
       <CategoryScroller />
 
-      {/* Promo Carousel */}
-      <PromoCarousel />
+        {/* Promo Carousel */}
+        <div className="hidden md:block">
+          <PromoCarousel />
+        </div>
 
       {/* Hero Section - Desktop only */}
       <section className="relative hero-section overflow-hidden hidden md:block">
         <div className="absolute inset-0">
           <img
             src={heroBanner}
-            alt="Quality Electronics at Afua's Electronics"
+            alt="Quality Electronics at Afuwah's Electronics"
             className="w-full h-full object-cover opacity-20"
           />
         </div>
@@ -60,13 +62,20 @@ export default function Home() {
                     Shop Now <ArrowRight className="ml-2 h-5 w-5" />
                   </Link>
                 </Button>
-                <Button
-                  asChild
-                  variant="outline"
-                  size="lg"
-                  className="border-white text-white hover:bg-white hover:text-primary">
-                  <Link to="/shop">Browse Categories</Link>
-                </Button>
+              <Button
+                asChild
+                variant="outline"
+                size="lg"
+                className="border-white text-white hover:bg-white hover:text-primary hidden md:flex">
+                <Link to="/shop">Browse Categories</Link>
+              </Button>
+              <Button
+                asChild
+                variant="outline"
+                size="lg"
+                className="border-white text-white hover:bg-white hover:text-primary hidden md:flex">
+                <Link to="/contact">Get Expert Advice</Link>
+              </Button>
               </div>
             </div>
           </div>
@@ -335,7 +344,7 @@ export default function Home() {
               Ready to Upgrade Your Electronics?
             </h2>
             <p className="text-lg opacity-90 mb-8">
-              Join thousands of satisfied customers who trust Afua's Electronics
+              Join thousands of satisfied customers who trust Afuwah's Electronics
               for quality products and exceptional service.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
