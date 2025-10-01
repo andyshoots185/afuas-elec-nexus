@@ -12,6 +12,7 @@ import { ProductManagement } from '@/components/admin/ProductManagement';
 import { OrderManagement } from '@/components/admin/OrderManagement';
 import { UserManagement } from '@/components/admin/UserManagement';
 import { AdminLogs } from '@/components/admin/AdminLogs';
+import { NotificationBadge } from '@/components/admin/NotificationBadge';
 
 interface DashboardStats {
   totalProducts: number;
@@ -88,22 +89,25 @@ export default function AdminDashboard() {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-4 py-4 md:py-8 max-w-7xl">
         {/* Header */}
-        <div className="flex items-center justify-between mb-8">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6 md:mb-8">
           <div>
-            <h1 className="text-3xl font-bold">Admin Dashboard</h1>
-            <p className="text-muted-foreground">
-              Manage your electronics store
+            <h1 className="text-2xl md:text-3xl font-bold">Afuwah's Electronics</h1>
+            <p className="text-sm md:text-base text-muted-foreground">
+              Admin Dashboard - Manage your store
             </p>
           </div>
-          <Badge variant="secondary" className="bg-green-100 text-green-800">
-            Admin Access
-          </Badge>
+          <div className="flex items-center gap-2">
+            <NotificationBadge />
+            <Badge variant="secondary" className="bg-green-100 text-green-800">
+              Admin Access
+            </Badge>
+          </div>
         </div>
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-6 mb-6 md:mb-8">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Total Products</CardTitle>
@@ -147,11 +151,11 @@ export default function AdminDashboard() {
 
         {/* Main Content */}
         <Tabs defaultValue="products" className="space-y-4">
-          <TabsList className="grid w-full grid-cols-4">
-            <TabsTrigger value="products">Products</TabsTrigger>
-            <TabsTrigger value="orders">Orders</TabsTrigger>
-            <TabsTrigger value="users">Users</TabsTrigger>
-            <TabsTrigger value="logs">Activity Logs</TabsTrigger>
+          <TabsList className="grid w-full grid-cols-2 md:grid-cols-4 h-auto">
+            <TabsTrigger value="products" className="text-xs md:text-sm">Products</TabsTrigger>
+            <TabsTrigger value="orders" className="text-xs md:text-sm">Orders</TabsTrigger>
+            <TabsTrigger value="users" className="text-xs md:text-sm">Users</TabsTrigger>
+            <TabsTrigger value="logs" className="text-xs md:text-sm">Logs</TabsTrigger>
           </TabsList>
 
           <TabsContent value="products">

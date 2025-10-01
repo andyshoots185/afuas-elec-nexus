@@ -142,15 +142,15 @@ export default function Cart() {
                         {/* Price */}
                         <div className="text-right">
                           <div className="font-semibold text-lg">
-                            KSh {(item.price * item.quantity).toLocaleString()}
+                            UGX {(item.price * item.quantity).toLocaleString()}
                           </div>
                           {item.originalPrice && (
                             <div className="text-sm text-muted-foreground line-through">
-                              KSh {(item.originalPrice * item.quantity).toLocaleString()}
+                              UGX {(item.originalPrice * item.quantity).toLocaleString()}
                             </div>
                           )}
                           <div className="text-xs text-muted-foreground">
-                            KSh {item.price.toLocaleString()} each
+                            UGX {item.price.toLocaleString()} each
                           </div>
                         </div>
                       </div>
@@ -176,7 +176,7 @@ export default function Cart() {
               <CardContent className="space-y-4">
                 <div className="flex justify-between">
                   <span>Subtotal ({itemCount} items)</span>
-                  <span>KSh {subtotal.toLocaleString()}</span>
+                  <span>UGX {subtotal.toLocaleString()}</span>
                 </div>
                 
                 <div className="flex justify-between">
@@ -185,7 +185,7 @@ export default function Cart() {
                     {shipping === 0 ? (
                       <span className="text-success">Free</span>
                     ) : (
-                      `KSh ${shipping.toLocaleString()}`
+                      `UGX ${shipping.toLocaleString()}`
                     )}
                   </span>
                 </div>
@@ -198,7 +198,7 @@ export default function Cart() {
 
                 {shipping > 0 && (
                   <div className="text-sm text-muted-foreground bg-muted p-3 rounded-md">
-                    Add KSh {(50000 - subtotal).toLocaleString()} more for free delivery
+                    Add UGX {(50000 - subtotal).toLocaleString()} more for free delivery
                   </div>
                 )}
 
@@ -206,7 +206,7 @@ export default function Cart() {
 
                 <div className="flex justify-between font-semibold text-lg">
                   <span>Total</span>
-                  <span>KSh {finalTotal.toLocaleString()}</span>
+                  <span>UGX {finalTotal.toLocaleString()}</span>
                 </div>
 
                 <Button asChild className="w-full" size="lg">
