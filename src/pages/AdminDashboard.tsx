@@ -1,81 +1,24 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from '@/contexts/AuthContext';
-import { supabase } from '@/integrations/supabase/client';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Badge } from '@/components/ui/badge';
-import { Plus, Package, ShoppingCart, Users, TrendingUp, Loader2 } from 'lucide-react';
-import { formatUGX } from '@/utils/formatUGX';
+import React, { useState } from 'react';
+import { Routes, Route, Navigate } from 'react-router-dom';
+import { useAdminRole } from '@/hooks/useAdminRole';
+import { AdminSidebar } from '@/components/admin/AdminSidebar';
+import { DashboardOverview } from '@/components/admin/DashboardOverview';
 import { ProductManagement } from '@/components/admin/ProductManagement';
 import { OrderManagement } from '@/components/admin/OrderManagement';
+import { SalesManagement } from '@/components/admin/SalesManagement';
 import { UserManagement } from '@/components/admin/UserManagement';
 import { AdminLogs } from '@/components/admin/AdminLogs';
+import { AdminSettings } from '@/components/admin/AdminSettings';
+import { ReviewSection } from '@/components/product/ReviewSection';
+import Messages from '@/pages/Messages';
+import { Loader2 } from 'lucide-react';
 import { NotificationBadge } from '@/components/admin/NotificationBadge';
 
-interface DashboardStats {
-  totalProducts: number;
-  totalOrders: number;
-  totalRevenue: number;
-  pendingOrders: number;
-}
-
 export default function AdminDashboard() {
-  const { user, isAdmin, loading } = useAuth();
-  const navigate = useNavigate();
-  const [stats, setStats] = useState<DashboardStats>({
-    totalProducts: 0,
-    totalOrders: 0,
-    totalRevenue: 0,
-    pendingOrders: 0
-  });
-  const [statsLoading, setStatsLoading] = useState(true);
+  const { isAdmin, loading } = useAdminRole();
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
-  // Redirect if not admin
-  useEffect(() => {
-    if (!loading && (!user || !isAdmin)) {
-      navigate('/auth');
-    }
-  }, [user, isAdmin, loading, navigate]);
-
-  // Fetch dashboard stats
-  useEffect(() => {
-    const fetchStats = async () => {
-      if (!user || !isAdmin) return;
-
-      try {
-        // Get total products
-        const { count: productsCount } = await supabase
-          .from('products')
-          .select('*', { count: 'exact', head: true });
-
-        // Get total orders and revenue
-        const { data: orders } = await supabase
-          .from('orders')
-          .select('total_amount_ugx, status');
-
-        const totalOrders = orders?.length || 0;
-        const totalRevenue = orders?.reduce((sum, order) => sum + order.total_amount_ugx, 0) || 0;
-        const pendingOrders = orders?.filter(order => order.status === 'pending').length || 0;
-
-        setStats({
-          totalProducts: productsCount || 0,
-          totalOrders,
-          totalRevenue,
-          pendingOrders
-        });
-      } catch (error) {
-        console.error('Error fetching stats:', error);
-      } finally {
-        setStatsLoading(false);
-      }
-    };
-
-    fetchStats();
-  }, [user, isAdmin]);
-
-  if (loading || statsLoading) {
+  if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin" />
@@ -83,98 +26,39 @@ export default function AdminDashboard() {
     );
   }
 
-  if (!user || !isAdmin) {
-    return null;
+  if (!isAdmin) {
+    return <Navigate to="/auth" replace />;
   }
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="container mx-auto px-4 py-4 md:py-8 max-w-7xl">
-        {/* Header */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6 md:mb-8">
-          <div>
-            <h1 className="text-2xl md:text-3xl font-bold">Afuwah's Electronics</h1>
-            <p className="text-sm md:text-base text-muted-foreground">
-              Admin Dashboard - Manage your store
-            </p>
-          </div>
-          <div className="flex items-center gap-2">
+      <AdminSidebar isOpen={isSidebarOpen} onToggle={() => setIsSidebarOpen(!isSidebarOpen)} />
+      
+      <main className="lg:ml-64 min-h-screen">
+        {/* Top bar */}
+        <div className="border-b bg-card/50 backdrop-blur">
+          <div className="flex items-center justify-between p-4">
+            <div className="lg:ml-0 ml-12">
+              <h1 className="text-xl font-bold">Admin Dashboard</h1>
+            </div>
             <NotificationBadge />
-            <Badge variant="secondary" className="bg-green-100 text-green-800">
-              Admin Access
-            </Badge>
           </div>
         </div>
 
-        {/* Stats Cards */}
-        <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-6 mb-6 md:mb-8">
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Total Products</CardTitle>
-              <Package className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{stats.totalProducts}</div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Total Orders</CardTitle>
-              <ShoppingCart className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{stats.totalOrders}</div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Total Revenue</CardTitle>
-              <TrendingUp className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{formatUGX(stats.totalRevenue)}</div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Pending Orders</CardTitle>
-              <Users className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-orange-600">{stats.pendingOrders}</div>
-            </CardContent>
-          </Card>
+        {/* Content */}
+        <div className="p-4 md:p-8">
+          <Routes>
+            <Route index element={<DashboardOverview />} />
+            <Route path="products" element={<ProductManagement />} />
+            <Route path="orders" element={<OrderManagement />} />
+            <Route path="sales" element={<SalesManagement />} />
+            <Route path="customers" element={<UserManagement />} />
+            <Route path="reviews" element={<ReviewSection productId="" />} />
+            <Route path="messages" element={<Messages />} />
+            <Route path="settings" element={<AdminSettings />} />
+          </Routes>
         </div>
-
-        {/* Main Content */}
-        <Tabs defaultValue="products" className="space-y-4">
-          <TabsList className="grid w-full grid-cols-2 md:grid-cols-4 h-auto">
-            <TabsTrigger value="products" className="text-xs md:text-sm">Products</TabsTrigger>
-            <TabsTrigger value="orders" className="text-xs md:text-sm">Orders</TabsTrigger>
-            <TabsTrigger value="users" className="text-xs md:text-sm">Users</TabsTrigger>
-            <TabsTrigger value="logs" className="text-xs md:text-sm">Logs</TabsTrigger>
-          </TabsList>
-
-          <TabsContent value="products">
-            <ProductManagement />
-          </TabsContent>
-
-          <TabsContent value="orders">
-            <OrderManagement />
-          </TabsContent>
-
-          <TabsContent value="users">
-            <UserManagement />
-          </TabsContent>
-
-          <TabsContent value="logs">
-            <AdminLogs />
-          </TabsContent>
-        </Tabs>
-      </div>
+      </main>
     </div>
   );
 }

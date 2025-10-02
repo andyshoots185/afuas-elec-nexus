@@ -1,6 +1,5 @@
-import { useAuth } from '@/contexts/AuthContext';
-import { useNavigate } from 'react-router-dom';
-import { useEffect } from 'react';
+import { useAdminRole } from '@/hooks/useAdminRole';
+import { Navigate } from 'react-router-dom';
 import { Loader2 } from 'lucide-react';
 
 interface AdminRouteProps {
@@ -8,14 +7,7 @@ interface AdminRouteProps {
 }
 
 export function AdminRoute({ children }: AdminRouteProps) {
-  const { user, isAdmin, loading } = useAuth();
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    if (!loading && (!user || !isAdmin)) {
-      navigate('/auth');
-    }
-  }, [user, isAdmin, loading, navigate]);
+  const { isAdmin, loading } = useAdminRole();
 
   if (loading) {
     return (
@@ -25,8 +17,8 @@ export function AdminRoute({ children }: AdminRouteProps) {
     );
   }
 
-  if (!user || !isAdmin) {
-    return null;
+  if (!isAdmin) {
+    return <Navigate to="/auth" replace />;
   }
 
   return <>{children}</>;
