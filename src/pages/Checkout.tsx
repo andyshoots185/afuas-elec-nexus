@@ -101,7 +101,7 @@ export default function Checkout() {
             city: shippingInfo.city,
             country: shippingInfo.county,
             postal_code: shippingInfo.postalCode
-          },
+          } as any,
           billing_address: {
             first_name: shippingInfo.firstName,
             last_name: shippingInfo.lastName,
@@ -110,8 +110,8 @@ export default function Checkout() {
             city: shippingInfo.city,
             country: shippingInfo.county,
             postal_code: shippingInfo.postalCode
-          }
-        }])
+          } as any
+        } as any])
         .select()
         .single();
 
