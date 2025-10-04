@@ -59,6 +59,22 @@ export function ProductManagement() {
 
   useEffect(() => {
     fetchData();
+    
+    // Subscribe to real-time updates
+    const subscription = supabase
+      .channel('products-changes')
+      .on('postgres_changes', {
+        event: '*',
+        schema: 'public',
+        table: 'products'
+      }, () => {
+        fetchData();
+      })
+      .subscribe();
+
+    return () => {
+      subscription.unsubscribe();
+    };
   }, []);
 
   const fetchData = async () => {
