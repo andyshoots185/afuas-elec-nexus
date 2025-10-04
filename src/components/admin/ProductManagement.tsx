@@ -65,8 +65,8 @@ export function ProductManagement() {
     try {
       const [productsRes, categoriesRes, brandsRes] = await Promise.all([
         supabase.from('products').select('*').order('created_at', { ascending: false }),
-        supabase.from('categories').select('id, name'),
-        supabase.from('brands').select('id, name')
+        supabase.from('categories').select('id, name').eq('is_active', true),
+        supabase.from('brands').select('id, name').eq('is_active', true)
       ]);
 
       if (productsRes.data) setProducts(productsRes.data);
@@ -98,17 +98,31 @@ export function ProductManagement() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
+    // Validation
+    if (!formData.name.trim()) {
+      toast.error('Product name is required');
+      return;
+    }
+    if (!formData.category_id) {
+      toast.error('Please select a category');
+      return;
+    }
+    if (!formData.price_ugx || parseInt(formData.price_ugx) <= 0) {
+      toast.error('Please enter a valid price');
+      return;
+    }
+    
     try {
       const productData = {
-        name: formData.name,
-        description: formData.description,
+        name: formData.name.trim(),
+        description: formData.description?.trim() || '',
         price_ugx: parseInt(formData.price_ugx),
         category_id: formData.category_id,
-        brand_id: formData.brand_id,
-        stock_quantity: parseInt(formData.stock_quantity),
+        brand_id: formData.brand_id || null,
+        stock_quantity: parseInt(formData.stock_quantity) || 0,
         status: formData.status,
-        sku: formData.sku,
-        slug: formData.slug || formData.name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')
+        sku: formData.sku?.trim() || '',
+        slug: formData.slug?.trim() || formData.name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')
       };
 
       let productId = editingProduct?.id;
