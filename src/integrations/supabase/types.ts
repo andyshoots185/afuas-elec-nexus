@@ -909,6 +909,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      add_admin_role_by_email: {
+        Args: { admin_email: string }
+        Returns: undefined
+      }
       generate_order_number: {
         Args: Record<PropertyKey, never>
         Returns: string

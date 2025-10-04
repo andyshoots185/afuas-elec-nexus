@@ -1,5 +1,7 @@
+import { useState, useEffect } from "react";
+import { supabase } from "@/integrations/supabase/client";
 import { Link } from "react-router-dom";
-import { ArrowRight, Star, TrendingUp } from "lucide-react";
+import { ArrowRight, Star, TrendingUp, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -9,9 +11,86 @@ import { CategoryScroller } from "@/components/mobile/CategoryScroller";
 import { PromoCarousel } from "@/components/mobile/PromoCarousel";
 import { formatUGX } from "@/utils/formatUGX";
 import { products } from "../data/products";
-import { featuredProducts, categories, getProductsByCategory } from "@/data/products";
+import { categories, getProductsByCategory } from "@/data/products";
 import heroBanner from "@/assets/hero-banner.jpg";
+
+interface Product {
+  id: string;
+  name: string;
+  description: string;
+  price_ugx: number;
+  category_id: string;
+  brand_id: string;
+  status: string;
+  image_url?: string;
+}
+
 export default function Home() {
+  const [featuredProducts, setFeaturedProducts] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    // Fetch featured products from database
+    const fetchFeaturedProducts = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('products')
+          .select(`
+            *,
+            product_images (image_url, sort_order)
+          `)
+          .eq('status', 'active')
+          .eq('is_featured', true)
+          .order('created_at', { ascending: false })
+          .limit(8);
+
+        if (error) throw error;
+        
+        // Transform data to match expected format
+        const transformedProducts = data?.map(product => ({
+          id: product.id,
+          name: product.name,
+          price: product.price_ugx,
+          image: product.product_images?.[0]?.image_url || '/placeholder.svg',
+          rating: 4.5,
+          reviewCount: 0,
+          inStock: product.stock_quantity > 0,
+          category: product.category_id,
+          brand: product.brand_id,
+        })) || [];
+
+        setFeaturedProducts(transformedProducts);
+      } catch (error) {
+        console.error('Error fetching featured products:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchFeaturedProducts();
+
+    // Set up real-time subscription
+    const channel = supabase
+      .channel('products-changes')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'products',
+          filter: 'status=eq.active'
+        },
+        () => {
+          fetchFeaturedProducts();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, []);
+
   const tvs = getProductsByCategory("tvs").slice(0, 4);
   const appliances = getProductsByCategory("refrigerators").slice(0, 4);
   return <div className="min-h-screen">
@@ -83,7 +162,17 @@ export default function Home() {
 
           {/* Mobile: 2-column grid, Desktop: 4-column */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-6">
-            {featuredProducts.slice(0, 4).map(product => <ProductCard key={product.id} product={product} />)}
+            {loading ? (
+              <div className="col-span-full flex justify-center py-8">
+                <Loader2 className="h-8 w-8 animate-spin" />
+              </div>
+            ) : featuredProducts.length > 0 ? (
+              featuredProducts.slice(0, 4).map(product => <ProductCard key={product.id} product={product} />)
+            ) : (
+              <div className="col-span-full text-center py-8 text-muted-foreground">
+                No featured products yet
+              </div>
+            )}
           </div>
         </div>
       </section>
@@ -259,7 +348,17 @@ export default function Home() {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {products.map(product => <ProductCard key={product.id} product={product} />)}
+            {loading ? (
+              <div className="col-span-full flex justify-center py-8">
+                <Loader2 className="h-8 w-8 animate-spin" />
+              </div>
+            ) : featuredProducts.length > 0 ? (
+              featuredProducts.map(product => <ProductCard key={product.id} product={product} />)
+            ) : (
+              <div className="col-span-full text-center py-8 text-muted-foreground">
+                No products yet
+              </div>
+            )}
           </div>
         </div>
       </section>
