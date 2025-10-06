@@ -69,24 +69,46 @@ export default function Checkout() {
     }
 
     // Validate phone number for mobile money
-    if ((paymentMethod === "mpesa" || paymentMethod === "airtel") && 
-        !/^[0-9]{10}$/.test(shippingInfo.phone.replace(/\s/g, ''))) {
+    let phoneE164 = shippingInfo.phone.replace(/\s/g, '');
+    
+    // Convert to E.164 format for Uganda
+    if (!/^\+/.test(phoneE164)) {
+      // Remove leading 0 if present
+      if (phoneE164.startsWith('0')) {
+        phoneE164 = phoneE164.substring(1);
+      }
+      // Add Uganda country code
+      phoneE164 = `+256${phoneE164}`;
+    }
+
+    // Validate E.164 format: +256 followed by 9 digits
+    if (!/^\+256[0-9]{9}$/.test(phoneE164)) {
       toast({
         title: "Invalid Phone Number",
-        description: "Please enter a valid 10-digit phone number for mobile money payment.",
+        description: "Please enter a valid Ugandan phone number (e.g., 0700000000).",
         variant: "destructive",
       });
+      return;
+    }
+
+    if (!user) {
+      toast({
+        title: "Authentication Required",
+        description: "Please sign in to complete your order.",
+        variant: "destructive",
+      });
+      navigate('/auth');
       return;
     }
 
     setIsProcessing(true);
 
     try {
-      // Create order in database
+      // Create order in database with E.164 phone number
       const { data: order, error: orderError } = await supabase
         .from('orders')
         .insert([{
-          user_id: user?.id,
+          user_id: user.id,
           subtotal_ugx: subtotal,
           shipping_cost_ugx: shipping,
           total_amount_ugx: finalTotal,
@@ -96,7 +118,7 @@ export default function Checkout() {
           shipping_address: {
             first_name: shippingInfo.firstName,
             last_name: shippingInfo.lastName,
-            phone: shippingInfo.phone,
+            phone: phoneE164,
             address_line_1: shippingInfo.address,
             city: shippingInfo.city,
             country: shippingInfo.county,
@@ -105,7 +127,7 @@ export default function Checkout() {
           billing_address: {
             first_name: shippingInfo.firstName,
             last_name: shippingInfo.lastName,
-            phone: shippingInfo.phone,
+            phone: phoneE164,
             address_line_1: shippingInfo.address,
             city: shippingInfo.city,
             country: shippingInfo.county,

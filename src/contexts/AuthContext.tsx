@@ -32,7 +32,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
 
-  const isAdmin = profile?.role === 'admin';
+  const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
     // Set up auth state listener FIRST
@@ -50,8 +50,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             .single();
           
           setProfile(profileData);
+
+          // Check admin role from user_roles table
+          const { data: rolesData } = await supabase
+            .from('user_roles')
+            .select('role')
+            .eq('user_id', session.user.id)
+            .eq('role', 'admin')
+            .maybeSingle();
+          
+          setIsAdmin(!!rolesData);
         } else {
           setProfile(null);
+          setIsAdmin(false);
         }
         
         setLoading(false);

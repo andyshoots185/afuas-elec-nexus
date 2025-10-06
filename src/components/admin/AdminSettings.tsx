@@ -11,7 +11,7 @@ export function AdminSettings() {
   const [storeSettings, setStoreSettings] = useState({
     name: "Afuwah's Electronics",
     email: 'support@afuwahs.com',
-    phone: '+256 XXX XXXXXX',
+    phone: '+256745187279',
     address: 'Kampala, Uganda',
     description: 'Your trusted electronics store',
     businessHours: '9:00 AM - 6:00 PM'

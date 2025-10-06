@@ -84,7 +84,7 @@ export function AIHelper() {
   };
 
   const handleWhatsAppContact = () => {
-    const phoneNumber = '+256700000000'; // Replace with actual WhatsApp number
+    const phoneNumber = '+256745187279';
     const message = encodeURIComponent('Hi, I need help with my order at Afuwah\'s Electronics');
     window.open(`https://wa.me/${phoneNumber}?text=${message}`, '_blank');
   };

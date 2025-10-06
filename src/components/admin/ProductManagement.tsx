@@ -54,7 +54,11 @@ export function ProductManagement() {
     status: 'active',
     sku: '',
     slug: '',
-    image_url: ''
+    image_url: '',
+    is_featured: false,
+    is_flash_sale: false,
+    flash_sale_start: '',
+    flash_sale_end: ''
   });
 
   useEffect(() => {
@@ -122,7 +126,11 @@ export function ProductManagement() {
         stock_quantity: parseInt(formData.stock_quantity) || 0,
         status: formData.status,
         sku: formData.sku?.trim() || '',
-        slug: formData.slug?.trim() || formData.name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')
+        slug: formData.slug?.trim() || formData.name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, ''),
+        is_featured: formData.is_featured,
+        is_flash_sale: formData.is_flash_sale,
+        flash_sale_start: formData.flash_sale_start || null,
+        flash_sale_end: formData.flash_sale_end || null
       };
 
       let productId = editingProduct?.id;
@@ -195,7 +203,11 @@ export function ProductManagement() {
       status: product.status,
       sku: product.sku || '',
       slug: product.slug || '',
-      image_url: ''
+      image_url: '',
+      is_featured: (product as any).is_featured || false,
+      is_flash_sale: (product as any).is_flash_sale || false,
+      flash_sale_start: (product as any).flash_sale_start || '',
+      flash_sale_end: (product as any).flash_sale_end || ''
     });
     setIsDialogOpen(true);
   };
@@ -240,7 +252,11 @@ export function ProductManagement() {
       status: 'active',
       sku: '',
       slug: '',
-      image_url: ''
+      image_url: '',
+      is_featured: false,
+      is_flash_sale: false,
+      flash_sale_start: '',
+      flash_sale_end: ''
     });
     setEditingProduct(null);
   };

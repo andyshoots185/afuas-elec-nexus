@@ -27,7 +27,9 @@ interface Product {
 
 export default function Home() {
   const [featuredProducts, setFeaturedProducts] = useState<any[]>([]);
+  const [flashSaleProducts, setFlashSaleProducts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [flashLoading, setFlashLoading] = useState(true);
 
   useEffect(() => {
     // Fetch featured products from database
@@ -67,33 +69,71 @@ export default function Home() {
       }
     };
 
-    fetchFeaturedProducts();
+    // Fetch flash sale products
+    const fetchFlashSaleProducts = async () => {
+      try {
+        const now = new Date().toISOString();
+        const { data, error } = await supabase
+          .from('products')
+          .select(`
+            *,
+            product_images (image_url, sort_order)
+          `)
+          .eq('status', 'active')
+          .eq('is_flash_sale', true)
+          .lte('flash_sale_start', now)
+          .gte('flash_sale_end', now)
+          .order('created_at', { ascending: false })
+          .limit(8);
 
-    // Set up real-time subscription
-    const channel = supabase
-      .channel('products-changes')
+        if (error) throw error;
+        
+        const transformedProducts = data?.map(product => ({
+          id: product.id,
+          name: product.name,
+          price: product.price_ugx,
+          image: product.product_images?.[0]?.image_url || '/placeholder.svg',
+          rating: 4.5,
+          reviewCount: 0,
+          inStock: product.stock_quantity > 0,
+          category: product.category_id,
+          brand: product.brand_id,
+        })) || [];
+
+        setFlashSaleProducts(transformedProducts);
+      } catch (error) {
+        console.error('Error fetching flash sale products:', error);
+      } finally {
+        setFlashLoading(false);
+      }
+    };
+
+    fetchFeaturedProducts();
+    fetchFlashSaleProducts();
+
+    // Set up real-time subscription for both featured and flash sale
+    const productsChannel = supabase
+      .channel('products-homepage-changes')
       .on(
         'postgres_changes',
-        {
-          event: '*',
-          schema: 'public',
-          table: 'products',
-          filter: 'status=eq.active'
-        },
+        { event: '*', schema: 'public', table: 'products' },
         () => {
           fetchFeaturedProducts();
+          fetchFlashSaleProducts();
         }
       )
       .subscribe();
 
     return () => {
-      supabase.removeChannel(channel);
+      supabase.removeChannel(productsChannel);
     };
   }, []);
 
   const tvs = getProductsByCategory("tvs").slice(0, 4);
   const appliances = getProductsByCategory("refrigerators").slice(0, 4);
-  return <div className="min-h-screen">
+  
+  return (
+    <div className="min-h-screen">
       {/* Mobile Top Search Bar */}
       <TopSearchBar />
 
@@ -162,15 +202,17 @@ export default function Home() {
 
           {/* Mobile: 2-column grid, Desktop: 4-column */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-6">
-            {loading ? (
+            {flashLoading ? (
               <div className="col-span-full flex justify-center py-8">
                 <Loader2 className="h-8 w-8 animate-spin" />
               </div>
+            ) : flashSaleProducts.length > 0 ? (
+              flashSaleProducts.slice(0, 4).map(product => <ProductCard key={product.id} product={product} />)
             ) : featuredProducts.length > 0 ? (
               featuredProducts.slice(0, 4).map(product => <ProductCard key={product.id} product={product} />)
             ) : (
               <div className="col-span-full text-center py-8 text-muted-foreground">
-                No featured products yet
+                No flash sale products yet
               </div>
             )}
           </div>
@@ -188,14 +230,20 @@ export default function Home() {
           </div>
 
           <div className="grid grid-cols-3 gap-4">
-            {categories.slice(0, 6).map(category => <Link key={category.id} to={`/shop?category=${category.id}`} className="text-center p-3 rounded-lg hover:bg-muted transition-colors">
+            {categories.slice(0, 6).map(category => (
+              <Link
+                key={category.id}
+                to={`/shop?category=${category.id}`}
+                className="text-center p-3 rounded-lg hover:bg-muted transition-colors"
+              >
                 <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mb-2 mx-auto">
                   <TrendingUp className="h-6 w-6 text-primary" />
                 </div>
                 <h3 className="font-medium text-xs leading-tight">
                   {category.name.split(" ")[0]}
                 </h3>
-              </Link>)}
+              </Link>
+            ))}
           </div>
         </div>
       </section>
@@ -215,9 +263,11 @@ export default function Home() {
           {/* Mobile: Horizontal scroll, Desktop: Grid */}
           <div className="md:hidden">
             <div className="flex gap-3 overflow-x-auto scrollbar-hide pb-4">
-              {[...tvs, ...appliances].slice(0, 6).map(product => <div key={product.id} className="flex-shrink-0 w-40">
+              {[...tvs, ...appliances].slice(0, 6).map(product => (
+                <div key={product.id} className="flex-shrink-0 w-40">
                   <ProductCard product={product} />
-                </div>)}
+                </div>
+              ))}
             </div>
           </div>
 
@@ -229,9 +279,17 @@ export default function Home() {
                 <h3 className="text-2xl font-bold">Trending TVs</h3>
               </div>
               <div className="space-y-6">
-                {tvs.map(product => <div key={product.id} className="flex gap-4 p-4 border border-border rounded-lg hover:shadow-md transition-shadow">
+                {tvs.map(product => (
+                  <div
+                    key={product.id}
+                    className="flex gap-4 p-4 border border-border rounded-lg hover:shadow-md transition-shadow"
+                  >
                     <div className="w-24 h-20 bg-muted rounded-md overflow-hidden flex-shrink-0">
-                      <img src={product.image} alt={product.name} className="w-full h-full object-cover" />
+                      <img
+                        src={product.image}
+                        alt={product.name}
+                        className="w-full h-full object-cover"
+                      />
                     </div>
                     <div className="flex-1 min-w-0">
                       <h4 className="font-semibold text-sm mb-1 line-clamp-2">
@@ -239,7 +297,16 @@ export default function Home() {
                       </h4>
                       <div className="flex items-center gap-1 mb-2">
                         <div className="flex">
-                          {[1, 2, 3, 4, 5].map(star => <Star key={star} className={`h-3 w-3 ${star <= Math.floor(product.rating) ? "fill-rating text-rating" : "text-muted-foreground"}`} />)}
+                          {[1, 2, 3, 4, 5].map(star => (
+                            <Star
+                              key={star}
+                              className={`h-3 w-3 ${
+                                star <= Math.floor(product.rating)
+                                  ? "fill-rating text-rating"
+                                  : "text-muted-foreground"
+                              }`}
+                            />
+                          ))}
                         </div>
                         <span className="text-xs text-muted-foreground">
                           ({product.reviewCount})
@@ -250,16 +317,19 @@ export default function Home() {
                           <span className="price-text text-base">
                             {formatUGX(product.price)}
                           </span>
-                          {product.originalPrice && <span className="original-price text-xs">
+                          {product.originalPrice && (
+                            <span className="original-price text-xs">
                               {formatUGX(product.originalPrice)}
-                            </span>}
+                            </span>
+                          )}
                         </div>
                         <Button asChild size="sm" variant="outline">
                           <Link to={`/product/${product.id}`}>View</Link>
                         </Button>
                       </div>
                     </div>
-                  </div>)}
+                  </div>
+                ))}
               </div>
             </div>
 
@@ -270,9 +340,17 @@ export default function Home() {
                 <h3 className="text-2xl font-bold">Top Appliances</h3>
               </div>
               <div className="space-y-6">
-                {appliances.map(product => <div key={product.id} className="flex gap-4 p-4 border border-border rounded-lg hover:shadow-md transition-shadow">
+                {appliances.map(product => (
+                  <div
+                    key={product.id}
+                    className="flex gap-4 p-4 border border-border rounded-lg hover:shadow-md transition-shadow"
+                  >
                     <div className="w-24 h-20 bg-muted rounded-md overflow-hidden flex-shrink-0">
-                      <img src={product.image} alt={product.name} className="w-full h-full object-cover" />
+                      <img
+                        src={product.image}
+                        alt={product.name}
+                        className="w-full h-full object-cover"
+                      />
                     </div>
                     <div className="flex-1 min-w-0">
                       <h4 className="font-semibold text-sm mb-1 line-clamp-2">
@@ -280,7 +358,16 @@ export default function Home() {
                       </h4>
                       <div className="flex items-center gap-1 mb-2">
                         <div className="flex">
-                          {[1, 2, 3, 4, 5].map(star => <Star key={star} className={`h-3 w-3 ${star <= Math.floor(product.rating) ? "fill-rating text-rating" : "text-muted-foreground"}`} />)}
+                          {[1, 2, 3, 4, 5].map(star => (
+                            <Star
+                              key={star}
+                              className={`h-3 w-3 ${
+                                star <= Math.floor(product.rating)
+                                  ? "fill-rating text-rating"
+                                  : "text-muted-foreground"
+                              }`}
+                            />
+                          ))}
                         </div>
                         <span className="text-xs text-muted-foreground">
                           ({product.reviewCount})
@@ -291,45 +378,25 @@ export default function Home() {
                           <span className="price-text text-base">
                             {formatUGX(product.price)}
                           </span>
-                          {product.originalPrice && <span className="original-price text-xs">
+                          {product.originalPrice && (
+                            <span className="original-price text-xs">
                               {formatUGX(product.originalPrice)}
-                            </span>}
+                            </span>
+                          )}
                         </div>
                         <Button asChild size="sm" variant="outline">
                           <Link to={`/product/${product.id}`}>View</Link>
                         </Button>
                       </div>
                     </div>
-                  </div>)}
+                  </div>
+                ))}
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Featured Products */}
-      {/* <section className="section-spacing bg-muted/30">
-        <div className="container mx-auto container-padding">
-          <div className="flex items-center justify-between mb-8">
-            <div>
-              <h2 className="text-3xl font-bold mb-2">Featured Products</h2>
-              <p className="text-muted-foreground">
-                Handpicked electronics at amazing prices
-              </p>
-            </div>
-            <Button asChild variant="outline">
-              <Link to="/shop">
-                View All <ArrowRight className="ml-2 h-4 w-4" />
-              </Link>
-            </Button>
-          </div>
-           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {featuredProducts.map((product) => (
-              <ProductCard key={product.id} product={product} />
-            ))}
-          </div>
-        </div>
-       </section> */}
       {/* Featured Products */}
       <section className="section-spacing bg-muted/30">
         <div className="container mx-auto container-padding">
@@ -387,5 +454,6 @@ export default function Home() {
           </div>
         </div>
       </section>
-    </div>;
+    </div>
+  );
 }
