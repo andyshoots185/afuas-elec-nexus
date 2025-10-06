@@ -80,15 +80,21 @@ export default function Home() {
             product_images (image_url, sort_order)
           `)
           .eq('status', 'active')
-          .eq('is_flash_sale', true)
-          .lte('flash_sale_start', now)
-          .gte('flash_sale_end', now)
           .order('created_at', { ascending: false })
-          .limit(8);
+          .limit(8) as any;
 
         if (error) throw error;
         
-        const transformedProducts = data?.map(product => ({
+        // Filter flash sale products client-side until types are regenerated
+        const flashData = data?.filter((p: any) => 
+          p.is_flash_sale === true &&
+          p.flash_sale_start &&
+          p.flash_sale_end &&
+          new Date(p.flash_sale_start) <= new Date(now) &&
+          new Date(p.flash_sale_end) >= new Date(now)
+        );
+        
+        const transformedProducts = (flashData || data)?.map((product: any) => ({
           id: product.id,
           name: product.name,
           price: product.price_ugx,
