@@ -32,17 +32,18 @@ export default function Home() {
   const [flashLoading, setFlashLoading] = useState(true);
 
   useEffect(() => {
-    // Fetch featured products from database
+    // Fetch featured products from database (product-level OR category-level)
     const fetchFeaturedProducts = async () => {
       try {
         const { data, error } = await supabase
           .from('products')
           .select(`
             *,
-            product_images (image_url, sort_order)
+            product_images (image_url, sort_order),
+            categories!inner (featured_category)
           `)
           .eq('status', 'active')
-          .eq('is_featured', true)
+          .or('is_featured.eq.true,categories.featured_category.eq.true')
           .order('created_at', { ascending: false })
           .limit(8);
 
@@ -69,7 +70,7 @@ export default function Home() {
       }
     };
 
-    // Fetch flash sale products
+    // Fetch flash sale products (product-level OR category-level)
     const fetchFlashSaleProducts = async () => {
       try {
         const now = new Date().toISOString();
@@ -77,7 +78,8 @@ export default function Home() {
           .from('products')
           .select(`
             *,
-            product_images (image_url, sort_order)
+            product_images (image_url, sort_order),
+            categories!inner (flash_sale_category)
           `)
           .eq('status', 'active')
           .order('created_at', { ascending: false })
@@ -85,14 +87,18 @@ export default function Home() {
 
         if (error) throw error;
         
-        // Filter flash sale products client-side until types are regenerated
-        const flashData = data?.filter((p: any) => 
-          p.is_flash_sale === true &&
-          p.flash_sale_start &&
-          p.flash_sale_end &&
-          new Date(p.flash_sale_start) <= new Date(now) &&
-          new Date(p.flash_sale_end) >= new Date(now)
-        );
+        // Filter: product-level flash sale OR category-level flash sale
+        const flashData = data?.filter((p: any) => {
+          const isProductFlashSale = p.is_flash_sale === true &&
+            p.flash_sale_start &&
+            p.flash_sale_end &&
+            new Date(p.flash_sale_start) <= new Date(now) &&
+            new Date(p.flash_sale_end) >= new Date(now);
+          
+          const isCategoryFlashSale = p.categories?.flash_sale_category === true;
+          
+          return isProductFlashSale || isCategoryFlashSale;
+        });
         
         const transformedProducts = (flashData || data)?.map((product: any) => ({
           id: product.id,

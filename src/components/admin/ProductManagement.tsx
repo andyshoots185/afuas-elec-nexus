@@ -12,7 +12,8 @@ import { Badge } from '@/components/ui/badge';
 import { Plus, Edit, Trash2, Eye, Loader2 } from 'lucide-react';
 import { formatUGX } from '@/utils/formatUGX';
 import { toast } from 'sonner';
-import { ImageUpload } from './ImageUpload';
+import { ImageUploadField } from './ImageUploadField';
+import { Switch } from '@/components/ui/switch';
 
 interface Product {
   id: string;
@@ -305,15 +306,12 @@ export function ProductManagement() {
               </DialogHeader>
               
               <form onSubmit={handleSubmit} className="space-y-4 pb-4">
-                <div className="space-y-2">
-                  <Label>Product Image</Label>
-                  <ImageUpload
-                    onImagesUploaded={(urls) => setFormData(prev => ({ ...prev, image_url: urls[0] || '' }))}
-                  />
-                  {formData.image_url && (
-                    <p className="text-sm text-muted-foreground">Image uploaded successfully</p>
-                  )}
-                </div>
+                <ImageUploadField
+                  productId={editingProduct?.id}
+                  currentImageUrl={formData.image_url}
+                  onImageUploaded={(url) => setFormData(prev => ({ ...prev, image_url: url }))}
+                  label="Product Image"
+                />
 
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
@@ -430,6 +428,73 @@ export function ProductManagement() {
                       onChange={handleInputChange}
                       placeholder="product-slug"
                     />
+                  </div>
+                </div>
+
+                <div className="space-y-4 border-t pt-4">
+                  <h3 className="font-semibold text-sm">Product Display Settings</h3>
+                  
+                  <div className="flex items-center justify-between">
+                    <div className="space-y-0.5">
+                      <Label htmlFor="is_featured" className="cursor-pointer">
+                        Featured Product
+                      </Label>
+                      <p className="text-sm text-muted-foreground">
+                        Show in featured products section
+                      </p>
+                    </div>
+                    <Switch
+                      id="is_featured"
+                      checked={formData.is_featured}
+                      onCheckedChange={(checked) => 
+                        setFormData(prev => ({ ...prev, is_featured: checked }))
+                      }
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between">
+                      <div className="space-y-0.5">
+                        <Label htmlFor="is_flash_sale" className="cursor-pointer">
+                          Flash Sale
+                        </Label>
+                        <p className="text-sm text-muted-foreground">
+                          Show in flash sale section with time limit
+                        </p>
+                      </div>
+                      <Switch
+                        id="is_flash_sale"
+                        checked={formData.is_flash_sale}
+                        onCheckedChange={(checked) => 
+                          setFormData(prev => ({ ...prev, is_flash_sale: checked }))
+                        }
+                      />
+                    </div>
+
+                    {formData.is_flash_sale && (
+                      <div className="grid grid-cols-2 gap-4 mt-2">
+                        <div className="space-y-2">
+                          <Label htmlFor="flash_sale_start">Start Date & Time</Label>
+                          <Input
+                            id="flash_sale_start"
+                            name="flash_sale_start"
+                            type="datetime-local"
+                            value={formData.flash_sale_start}
+                            onChange={handleInputChange}
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="flash_sale_end">End Date & Time</Label>
+                          <Input
+                            id="flash_sale_end"
+                            name="flash_sale_end"
+                            type="datetime-local"
+                            value={formData.flash_sale_end}
+                            onChange={handleInputChange}
+                          />
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </div>
 

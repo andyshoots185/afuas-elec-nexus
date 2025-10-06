@@ -10,7 +10,8 @@ import {
   MessageSquare, 
   Settings,
   Menu,
-  X
+  X,
+  Layers
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
@@ -24,6 +25,7 @@ export function AdminSidebar({ isOpen, onToggle }: AdminSidebarProps) {
   const navItems = [
     { to: '/admin', icon: LayoutDashboard, label: 'Dashboard', end: true },
     { to: '/admin/products', icon: Package, label: 'Products' },
+    { to: '/admin/categories', icon: Layers, label: 'Categories' },
     { to: '/admin/orders', icon: ShoppingCart, label: 'Orders' },
     { to: '/admin/sales', icon: Tag, label: 'Sales & Offers' },
     { to: '/admin/customers', icon: Users, label: 'Customers' },

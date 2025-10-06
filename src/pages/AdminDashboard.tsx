@@ -7,6 +7,7 @@ import { ProductManagement } from '@/components/admin/ProductManagement';
 import { OrderManagement } from '@/components/admin/OrderManagement';
 import { SalesManagement } from '@/components/admin/SalesManagement';
 import { UserManagement } from '@/components/admin/UserManagement';
+import { CategoryManagement } from '@/components/admin/CategoryManagement';
 import { AdminLogs } from '@/components/admin/AdminLogs';
 import { AdminSettings } from '@/components/admin/AdminSettings';
 import { ReviewSection } from '@/components/product/ReviewSection';
@@ -50,6 +51,7 @@ export default function AdminDashboard() {
           <Routes>
             <Route index element={<DashboardOverview />} />
             <Route path="products" element={<ProductManagement />} />
+            <Route path="categories" element={<CategoryManagement />} />
             <Route path="orders" element={<OrderManagement />} />
             <Route path="sales" element={<SalesManagement />} />
             <Route path="customers" element={<UserManagement />} />

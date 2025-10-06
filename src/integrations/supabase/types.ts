@@ -219,6 +219,8 @@ export type Database = {
         Row: {
           created_at: string
           description: string | null
+          featured_category: boolean | null
+          flash_sale_category: boolean | null
           id: string
           image_url: string | null
           is_active: boolean | null
@@ -231,6 +233,8 @@ export type Database = {
         Insert: {
           created_at?: string
           description?: string | null
+          featured_category?: boolean | null
+          flash_sale_category?: boolean | null
           id?: string
           image_url?: string | null
           is_active?: boolean | null
@@ -243,6 +247,8 @@ export type Database = {
         Update: {
           created_at?: string
           description?: string | null
+          featured_category?: boolean | null
+          flash_sale_category?: boolean | null
           id?: string
           image_url?: string | null
           is_active?: boolean | null
@@ -598,8 +604,11 @@ export type Database = {
           dimensions_height: number | null
           dimensions_length: number | null
           dimensions_width: number | null
+          flash_sale_end: string | null
+          flash_sale_start: string | null
           id: string
           is_featured: boolean | null
+          is_flash_sale: boolean | null
           meta_description: string | null
           meta_title: string | null
           metadata: Json | null
@@ -628,8 +637,11 @@ export type Database = {
           dimensions_height?: number | null
           dimensions_length?: number | null
           dimensions_width?: number | null
+          flash_sale_end?: string | null
+          flash_sale_start?: string | null
           id?: string
           is_featured?: boolean | null
+          is_flash_sale?: boolean | null
           meta_description?: string | null
           meta_title?: string | null
           metadata?: Json | null
@@ -658,8 +670,11 @@ export type Database = {
           dimensions_height?: number | null
           dimensions_length?: number | null
           dimensions_width?: number | null
+          flash_sale_end?: string | null
+          flash_sale_start?: string | null
           id?: string
           is_featured?: boolean | null
+          is_flash_sale?: boolean | null
           meta_description?: string | null
           meta_title?: string | null
           metadata?: Json | null
