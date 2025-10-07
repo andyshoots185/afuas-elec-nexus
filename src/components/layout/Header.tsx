@@ -52,19 +52,18 @@ export function Header() {
 
   const handleSignOut = async () => {
     try {
-      await supabase.auth.signOut();
-      toast({
-        title: "Signed out",
-        description: "You have been successfully signed out.",
-      });
-      navigate("/");
+      // Clear UI state first
+      setMobileMenuOpen(false);
+      
+      // Use the signOut from context
+      const { signOut: contextSignOut } = useAuth();
+      
+      // Call signOut which handles everything
+      await contextSignOut();
     } catch (error) {
       console.error("Error signing out:", error);
-      toast({
-        title: "Error",
-        description: "Failed to sign out. Please try again.",
-        variant: "destructive",
-      });
+      // Force reload anyway to clear state
+      window.location.href = "/";
     }
   };
 

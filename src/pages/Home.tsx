@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ProductCard } from "@/components/shared/ProductCard";
+import { ProductCardSkeleton } from "@/components/shared/ProductCardSkeleton";
 import { TopSearchBar } from "@/components/mobile/TopSearchBar";
 import { CategoryScroller } from "@/components/mobile/CategoryScroller";
 import { PromoCarousel } from "@/components/mobile/PromoCarousel";
@@ -215,9 +216,9 @@ export default function Home() {
           {/* Mobile: 2-column grid, Desktop: 4-column */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-6">
             {flashLoading ? (
-              <div className="col-span-full flex justify-center py-8">
-                <Loader2 className="h-8 w-8 animate-spin" />
-              </div>
+              <>
+                {[1, 2, 3, 4].map(i => <ProductCardSkeleton key={i} />)}
+              </>
             ) : flashSaleProducts.length > 0 ? (
               flashSaleProducts.slice(0, 4).map(product => <ProductCard key={product.id} product={product} />)
             ) : featuredProducts.length > 0 ? (
@@ -428,9 +429,9 @@ export default function Home() {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {loading ? (
-              <div className="col-span-full flex justify-center py-8">
-                <Loader2 className="h-8 w-8 animate-spin" />
-              </div>
+              <>
+                {[1, 2, 3, 4, 5, 6, 7, 8].map(i => <ProductCardSkeleton key={i} />)}
+              </>
             ) : featuredProducts.length > 0 ? (
               featuredProducts.map(product => <ProductCard key={product.id} product={product} />)
             ) : (

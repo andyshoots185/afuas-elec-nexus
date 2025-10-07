@@ -35,45 +35,76 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
-    // Set up auth state listener FIRST
+    // Check for existing session FIRST
+    const checkSession = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      if (session?.user) {
+        setSession(session);
+        setUser(session.user);
+        
+        // Fetch profile and roles in parallel
+        const [profileRes, rolesRes] = await Promise.all([
+          supabase.from('profiles').select('*').eq('id', session.user.id).single(),
+          supabase.from('user_roles').select('role').eq('user_id', session.user.id).eq('role', 'admin').maybeSingle()
+        ]);
+        
+        setProfile(profileRes.data);
+        const adminStatus = !!rolesRes.data;
+        setIsAdmin(adminStatus);
+        
+        // Persist admin status in localStorage for instant UI updates
+        if (adminStatus) {
+          localStorage.setItem('is_admin', 'true');
+        } else {
+          localStorage.removeItem('is_admin');
+        }
+      }
+      
+      setLoading(false);
+    };
+    
+    checkSession();
+
+    // Set up auth state listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
         setSession(session);
         setUser(session?.user ?? null);
         
+        if (event === 'SIGNED_OUT') {
+          setProfile(null);
+          setIsAdmin(false);
+          localStorage.removeItem('is_admin');
+          setLoading(false);
+          return;
+        }
+        
         if (session?.user) {
-          // Fetch user profile
-          const { data: profileData } = await supabase
-            .from('profiles')
-            .select('*')
-            .eq('id', session.user.id)
-            .single();
+          // Fetch profile and roles
+          const [profileRes, rolesRes] = await Promise.all([
+            supabase.from('profiles').select('*').eq('id', session.user.id).single(),
+            supabase.from('user_roles').select('role').eq('user_id', session.user.id).eq('role', 'admin').maybeSingle()
+          ]);
           
-          setProfile(profileData);
-
-          // Check admin role from user_roles table
-          const { data: rolesData } = await supabase
-            .from('user_roles')
-            .select('role')
-            .eq('user_id', session.user.id)
-            .eq('role', 'admin')
-            .maybeSingle();
+          setProfile(profileRes.data);
+          const adminStatus = !!rolesRes.data;
+          setIsAdmin(adminStatus);
           
-          setIsAdmin(!!rolesData);
+          if (adminStatus) {
+            localStorage.setItem('is_admin', 'true');
+          } else {
+            localStorage.removeItem('is_admin');
+          }
         } else {
           setProfile(null);
           setIsAdmin(false);
+          localStorage.removeItem('is_admin');
         }
         
         setLoading(false);
       }
     );
-
-    // THEN check for existing session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setUser(session?.user ?? null);
-    });
 
     return () => subscription.unsubscribe();
   }, []);
@@ -128,26 +159,32 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signOut = async () => {
     try {
-      // Clear all auth-related storage
-      const { error } = await supabase.auth.signOut();
-      
-      if (error) {
-        toast.error(error.message);
-        return;
-      }
-
-      // Clear local state
+      // Clear local state immediately for instant UI update
       setUser(null);
       setSession(null);
       setProfile(null);
+      setIsAdmin(false);
       
-      // Clear remember me preference
+      // Clear all storage
       localStorage.removeItem('supabase.remember');
+      localStorage.removeItem('is_admin');
+      
+      // Sign out from Supabase
+      const { error } = await supabase.auth.signOut();
+      
+      if (error) {
+        console.error('Sign out error:', error);
+        // Don't show error to user, they're already signed out locally
+      }
       
       toast.success('Signed out successfully');
+      
+      // Force reload to clear any cached data
+      window.location.href = '/';
     } catch (error: any) {
       console.error('Sign out error:', error);
-      toast.error('Failed to sign out');
+      // Even if there's an error, user is signed out locally
+      window.location.href = '/';
     }
   };
 

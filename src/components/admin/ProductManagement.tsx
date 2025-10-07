@@ -55,7 +55,7 @@ export function ProductManagement() {
     status: 'active',
     sku: '',
     slug: '',
-    image_url: '',
+    image_urls: [] as string[],
     is_featured: false,
     is_flash_sale: false,
     flash_sale_start: '',
@@ -174,13 +174,14 @@ export function ProductManagement() {
         toast.success('Product created successfully - now visible on homepage!');
       }
 
-      // Save product image if uploaded
-      if (formData.image_url && productId) {
-        await supabase.from('product_images').insert([{
+      // Save product images if uploaded
+      if (formData.image_urls.length > 0 && productId) {
+        const imageInserts = formData.image_urls.map((url, index) => ({
           product_id: productId,
-          image_url: formData.image_url,
-          sort_order: 0
-        }]);
+          image_url: url,
+          sort_order: index
+        }));
+        await supabase.from('product_images').insert(imageInserts);
       }
 
       setIsDialogOpen(false);
@@ -204,7 +205,7 @@ export function ProductManagement() {
       status: product.status,
       sku: product.sku || '',
       slug: product.slug || '',
-      image_url: '',
+      image_urls: [],
       is_featured: (product as any).is_featured || false,
       is_flash_sale: (product as any).is_flash_sale || false,
       flash_sale_start: (product as any).flash_sale_start || '',
@@ -253,7 +254,7 @@ export function ProductManagement() {
       status: 'active',
       sku: '',
       slug: '',
-      image_url: '',
+      image_urls: [],
       is_featured: false,
       is_flash_sale: false,
       flash_sale_start: '',
@@ -308,9 +309,10 @@ export function ProductManagement() {
               <form onSubmit={handleSubmit} className="space-y-4 pb-4">
                 <ImageUploadField
                   productId={editingProduct?.id}
-                  currentImageUrl={formData.image_url}
-                  onImageUploaded={(url) => setFormData(prev => ({ ...prev, image_url: url }))}
-                  label="Product Image"
+                  currentImageUrls={formData.image_urls}
+                  onImagesUploaded={(urls) => setFormData(prev => ({ ...prev, image_urls: urls }))}
+                  label="Product Images"
+                  multiple={true}
                 />
 
                 <div className="grid grid-cols-2 gap-4">

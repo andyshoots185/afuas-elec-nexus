@@ -9,20 +9,22 @@ import imageCompression from 'browser-image-compression';
 
 interface ImageUploadFieldProps {
   productId?: string;
-  currentImageUrl?: string;
-  onImageUploaded: (url: string) => void;
+  currentImageUrls?: string[];
+  onImagesUploaded: (urls: string[]) => void;
   label?: string;
+  multiple?: boolean;
 }
 
 export function ImageUploadField({ 
   productId, 
-  currentImageUrl, 
-  onImageUploaded,
-  label = "Product Image"
+  currentImageUrls = [], 
+  onImagesUploaded,
+  label = "Product Images",
+  multiple = true
 }: ImageUploadFieldProps) {
   const [uploading, setUploading] = useState(false);
   const [progress, setProgress] = useState(0);
-  const [previewUrl, setPreviewUrl] = useState(currentImageUrl);
+  const [previewUrls, setPreviewUrls] = useState<string[]>(currentImageUrls);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
 
@@ -43,77 +45,94 @@ export function ImageUploadField({
     }
   };
 
-  const uploadImage = async (file: File) => {
-    if (!file) return;
+  const uploadImages = async (files: FileList) => {
+    if (!files || files.length === 0) return;
 
-    // Validate file type
+    // Validate file types and sizes
     const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
-    if (!validTypes.includes(file.type)) {
-      toast({
-        title: "Invalid file type",
-        description: "Please upload JPEG, PNG, or WEBP images only",
-        variant: "destructive",
-      });
-      return;
+    const maxSize = 10 * 1024 * 1024; // 10MB
+    
+    const validFiles: File[] = [];
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+      
+      if (!validTypes.includes(file.type)) {
+        toast({
+          title: "Invalid file type",
+          description: `${file.name} is not a valid image. Only JPEG, PNG, or WEBP allowed.`,
+          variant: "destructive",
+        });
+        continue;
+      }
+      
+      if (file.size > maxSize) {
+        toast({
+          title: "File too large",
+          description: `${file.name} exceeds 10MB limit`,
+          variant: "destructive",
+        });
+        continue;
+      }
+      
+      validFiles.push(file);
     }
-
-    // Validate file size (5MB max before compression)
-    if (file.size > 5 * 1024 * 1024) {
-      toast({
-        title: "File too large",
-        description: "Maximum file size is 5MB",
-        variant: "destructive",
-      });
-      return;
-    }
+    
+    if (validFiles.length === 0) return;
 
     setUploading(true);
-    setProgress(10);
-
+    const uploadedUrls: string[] = [];
+    
     try {
-      // Compress image
-      setProgress(30);
-      const compressedFile = await compressImage(file);
+      const totalFiles = validFiles.length;
       
-      setProgress(50);
+      for (let i = 0; i < validFiles.length; i++) {
+        const file = validFiles[i];
+        const currentProgress = ((i + 1) / totalFiles) * 100;
+        setProgress(Math.floor(currentProgress * 0.3)); // 0-30%
+        
+        // Compress image
+        const compressedFile = await compressImage(file);
+        setProgress(Math.floor(currentProgress * 0.6)); // 30-60%
+        
+        // Generate unique filename
+        const fileExt = compressedFile.name.split('.').pop();
+        const fileName = `${productId || Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
+        const filePath = `${fileName}`;
+        
+        // Upload to Supabase Storage
+        const { data, error } = await supabase.storage
+          .from('product-images')
+          .upload(filePath, compressedFile, {
+            cacheControl: '3600',
+            upsert: false,
+          });
 
-      // Generate unique filename
-      const fileExt = compressedFile.name.split('.').pop();
-      const fileName = `${productId || Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
-      const filePath = `${fileName}`;
+        if (error) throw error;
+        
+        setProgress(Math.floor(currentProgress * 0.9)); // 60-90%
 
-      setProgress(70);
+        // Get public URL
+        const { data: { publicUrl } } = supabase.storage
+          .from('product-images')
+          .getPublicUrl(data.path);
 
-      // Upload to Supabase Storage
-      const { data, error } = await supabase.storage
-        .from('product-images')
-        .upload(filePath, compressedFile, {
-          cacheControl: '3600',
-          upsert: false,
-        });
-
-      if (error) throw error;
-
-      setProgress(90);
-
-      // Get public URL
-      const { data: { publicUrl } } = supabase.storage
-        .from('product-images')
-        .getPublicUrl(data.path);
-
+        uploadedUrls.push(publicUrl);
+      }
+      
       setProgress(100);
-      setPreviewUrl(publicUrl);
-      onImageUploaded(publicUrl);
+      const newUrls = [...previewUrls, ...uploadedUrls];
+      setPreviewUrls(newUrls);
+      onImagesUploaded(newUrls);
 
       toast({
         title: "Success",
-        description: "Image uploaded successfully",
+        description: `${uploadedUrls.length} image(s) uploaded successfully`,
       });
     } catch (error: any) {
       console.error('Upload error:', error);
       toast({
         title: "Upload failed",
-        description: error.message || "Failed to upload image",
+        description: error.message || "Failed to upload images",
         variant: "destructive",
       });
     } finally {
@@ -126,40 +145,42 @@ export function ImageUploadField({
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      uploadImage(file);
+    const files = e.target.files;
+    if (files && files.length > 0) {
+      uploadImages(files);
     }
   };
 
-  const clearImage = () => {
-    setPreviewUrl(undefined);
-    onImageUploaded('');
-    if (fileInputRef.current) {
-      fileInputRef.current.value = '';
-    }
+  const removeImage = (index: number) => {
+    const newUrls = previewUrls.filter((_, i) => i !== index);
+    setPreviewUrls(newUrls);
+    onImagesUploaded(newUrls);
   };
 
   return (
     <div className="space-y-2">
       <Label>{label}</Label>
       
-      {previewUrl && (
-        <div className="relative w-full h-48 border rounded-lg overflow-hidden bg-muted">
-          <img 
-            src={previewUrl} 
-            alt="Preview" 
-            className="w-full h-full object-contain"
-          />
-          <Button
-            type="button"
-            variant="destructive"
-            size="icon"
-            className="absolute top-2 right-2"
-            onClick={clearImage}
-          >
-            <X className="h-4 w-4" />
-          </Button>
+      {previewUrls.length > 0 && (
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+          {previewUrls.map((url, index) => (
+            <div key={index} className="relative group h-32 border rounded-lg overflow-hidden bg-muted">
+              <img 
+                src={url} 
+                alt={`Preview ${index + 1}`} 
+                className="w-full h-full object-cover"
+              />
+              <Button
+                type="button"
+                variant="destructive"
+                size="icon"
+                className="absolute top-1 right-1 h-7 w-7 opacity-0 group-hover:opacity-100 transition-opacity"
+                onClick={() => removeImage(index)}
+              >
+                <X className="h-3 w-3" />
+              </Button>
+            </div>
+          ))}
         </div>
       )}
 
@@ -167,7 +188,7 @@ export function ImageUploadField({
         ref={fileInputRef}
         type="file"
         accept="image/jpeg,image/jpg,image/png,image/webp"
-        capture="environment"
+        multiple={multiple}
         onChange={handleFileChange}
         className="hidden"
         disabled={uploading}
@@ -190,14 +211,13 @@ export function ImageUploadField({
             className="flex-1"
           >
             <Upload className="h-4 w-4 mr-2" />
-            Choose File
+            {multiple ? 'Choose Images' : 'Choose Image'}
           </Button>
           <Button
             type="button"
             variant="outline"
             onClick={() => {
               if (fileInputRef.current) {
-                fileInputRef.current.setAttribute('capture', 'environment');
                 fileInputRef.current.click();
               }
             }}
@@ -211,7 +231,7 @@ export function ImageUploadField({
       )}
 
       <p className="text-xs text-muted-foreground">
-        Max 5MB. JPEG, PNG, or WEBP. Images will be compressed automatically.
+        {multiple ? 'Select multiple images.' : 'Select one image.'} Max 10MB each. JPEG, PNG, or WEBP. Auto-compressed.
       </p>
     </div>
   );
