@@ -210,11 +210,26 @@ All colors MUST be HSL. Clean, professional e-commerce aesthetic.
 img {
   image-rendering: -webkit-optimize-contrast;
   image-rendering: crisp-edges;
+  content-visibility: auto;
+}
+
+img[loading="lazy"] {
+  opacity: 0;
+  transition: opacity 0.3s ease-in;
+}
+
+img[loading="lazy"].loaded {
+  opacity: 1;
 }
 
 /* Smooth scrolling */
 html {
   scroll-behavior: smooth;
+  overflow-x: hidden;
+}
+
+body {
+  overflow-x: hidden;
 }
 
 /* Hardware acceleration for animations */
@@ -223,6 +238,13 @@ html {
 .animate-spin {
   will-change: transform;
   transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+/* Dropdown optimizations */
+[role="menu"],
+[role="dialog"] {
+  will-change: transform;
   backface-visibility: hidden;
 }
 

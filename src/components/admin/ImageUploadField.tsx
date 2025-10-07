@@ -208,24 +208,10 @@ export function ImageUploadField({
             type="button"
             variant="outline"
             onClick={() => fileInputRef.current?.click()}
-            className="flex-1"
+            className="w-full"
           >
             <Upload className="h-4 w-4 mr-2" />
-            {multiple ? 'Choose Images' : 'Choose Image'}
-          </Button>
-          <Button
-            type="button"
-            variant="outline"
-            onClick={() => {
-              if (fileInputRef.current) {
-                fileInputRef.current.click();
-              }
-            }}
-            className="flex-1 md:flex-none"
-          >
-            <Camera className="h-4 w-4 mr-2" />
-            <span className="hidden md:inline">Take Photo</span>
-            <span className="md:hidden">Camera</span>
+            {multiple ? 'Choose Images from Gallery' : 'Choose Image from Gallery'}
           </Button>
         </div>
       )}

@@ -52,17 +52,17 @@ export function Header() {
 
   const handleSignOut = async () => {
     try {
-      // Clear UI state first
       setMobileMenuOpen(false);
-      
-      // Use the signOut from context
-      const { signOut: contextSignOut } = useAuth();
-      
-      // Call signOut which handles everything
-      await contextSignOut();
+      await supabase.auth.signOut();
+      localStorage.clear();
+      sessionStorage.clear();
+      toast({
+        title: "Signed out",
+        description: "You've been signed out successfully",
+      });
+      window.location.href = "/";
     } catch (error) {
-      console.error("Error signing out:", error);
-      // Force reload anyway to clear state
+      console.error("Sign out error:", error);
       window.location.href = "/";
     }
   };
@@ -189,47 +189,47 @@ export function Header() {
                   <User className="h-5 w-5" />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-56">
+              <DropdownMenuContent align="end" className="w-56 bg-background border shadow-lg z-50">
                 {user ? (
                   <>
-                    <div className="px-2 py-1.5 text-sm font-medium">
+                    <div className="px-2 py-1.5 text-sm font-medium truncate">
                       {user.email}
                     </div>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem asChild>
-                      <Link to="/profile">My Profile</Link>
+                      <Link to="/profile" className="cursor-pointer">My Profile</Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem asChild>
-                      <Link to="/orders">My Orders</Link>
+                      <Link to="/my-orders" className="cursor-pointer">My Orders</Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem asChild>
-                      <Link to="/wishlist">My Wishlist</Link>
+                      <Link to="/wishlist" className="cursor-pointer">My Wishlist</Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem asChild>
-                      <Link to="/messages">Messages</Link>
+                      <Link to="/messages" className="cursor-pointer">Messages</Link>
                     </DropdownMenuItem>
                     {isAdmin && (
                       <>
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem asChild>
-                          <Link to="/admin" className="text-primary font-medium">
+                        <DropdownMenuItem asChild className="bg-primary/10">
+                          <Link to="/admin" className="text-primary font-medium cursor-pointer">
                             Admin Dashboard
                           </Link>
                         </DropdownMenuItem>
                       </>
                     )}
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem onClick={handleSignOut} className="text-destructive">
+                    <DropdownMenuItem onClick={handleSignOut} className="text-destructive cursor-pointer">
                       Sign Out
                     </DropdownMenuItem>
                   </>
                 ) : (
                   <>
                     <DropdownMenuItem asChild>
-                      <Link to="/auth">Sign In</Link>
+                      <Link to="/auth" className="cursor-pointer">Sign In</Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem asChild>
-                      <Link to="/auth">Create Account</Link>
+                      <Link to="/auth" className="cursor-pointer">Create Account</Link>
                     </DropdownMenuItem>
                   </>
                 )}

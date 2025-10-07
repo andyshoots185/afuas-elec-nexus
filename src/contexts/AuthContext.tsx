@@ -35,40 +35,54 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
+    let mounted = true;
+    
     // Check for existing session FIRST
-    const checkSession = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      
-      if (session?.user) {
-        setSession(session);
-        setUser(session.user);
+    const initAuth = async () => {
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
         
-        // Fetch profile and roles in parallel
-        const [profileRes, rolesRes] = await Promise.all([
-          supabase.from('profiles').select('*').eq('id', session.user.id).single(),
-          supabase.from('user_roles').select('role').eq('user_id', session.user.id).eq('role', 'admin').maybeSingle()
-        ]);
+        if (!mounted) return;
         
-        setProfile(profileRes.data);
-        const adminStatus = !!rolesRes.data;
-        setIsAdmin(adminStatus);
-        
-        // Persist admin status in localStorage for instant UI updates
-        if (adminStatus) {
-          localStorage.setItem('is_admin', 'true');
-        } else {
-          localStorage.removeItem('is_admin');
+        if (session?.user) {
+          setSession(session);
+          setUser(session.user);
+          
+          // Fetch profile and roles in parallel
+          const [profileRes, rolesRes] = await Promise.all([
+            supabase.from('profiles').select('*').eq('id', session.user.id).maybeSingle(),
+            supabase.from('user_roles').select('role').eq('user_id', session.user.id).eq('role', 'admin').maybeSingle()
+          ]);
+          
+          if (!mounted) return;
+          
+          setProfile(profileRes.data);
+          const adminStatus = !!rolesRes.data;
+          setIsAdmin(adminStatus);
+          
+          // Persist admin status for instant UI
+          if (adminStatus) {
+            localStorage.setItem('is_admin', 'true');
+          } else {
+            localStorage.removeItem('is_admin');
+          }
+        }
+      } catch (error) {
+        console.error('Auth initialization error:', error);
+      } finally {
+        if (mounted) {
+          setLoading(false);
         }
       }
-      
-      setLoading(false);
     };
     
-    checkSession();
+    initAuth();
 
     // Set up auth state listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
+        if (!mounted) return;
+        
         setSession(session);
         setUser(session?.user ?? null);
         
@@ -81,21 +95,27 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         }
         
         if (session?.user) {
-          // Fetch profile and roles
-          const [profileRes, rolesRes] = await Promise.all([
-            supabase.from('profiles').select('*').eq('id', session.user.id).single(),
-            supabase.from('user_roles').select('role').eq('user_id', session.user.id).eq('role', 'admin').maybeSingle()
-          ]);
-          
-          setProfile(profileRes.data);
-          const adminStatus = !!rolesRes.data;
-          setIsAdmin(adminStatus);
-          
-          if (adminStatus) {
-            localStorage.setItem('is_admin', 'true');
-          } else {
-            localStorage.removeItem('is_admin');
-          }
+          // Defer data fetching to avoid blocking auth state change
+          setTimeout(async () => {
+            if (!mounted) return;
+            
+            const [profileRes, rolesRes] = await Promise.all([
+              supabase.from('profiles').select('*').eq('id', session.user.id).maybeSingle(),
+              supabase.from('user_roles').select('role').eq('user_id', session.user.id).eq('role', 'admin').maybeSingle()
+            ]);
+            
+            if (!mounted) return;
+            
+            setProfile(profileRes.data);
+            const adminStatus = !!rolesRes.data;
+            setIsAdmin(adminStatus);
+            
+            if (adminStatus) {
+              localStorage.setItem('is_admin', 'true');
+            } else {
+              localStorage.removeItem('is_admin');
+            }
+          }, 0);
         } else {
           setProfile(null);
           setIsAdmin(false);
@@ -106,7 +126,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
     );
 
-    return () => subscription.unsubscribe();
+    return () => {
+      mounted = false;
+      subscription.unsubscribe();
+    };
   }, []);
 
   const signUp = async (email: string, password: string, firstName?: string, lastName?: string) => {
