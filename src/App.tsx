@@ -53,35 +53,35 @@ function AppContent() {
         <Route path="/admin/*" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
         
         {/* Regular routes with header/footer */}
-        <Route path="*" element={
-          <div className="flex flex-col min-h-screen">
-            <Header />
-            <main className="flex-1 pb-16 md:pb-0">
-              <Routes>
-                <Route path="/" element={<Home />} />
-                <Route path="/shop" element={<Shop />} />
-                <Route path="/product/:id" element={<ProductDetail />} />
-                <Route path="/cart" element={<ProtectedRoute><Cart /></ProtectedRoute>} />
-                <Route path="/checkout" element={<ProtectedRoute><Checkout /></ProtectedRoute>} />
-                <Route path="/wishlist" element={<ProtectedRoute><Wishlist /></ProtectedRoute>} />
-                <Route path="/about" element={<About />} />
-                <Route path="/contact" element={<Contact />} />
-                <Route path="/help" element={<Help />} />
-                <Route path="/auth" element={<Auth />} />
-                <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
-                <Route path="/my-orders" element={<ProtectedRoute><MyOrders /></ProtectedRoute>} />
-                <Route path="/messages" element={<ProtectedRoute><Messages /></ProtectedRoute>} />
-                <Route path="*" element={<NotFound />} />
-              </Routes>
-            </main>
-            <Footer />
-            <BottomNavMobile />
-          </div>
-        } />
+        <Route path="/" element={<Home />} />
+        <Route path="/shop" element={<Shop />} />
+        <Route path="/product/:id" element={<ProductDetail />} />
+        <Route path="/cart" element={<ProtectedRoute><Cart /></ProtectedRoute>} />
+        <Route path="/checkout" element={<ProtectedRoute><Checkout /></ProtectedRoute>} />
+        <Route path="/wishlist" element={<ProtectedRoute><Wishlist /></ProtectedRoute>} />
+        <Route path="/about" element={<About />} />
+        <Route path="/contact" element={<Contact />} />
+        <Route path="/help" element={<Help />} />
+        <Route path="/auth" element={<Auth />} />
+        <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+        <Route path="/my-orders" element={<ProtectedRoute><MyOrders /></ProtectedRoute>} />
+        <Route path="/messages" element={<ProtectedRoute><Messages /></ProtectedRoute>} />
+        <Route path="*" element={<NotFound />} />
       </Routes>
-      <Toaster />
-      <Sonner />
     </>
+  );
+}
+
+function Layout() {
+  return (
+    <div className="flex flex-col min-h-screen">
+      <Header />
+      <main className="flex-1 pb-16 md:pb-0">
+        <AppContent />
+      </main>
+      <Footer />
+      <BottomNavMobile />
+    </div>
   );
 }
 
@@ -92,7 +92,15 @@ const App = () => (
         <CartProvider>
           <WishlistProvider>
             <BrowserRouter>
-              <AppContent />
+              <Routes>
+                {/* Admin routes without header/footer */}
+                <Route path="/admin/*" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
+                
+                {/* All other routes with header/footer layout */}
+                <Route path="*" element={<Layout />} />
+              </Routes>
+              <Toaster />
+              <Sonner />
             </BrowserRouter>
           </WishlistProvider>
         </CartProvider>
