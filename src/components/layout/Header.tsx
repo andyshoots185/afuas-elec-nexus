@@ -76,7 +76,7 @@ export function Header() {
             <div className="flex items-center space-x-4">
               <div className="flex items-center space-x-1">
                 <Phone className="h-3 w-3" />
-                <span>0742083075</span>
+                <span>0745187279</span>
               </div>
               <div className="hidden sm:flex items-center space-x-1">
                 <MapPin className="h-3 w-3" />
@@ -84,7 +84,7 @@ export function Header() {
               </div>
             </div>
             <div className="hidden md:block">
-              <span>Free delivery on orders over UGX 200,000</span>
+              <span>Free delivery on orders over UGX 500,000</span>
             </div>
           </div>
         </div>
