@@ -92,14 +92,14 @@ export function Footer() {
                 <div className="flex items-start space-x-3">
                   <Phone className="h-4 w-4 mt-0.5 text-primary" />
                   <div>
-                    <div>0742083075</div>
+                    <div>0745187279</div>
                     <div className="text-xs opacity-70">Customer Support</div>
                   </div>
                 </div>
                 <div className="flex items-start space-x-3">
                   <Mail className="h-4 w-4 mt-0.5 text-primary" />
                   <div>
-                    <div>munirsebikaaka@mail.com</div>
+                    <div>nakaakawaafuwa@gmail.com</div>
                     <div className="text-xs opacity-70">General Inquiries</div>
                   </div>
                 </div>
@@ -107,7 +107,7 @@ export function Footer() {
                   <MapPin className="h-4 w-4 mt-0.5 text-primary" />
                   <div>
                     <div>Kenya Wide Delivery</div>
-                    <div className="text-xs opacity-70">Free delivery on orders over KSh 50,000</div>
+                    <div className="text-xs opacity-70">Free delivery on orders over Ugx 500,000</div>
                   </div>
                 </div>
                 <div className="flex items-start space-x-3">
@@ -137,7 +137,7 @@ export function Footer() {
               <div className="flex items-center space-x-3 text-xs">
                 <div className="px-2 py-1 bg-muted rounded">MTN Money</div>
                 <div className="px-2 py-1 bg-muted rounded">Airtel Money</div>
-                <div className="px-2 py-1 bg-muted rounded">Cards</div>
+                <div className="px-2 py-1 bg-muted rounded">Cash</div>
               </div>
             </div>
           </div>
