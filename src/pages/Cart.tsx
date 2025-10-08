@@ -25,7 +25,7 @@ export default function Cart() {
   };
 
   const subtotal = total;
-  const shipping = subtotal >= 50000 ? 0 : 2000;
+  const shipping = subtotal >= 500000 ? 0 : 20000;
   const finalTotal = subtotal + shipping;
 
   if (items.length === 0) {
@@ -198,7 +198,7 @@ export default function Cart() {
 
                 {shipping > 0 && (
                   <div className="text-sm text-muted-foreground bg-muted p-3 rounded-md">
-                    Add UGX {(50000 - subtotal).toLocaleString()} more for free delivery
+                    Add UGX {(500000 - subtotal).toLocaleString()} more for free delivery
                   </div>
                 )}
 
