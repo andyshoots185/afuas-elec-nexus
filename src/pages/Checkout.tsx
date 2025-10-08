@@ -35,7 +35,7 @@ export default function Checkout() {
   });
 
   const subtotal = total;
-  const shipping = subtotal >= 50000 ? 0 : 2000;
+  const shipping = subtotal >= 500000 ? 0 : 20000;
   const finalTotal = subtotal + shipping;
 
   const handleInputChange = (field: string, value: string) => {
