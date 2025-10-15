@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Link } from "react-router-dom";
@@ -48,22 +49,41 @@ export default function Home() {
           .order('created_at', { ascending: false })
           .limit(8);
 
-        if (error) throw error;
+        // if (error) throw error;
         
-        // Transform data to match expected format
-        const transformedProducts = data?.map(product => ({
-          id: product.id,
-          name: product.name,
-          price: product.price_ugx,
-          image: product.product_images?.[0]?.image_url || '/placeholder.svg',
-          rating: 4.5,
-          reviewCount: 0,
-          inStock: product.stock_quantity > 0,
-          category: product.category_id,
-          brand: product.brand_id,
-        })) || [];
+        // // Transform data to match expected format
+        // const transformedProducts = data?.map(product => ({
+        //   id: product.id,
+        //   name: product.name,
+        //   price: product.price_ugx,
+        //   image: product.product_images?.[0]?.image_url || '/placeholder.svg',
+        //   rating: 4.5,
+        //   reviewCount: 0,
+        //   inStock: product.stock_quantity > 0,
+        //   category: product.category_id,
+        //   brand: product.brand_id,
+        // })) || [];
 
-        setFeaturedProducts(transformedProducts);
+        // setFeaturedProducts(transformedProducts);
+        if (error) throw error;
+
+const transformedProducts = (data && data.length > 0
+  ? data
+  : products // fallback to static data
+).map(product => ({
+  id: product.id,
+  name: product.name,
+  price: product.price_ugx || product.price,
+  image: product.image_url || product.image || '/placeholder.svg',
+  rating: product.rating || 4.5,
+  reviewCount: product.reviewCount || 0,
+  inStock: product.stock_quantity > 0 || true,
+  category: product.category_id || product.category,
+  brand: product.brand_id || product.brand,
+}));
+
+setFeaturedProducts(transformedProducts);
+
       } catch (error) {
         console.error('Error fetching featured products:', error);
       } finally {
@@ -101,17 +121,31 @@ export default function Home() {
           return isProductFlashSale || isCategoryFlashSale;
         });
         
-        const transformedProducts = (flashData || data)?.map((product: any) => ({
-          id: product.id,
-          name: product.name,
-          price: product.price_ugx,
-          image: product.product_images?.[0]?.image_url || '/placeholder.svg',
-          rating: 4.5,
-          reviewCount: 0,
-          inStock: product.stock_quantity > 0,
-          category: product.category_id,
-          brand: product.brand_id,
-        })) || [];
+        // const transformedProducts = (flashData || data)?.map((product: any) => ({
+        //   id: product.id,
+        //   name: product.name,
+        //   price: product.price_ugx,
+        //   image: product.product_images?.[0]?.image_url || '/placeholder.svg',
+        //   rating: 4.5,
+        //   reviewCount: 0,
+        //   inStock: product.stock_quantity > 0,
+        //   category: product.category_id,
+        //   brand: product.brand_id,
+        // })) || [];
+
+        const source = flashData && flashData.length > 0 ? flashData : (data && data.length > 0 ? data : products);
+
+const transformedProducts = source.map((product: any) => ({
+  id: product.id,
+  name: product.name,
+  price: product.price_ugx || product.price,
+  image: product.image_url || product.product_images?.[0]?.image_url || product.image || '/placeholder.svg',
+  rating: product.rating || 4.5,
+  reviewCount: product.reviewCount || 0,
+  inStock: product.stock_quantity > 0 || true,
+  category: product.category_id || product.category,
+  brand: product.brand_id || product.brand,
+}));
 
         setFlashSaleProducts(transformedProducts);
       } catch (error) {
