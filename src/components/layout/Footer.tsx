@@ -106,7 +106,7 @@ export function Footer() {
                 <div className="flex items-start space-x-3">
                   <MapPin className="h-4 w-4 mt-0.5 text-primary" />
                   <div>
-                    <div>Kenya Wide Delivery</div>
+                    <div>Uganda Wide Delivery</div>
                     <div className="text-xs opacity-70">Free delivery on orders over Ugx 500,000</div>
                   </div>
                 </div>
