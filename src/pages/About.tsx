@@ -234,7 +234,7 @@ export default function About() {
               <CardContent className="pt-6">
                 <MapPin className="h-8 w-8 text-primary mx-auto mb-4" />
                 <h3 className="font-semibold mb-2">Visit Us</h3>
-                <p className="text-muted-foreground">Kenya Wide Delivery</p>
+                <p className="text-muted-foreground">Uganda Wide Delivery</p>
                 <p className="text-sm text-muted-foreground">Free delivery over Ugx 500,000</p>
               </CardContent>
             </Card>
