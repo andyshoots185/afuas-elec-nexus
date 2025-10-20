@@ -8,9 +8,11 @@ import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ArrowLeft, Send, Loader2 } from 'lucide-react';
 import { formatUGX } from '@/utils/formatUGX';
 import { toast } from 'sonner';
+import { AIHelper } from '@/components/chat/AIHelper';
 
 interface Message {
   id: string;
@@ -97,7 +99,6 @@ export default function Messages() {
           filter: `receiver_id=eq.${user.id}`
         },
         (payload) => {
-          // Reload messages if they're for the current conversation
           if (
             selectedConversation &&
             (payload.new.sender_id === selectedConversation.other_user_id ||
@@ -142,7 +143,6 @@ export default function Messages() {
 
   const loadConversations = async () => {
     try {
-      // Get all conversations for the current user
       const { data: messagesData, error } = await supabase
         .from('messages')
         .select(`
@@ -161,7 +161,6 @@ export default function Messages() {
 
       if (error) throw error;
 
-      // Group messages by conversation (other_user + product)
       const conversationMap = new Map<string, any>();
       
       messagesData?.forEach((msg) => {
@@ -179,7 +178,6 @@ export default function Messages() {
           });
         }
 
-        // Count unread messages
         if (msg.receiver_id === user?.id && !msg.is_read) {
           conversationMap.get(key).unread_count++;
         }
@@ -187,7 +185,6 @@ export default function Messages() {
 
       const conversationsList = Array.from(conversationMap.values());
 
-      // Get profile info for other users
       const otherUserIds = conversationsList.map(c => c.other_user_id);
       if (otherUserIds.length > 0) {
         const { data: profiles } = await supabase
@@ -225,14 +222,12 @@ export default function Messages() {
       if (error) throw error;
       setMessages(data || []);
 
-      // Mark messages as read
       await supabase
         .from('messages')
         .update({ is_read: true })
         .eq('receiver_id', user?.id)
         .eq('sender_id', conversation.other_user_id);
 
-      // Refresh conversations to update unread count
       loadConversations();
     } catch (error) {
       console.error('Error loading messages:', error);
@@ -272,7 +267,7 @@ export default function Messages() {
   const startNewConversation = async () => {
     if (!product || !user) return;
 
-    const adminUserId = 'admin-user-id'; // This should be replaced with actual admin user ID
+    const adminUserId = 'admin-user-id';
     
     const newConversation: Conversation = {
       other_user_id: adminUserId,
@@ -304,234 +299,248 @@ export default function Messages() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="container mx-auto px-4 py-4 max-w-6xl">
-        {/* Header */}
+    <div className="min-h-screen bg-background pb-20 md:pb-8">
+      <div className="container mx-auto px-4 py-4 md:py-8">
         <div className="flex items-center gap-4 mb-6">
-          <Button variant="ghost" size="sm" onClick={() => navigate('/')}>
+          <Button variant="ghost" size="sm" onClick={() => navigate(-1)} className="md:flex hidden">
             <ArrowLeft className="h-4 w-4 mr-2" />
-            Back to Home
+            Back
           </Button>
-          <h1 className="text-2xl font-bold">Messages</h1>
+          <h1 className="text-2xl md:text-3xl font-bold">Messages & Support</h1>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 h-[calc(100vh-12rem)]">
-          {/* Conversations List */}
-          <Card className="col-span-1">
-            <CardHeader>
-              <CardTitle className="text-lg">Conversations</CardTitle>
-            </CardHeader>
-            <CardContent className="p-0">
-              <ScrollArea className="h-[calc(100vh-20rem)]">
-                {productId && product && !selectedConversation && (
-                  <div className="p-4 border-b">
-                    <div className="flex items-center gap-3 p-3 rounded-lg border bg-blue-50 cursor-pointer" onClick={startNewConversation}>
-                      <div className="w-12 h-12 bg-muted rounded overflow-hidden">
-                        {product.product_images?.[0] && (
-                          <img 
-                            src={product.product_images[0].image_url} 
-                            alt={product.name}
-                            className="w-full h-full object-cover"
-                          />
-                        )}
-                      </div>
-                      <div className="flex-1">
-                        <p className="font-medium text-sm">Ask about this product</p>
-                        <p className="text-xs text-muted-foreground line-clamp-1">{product.name}</p>
-                        <p className="text-xs font-semibold text-blue-600">{formatUGX(product.price_ugx)}</p>
-                      </div>
-                    </div>
-                  </div>
-                )}
-                
-                {conversations.map((conversation) => (
-                  <div
-                    key={`${conversation.other_user_id}-${conversation.product_id}`}
-                    className={`p-4 border-b cursor-pointer hover:bg-muted/50 ${
-                      selectedConversation?.other_user_id === conversation.other_user_id &&
-                      selectedConversation?.product_id === conversation.product_id
-                        ? 'bg-muted'
-                        : ''
-                    }`}
-                    onClick={() => {
-                      setSelectedConversation(conversation);
-                      loadMessages(conversation);
-                    }}
-                  >
-                    <div className="flex items-center gap-3">
-                      <Avatar className="h-10 w-10">
-                        <AvatarImage src={conversation.other_user?.avatar_url} />
-                        <AvatarFallback>
-                          {conversation.other_user ? 
-                            `${conversation.other_user.first_name[0]}${conversation.other_user.last_name[0]}` :
-                            'U'
-                          }
-                        </AvatarFallback>
-                      </Avatar>
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center justify-between">
-                          <p className="font-medium text-sm">
-                            {conversation.other_user ? 
-                              `${conversation.other_user.first_name} ${conversation.other_user.last_name}` :
-                              'Unknown User'
-                            }
-                          </p>
-                          {conversation.unread_count > 0 && (
-                            <Badge variant="destructive" className="h-5 w-5 p-0 flex items-center justify-center text-xs">
-                              {conversation.unread_count}
-                            </Badge>
-                          )}
-                        </div>
-                        {conversation.product_name && (
-                          <p className="text-xs text-muted-foreground line-clamp-1">
-                            Re: {conversation.product_name}
-                          </p>
-                        )}
-                        <p className="text-xs text-muted-foreground">
-                          {new Date(conversation.last_message_time).toLocaleDateString()}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-                
-                {conversations.length === 0 && !productId && (
-                  <div className="p-8 text-center text-muted-foreground">
-                    <p>No conversations yet</p>
-                    <p className="text-sm">Messages about products will appear here</p>
-                  </div>
-                )}
-              </ScrollArea>
-            </CardContent>
-          </Card>
+        <Tabs defaultValue="ai-helper" className="w-full">
+          <TabsList className="grid w-full grid-cols-2 mb-4">
+            <TabsTrigger value="ai-helper">AI Assistant</TabsTrigger>
+            <TabsTrigger value="conversations">
+              My Messages
+              {conversations.reduce((sum, conv) => sum + conv.unread_count, 0) > 0 && (
+                <Badge className="ml-2 h-5 w-5 p-0 flex items-center justify-center">
+                  {conversations.reduce((sum, conv) => sum + conv.unread_count, 0)}
+                </Badge>
+              )}
+            </TabsTrigger>
+          </TabsList>
 
-          {/* Chat Area */}
-          <Card className="col-span-2">
-            {selectedConversation ? (
-              <>
-                {/* Chat Header */}
-                <CardHeader className="border-b">
-                  <div className="flex items-center gap-3">
-                    <Avatar>
-                      <AvatarImage src={selectedConversation.other_user?.avatar_url} />
-                      <AvatarFallback>
-                        {selectedConversation.other_user ? 
-                          `${selectedConversation.other_user.first_name[0]}${selectedConversation.other_user.last_name[0]}` :
-                          'U'
-                        }
-                      </AvatarFallback>
-                    </Avatar>
-                    <div>
-                      <CardTitle className="text-lg">
-                        {selectedConversation.other_user ? 
-                          `${selectedConversation.other_user.first_name} ${selectedConversation.other_user.last_name}` :
-                          'Unknown User'
-                        }
-                      </CardTitle>
-                      {selectedConversation.product_name && (
-                        <p className="text-sm text-muted-foreground">
-                          About: {selectedConversation.product_name}
-                        </p>
-                      )}
-                    </div>
-                  </div>
+          <TabsContent value="ai-helper" className="h-[calc(100vh-220px)] md:h-[600px]">
+            <AIHelper />
+          </TabsContent>
+
+          <TabsContent value="conversations">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 h-[calc(100vh-220px)] md:h-[600px]">
+              {/* Conversations List */}
+              <Card className="col-span-1">
+                <CardHeader>
+                  <CardTitle className="text-lg">Conversations</CardTitle>
                 </CardHeader>
-
-                {/* Product Reference */}
-                {selectedConversation.product_name && (
-                  <div className="p-4 border-b bg-muted/30">
-                    <div className="flex items-center gap-3 p-3 rounded-lg border bg-background">
-                      <div className="w-12 h-12 bg-muted rounded overflow-hidden">
-                        {selectedConversation.product_image && (
-                          <img 
-                            src={selectedConversation.product_image} 
-                            alt={selectedConversation.product_name}
-                            className="w-full h-full object-cover"
-                          />
-                        )}
-                      </div>
-                      <div className="flex-1">
-                        <p className="font-medium text-sm">{selectedConversation.product_name}</p>
-                        <p className="text-sm font-semibold text-green-600">
-                          {formatUGX(selectedConversation.product_price || 0)}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                {/* Messages */}
-                <CardContent className="p-0 flex-1">
-                  <ScrollArea className="h-[calc(100vh-32rem)] p-4">
-                    {loadingMessages ? (
-                      <div className="flex items-center justify-center py-8">
-                        <Loader2 className="h-6 w-6 animate-spin" />
-                      </div>
-                    ) : (
-                      <div className="space-y-4">
-                        {messages.map((message) => (
-                          <div
-                            key={message.id}
-                            className={`flex ${
-                              message.sender_id === user?.id ? 'justify-end' : 'justify-start'
-                            }`}
-                          >
-                            <div
-                              className={`max-w-[70%] p-3 rounded-lg ${
-                                message.sender_id === user?.id
-                                  ? 'bg-primary text-primary-foreground'
-                                  : 'bg-muted'
-                              }`}
-                            >
-                              <p className="text-sm">{message.content}</p>
-                              <p className={`text-xs mt-1 ${
-                                message.sender_id === user?.id
-                                  ? 'text-primary-foreground/70'
-                                  : 'text-muted-foreground'
-                              }`}>
-                                {new Date(message.created_at).toLocaleTimeString()}
-                              </p>
-                            </div>
+                <CardContent className="p-0">
+                  <ScrollArea className="h-[calc(100vh-320px)] md:h-[500px]">
+                    {productId && product && !selectedConversation && (
+                      <div className="p-4 border-b">
+                        <div className="flex items-center gap-3 p-3 rounded-lg border bg-blue-50 cursor-pointer" onClick={startNewConversation}>
+                          <div className="w-12 h-12 bg-muted rounded overflow-hidden">
+                            {product.product_images?.[0] && (
+                              <img 
+                                src={product.product_images[0].image_url} 
+                                alt={product.name}
+                                className="w-full h-full object-cover"
+                              />
+                            )}
                           </div>
-                        ))}
-                        <div ref={messagesEndRef} />
+                          <div className="flex-1">
+                            <p className="font-medium text-sm">Ask about this product</p>
+                            <p className="text-xs text-muted-foreground line-clamp-1">{product.name}</p>
+                            <p className="text-xs font-semibold text-blue-600">{formatUGX(product.price_ugx)}</p>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                    
+                    {conversations.map((conversation) => (
+                      <div
+                        key={`${conversation.other_user_id}-${conversation.product_id}`}
+                        className={`p-4 border-b cursor-pointer hover:bg-muted/50 ${
+                          selectedConversation?.other_user_id === conversation.other_user_id &&
+                          selectedConversation?.product_id === conversation.product_id
+                            ? 'bg-muted'
+                            : ''
+                        }`}
+                        onClick={() => {
+                          setSelectedConversation(conversation);
+                          loadMessages(conversation);
+                        }}
+                      >
+                        <div className="flex items-center gap-3">
+                          <Avatar className="h-10 w-10">
+                            <AvatarImage src={conversation.other_user?.avatar_url} />
+                            <AvatarFallback>
+                              {conversation.other_user ? 
+                                `${conversation.other_user.first_name[0]}${conversation.other_user.last_name[0]}` :
+                                'U'
+                              }
+                            </AvatarFallback>
+                          </Avatar>
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center justify-between">
+                              <p className="font-medium text-sm">
+                                {conversation.other_user ? 
+                                  `${conversation.other_user.first_name} ${conversation.other_user.last_name}` :
+                                  'Unknown User'
+                                }
+                              </p>
+                              {conversation.unread_count > 0 && (
+                                <Badge variant="destructive" className="h-5 w-5 p-0 flex items-center justify-center text-xs">
+                                  {conversation.unread_count}
+                                </Badge>
+                              )}
+                            </div>
+                            {conversation.product_name && (
+                              <p className="text-xs text-muted-foreground line-clamp-1">
+                                Re: {conversation.product_name}
+                              </p>
+                            )}
+                            <p className="text-xs text-muted-foreground">
+                              {new Date(conversation.last_message_time).toLocaleDateString()}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                    
+                    {conversations.length === 0 && !productId && (
+                      <div className="p-8 text-center text-muted-foreground">
+                        <p>No conversations yet</p>
+                        <p className="text-sm">Messages about products will appear here</p>
                       </div>
                     )}
                   </ScrollArea>
                 </CardContent>
+              </Card>
 
-                {/* Message Input */}
-                <div className="p-4 border-t">
-                  <div className="flex gap-2">
-                    <Input
-                      placeholder="Type your message..."
-                      value={newMessage}
-                      onChange={(e) => setNewMessage(e.target.value)}
-                      onKeyPress={(e) => {
-                        if (e.key === 'Enter') {
-                          sendMessage();
-                        }
-                      }}
-                    />
-                    <Button onClick={sendMessage} disabled={sending}>
-                      {sending ? (
-                        <Loader2 className="h-4 w-4 animate-spin" />
-                      ) : (
-                        <Send className="h-4 w-4" />
-                      )}
-                    </Button>
-                  </div>
-                </div>
-              </>
-            ) : (
-              <CardContent className="flex items-center justify-center h-full">
-                <div className="text-center text-muted-foreground">
-                  <p>Select a conversation to start messaging</p>
-                </div>
-              </CardContent>
-            )}
-          </Card>
-        </div>
+              {/* Chat Area */}
+              <Card className="col-span-2">
+                {selectedConversation ? (
+                  <>
+                    {/* Chat Header */}
+                    <CardHeader className="border-b">
+                      <div className="flex items-center gap-3">
+                        <Avatar>
+                          <AvatarImage src={selectedConversation.other_user?.avatar_url} />
+                          <AvatarFallback>
+                            {selectedConversation.other_user ? 
+                              `${selectedConversation.other_user.first_name[0]}${selectedConversation.other_user.last_name[0]}` :
+                              'U'
+                            }
+                          </AvatarFallback>
+                        </Avatar>
+                        <div>
+                          <CardTitle className="text-lg">
+                            {selectedConversation.other_user ? 
+                              `${selectedConversation.other_user.first_name} ${selectedConversation.other_user.last_name}` :
+                              'Unknown User'
+                            }
+                          </CardTitle>
+                          {selectedConversation.product_name && (
+                            <p className="text-sm text-muted-foreground">
+                              About: {selectedConversation.product_name}
+                            </p>
+                          )}
+                        </div>
+                      </div>
+                    </CardHeader>
+
+                    {/* Product Reference */}
+                    {selectedConversation.product_name && (
+                      <div className="p-4 border-b bg-muted/30">
+                        <div className="flex items-center gap-3 p-3 rounded-lg border bg-background">
+                          <div className="w-12 h-12 bg-muted rounded overflow-hidden">
+                            {selectedConversation.product_image && (
+                              <img 
+                                src={selectedConversation.product_image} 
+                                alt={selectedConversation.product_name}
+                                className="w-full h-full object-cover"
+                              />
+                            )}
+                          </div>
+                          <div className="flex-1">
+                            <p className="font-medium text-sm">{selectedConversation.product_name}</p>
+                            <p className="text-sm font-semibold text-green-600">
+                              {formatUGX(selectedConversation.product_price || 0)}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Messages */}
+                    <CardContent className="p-0 flex-1">
+                      <ScrollArea className="h-[calc(100vh-480px)] md:h-[380px] p-4">
+                        {loadingMessages ? (
+                          <div className="flex items-center justify-center py-8">
+                            <Loader2 className="h-6 w-6 animate-spin" />
+                          </div>
+                        ) : (
+                          <div className="space-y-4">
+                            {messages.map((message) => (
+                              <div
+                                key={message.id}
+                                className={`flex ${
+                                  message.sender_id === user?.id ? 'justify-end' : 'justify-start'
+                                }`}
+                              >
+                                <div
+                                  className={`max-w-[70%] p-3 rounded-lg ${
+                                    message.sender_id === user?.id
+                                      ? 'bg-primary text-primary-foreground'
+                                      : 'bg-muted'
+                                  }`}
+                                >
+                                  <p className="text-sm">{message.content}</p>
+                                  <p className="text-xs mt-1 opacity-70">
+                                    {new Date(message.created_at).toLocaleTimeString([], {
+                                      hour: '2-digit',
+                                      minute: '2-digit',
+                                    })}
+                                  </p>
+                                </div>
+                              </div>
+                            ))}
+                            <div ref={messagesEndRef} />
+                          </div>
+                        )}
+                      </ScrollArea>
+
+                      <div className="p-4 border-t">
+                        <div className="flex gap-2">
+                          <Input
+                            placeholder="Type a message..."
+                            value={newMessage}
+                            onChange={(e) => setNewMessage(e.target.value)}
+                            onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
+                            disabled={sending}
+                          />
+                          <Button onClick={sendMessage} disabled={!newMessage.trim() || sending}>
+                            {sending ? (
+                              <Loader2 className="h-4 w-4 animate-spin" />
+                            ) : (
+                              <Send className="h-4 w-4" />
+                            )}
+                          </Button>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </>
+                ) : (
+                  <CardContent className="h-full flex items-center justify-center">
+                    <div className="text-center text-muted-foreground">
+                      <p>Select a conversation to start messaging</p>
+                    </div>
+                  </CardContent>
+                )}
+              </Card>
+            </div>
+          </TabsContent>
+        </Tabs>
       </div>
     </div>
   );

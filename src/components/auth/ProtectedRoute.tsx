@@ -14,14 +14,17 @@ export function ProtectedRoute({ children, requireAuth = true }: ProtectedRouteP
 
   useEffect(() => {
     if (!loading && requireAuth && !user) {
-      navigate('/auth');
+      navigate('/auth', { replace: true });
     }
   }, [user, loading, requireAuth, navigate]);
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin" />
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <div className="text-center">
+          <Loader2 className="h-8 w-8 animate-spin mx-auto text-primary" />
+          <p className="mt-2 text-sm text-muted-foreground">Loading...</p>
+        </div>
       </div>
     );
   }

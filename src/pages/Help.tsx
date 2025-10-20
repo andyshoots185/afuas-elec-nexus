@@ -9,7 +9,7 @@ export default function Help() {
   const faqs = [
     {
       question: "What are your delivery charges?",
-      answer: "We offer free delivery for orders over KSh 50,000. For orders below this amount, delivery charges are KSh 2,000 within major cities and may vary for remote areas."
+      answer: "We offer free delivery for orders over Ugx 500,000. For orders below this amount, delivery charges are Ugx 20,000 within major cities and may vary for remote areas."
     },
     {
       question: "Do you offer warranty on products?",
@@ -21,7 +21,7 @@ export default function Help() {
     },
     {
       question: "What payment methods do you accept?",
-      answer: "We accept M-Pesa, Airtel Money, and bank transfers. Credit/debit card payments are coming soon. All payments are secure and processed immediately."
+      answer: "We accept Cash, Airtel Money, and bank transfers. Credit/debit card payments are coming soon. All payments are secure and processed immediately."
     },
     {
       question: "How can I track my order?",
@@ -50,7 +50,7 @@ export default function Help() {
             <CardContent className="pt-6">
               <Phone className="h-8 w-8 text-primary mx-auto mb-4" />
               <h3 className="font-semibold mb-2">Call Support</h3>
-              <p className="text-muted-foreground text-sm mb-4">0742083075</p>
+              <p className="text-muted-foreground text-sm mb-4">0745187279</p>
               <Button asChild variant="outline" size="sm">
                 <a href="tel:0742083075">Call Now</a>
               </Button>
@@ -61,7 +61,7 @@ export default function Help() {
             <CardContent className="pt-6">
               <Mail className="h-8 w-8 text-primary mx-auto mb-4" />
               <h3 className="font-semibold mb-2">Email Us</h3>
-              <p className="text-muted-foreground text-sm mb-4">munirsebikaaka@mail.com</p>
+              <p className="text-muted-foreground text-sm mb-4">nakaakawaafuwa@gmail.com</p>
               <Button asChild variant="outline" size="sm">
                 <Link to="/contact">Send Email</Link>
               </Button>
