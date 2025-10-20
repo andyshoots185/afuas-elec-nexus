@@ -219,8 +219,6 @@ export type Database = {
         Row: {
           created_at: string
           description: string | null
-          featured_category: boolean | null
-          flash_sale_category: boolean | null
           id: string
           image_url: string | null
           is_active: boolean | null
@@ -233,8 +231,6 @@ export type Database = {
         Insert: {
           created_at?: string
           description?: string | null
-          featured_category?: boolean | null
-          flash_sale_category?: boolean | null
           id?: string
           image_url?: string | null
           is_active?: boolean | null
@@ -247,8 +243,6 @@ export type Database = {
         Update: {
           created_at?: string
           description?: string | null
-          featured_category?: boolean | null
-          flash_sale_category?: boolean | null
           id?: string
           image_url?: string | null
           is_active?: boolean | null
@@ -347,39 +341,6 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
-      }
-      notifications: {
-        Row: {
-          admin_id: string | null
-          created_at: string | null
-          id: string
-          message: string
-          metadata: Json | null
-          read: boolean | null
-          type: string
-          updated_at: string | null
-        }
-        Insert: {
-          admin_id?: string | null
-          created_at?: string | null
-          id?: string
-          message: string
-          metadata?: Json | null
-          read?: boolean | null
-          type: string
-          updated_at?: string | null
-        }
-        Update: {
-          admin_id?: string | null
-          created_at?: string | null
-          id?: string
-          message?: string
-          metadata?: Json | null
-          read?: boolean | null
-          type?: string
-          updated_at?: string | null
-        }
-        Relationships: []
       }
       order_items: {
         Row: {
@@ -604,11 +565,8 @@ export type Database = {
           dimensions_height: number | null
           dimensions_length: number | null
           dimensions_width: number | null
-          flash_sale_end: string | null
-          flash_sale_start: string | null
           id: string
           is_featured: boolean | null
-          is_flash_sale: boolean | null
           meta_description: string | null
           meta_title: string | null
           metadata: Json | null
@@ -637,11 +595,8 @@ export type Database = {
           dimensions_height?: number | null
           dimensions_length?: number | null
           dimensions_width?: number | null
-          flash_sale_end?: string | null
-          flash_sale_start?: string | null
           id?: string
           is_featured?: boolean | null
-          is_flash_sale?: boolean | null
           meta_description?: string | null
           meta_title?: string | null
           metadata?: Json | null
@@ -670,11 +625,8 @@ export type Database = {
           dimensions_height?: number | null
           dimensions_length?: number | null
           dimensions_width?: number | null
-          flash_sale_end?: string | null
-          flash_sale_start?: string | null
           id?: string
           is_featured?: boolean | null
-          is_flash_sale?: boolean | null
           meta_description?: string | null
           meta_title?: string | null
           metadata?: Json | null
@@ -866,30 +818,6 @@ export type Database = {
           },
         ]
       }
-      user_roles: {
-        Row: {
-          created_at: string
-          id: string
-          role: Database["public"]["Enums"]["app_role"]
-          updated_at: string
-          user_id: string
-        }
-        Insert: {
-          created_at?: string
-          id?: string
-          role?: Database["public"]["Enums"]["app_role"]
-          updated_at?: string
-          user_id: string
-        }
-        Update: {
-          created_at?: string
-          id?: string
-          role?: Database["public"]["Enums"]["app_role"]
-          updated_at?: string
-          user_id?: string
-        }
-        Relationships: []
-      }
       wishlist_items: {
         Row: {
           created_at: string
@@ -924,20 +852,9 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      add_admin_role_by_email: {
-        Args: { admin_email: string }
-        Returns: undefined
-      }
       generate_order_number: {
         Args: Record<PropertyKey, never>
         Returns: string
-      }
-      has_role: {
-        Args: {
-          _role: Database["public"]["Enums"]["app_role"]
-          _user_id: string
-        }
-        Returns: boolean
       }
       log_admin_action: {
         Args: {
@@ -950,7 +867,7 @@ export type Database = {
       }
     }
     Enums: {
-      app_role: "admin" | "seller" | "customer"
+      [_ in never]: never
     }
     CompositeTypes: {
       [_ in never]: never
@@ -1077,8 +994,6 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {
-      app_role: ["admin", "seller", "customer"],
-    },
+    Enums: {},
   },
 } as const

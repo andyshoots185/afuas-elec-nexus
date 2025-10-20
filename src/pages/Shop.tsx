@@ -384,11 +384,11 @@ export default function Shop() {
                     )}
                   </Button>
                 </SheetTrigger>
-                <SheetContent side="left" className="w-80 overflow-y-auto">
+                <SheetContent side="left" className="w-80">
                   <SheetHeader>
                     <SheetTitle>Filters</SheetTitle>
                   </SheetHeader>
-                  <div className="mt-6 pb-6">
+                  <div className="mt-6">
                     <FiltersSidebar />
                   </div>
                 </SheetContent>
@@ -400,7 +400,7 @@ export default function Shop() {
         <div className="flex gap-8">
           {/* Desktop Filters Sidebar */}
           <aside className="hidden lg:block w-64 flex-shrink-0">
-            <div className="sticky top-24 max-h-[calc(100vh-6rem)] overflow-y-auto pr-2">
+            <div className="sticky top-24">
               <FiltersSidebar />
             </div>
           </aside>

@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
-import { Star, Loader2, Trash2 } from 'lucide-react';
+import { Star, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 
 interface Review {
@@ -27,7 +27,7 @@ interface ReviewSectionProps {
 }
 
 export function ReviewSection({ productId }: ReviewSectionProps) {
-  const { user, isAdmin } = useAuth();
+  const { user } = useAuth();
   const [reviews, setReviews] = useState<Review[]>([]);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
@@ -62,6 +62,7 @@ export function ReviewSection({ productId }: ReviewSectionProps) {
 
   const loadReviews = async () => {
     try {
+      // First get reviews
       const { data: reviewsData, error: reviewsError } = await supabase
         .from('reviews')
         .select('*')
@@ -71,12 +72,14 @@ export function ReviewSection({ productId }: ReviewSectionProps) {
 
       if (reviewsError) throw reviewsError;
 
+      // Then get profiles for these reviews
       const userIds = reviewsData?.map(r => r.user_id) || [];
       const { data: profilesData } = await supabase
         .from('profiles')
         .select('id, first_name, last_name')
         .in('id', userIds);
 
+      // Combine the data
       const reviewsWithProfiles = reviewsData?.map(review => ({
         ...review,
         profiles: profilesData?.find(p => p.id === review.user_id)
@@ -132,31 +135,13 @@ export function ReviewSection({ productId }: ReviewSectionProps) {
     }
   };
 
-  const handleDeleteReview = async (reviewId: string) => {
-    if (!window.confirm('Are you sure you want to delete this review?')) return;
-
-    try {
-      const { error } = await supabase
-        .from('reviews')
-        .delete()
-        .eq('id', reviewId);
-
-      if (error) throw error;
-
-      toast.success('Review deleted successfully');
-      loadReviews();
-    } catch (error: any) {
-      console.error('Error deleting review:', error);
-      toast.error('Failed to delete review');
-    }
-  };
-
   const averageRating = reviews.length > 0
     ? reviews.reduce((sum, review) => sum + review.rating, 0) / reviews.length
     : 0;
 
   return (
     <div className="space-y-6">
+      {/* Rating Summary */}
       <Card>
         <CardHeader>
           <CardTitle>Customer Reviews</CardTitle>
@@ -185,6 +170,7 @@ export function ReviewSection({ productId }: ReviewSectionProps) {
             </div>
           </div>
 
+          {/* Write Review */}
           {user && (
             <div className="space-y-4 border-t pt-6">
               <h3 className="font-semibold">Write a Review</h3>
@@ -252,6 +238,7 @@ export function ReviewSection({ productId }: ReviewSectionProps) {
         </CardContent>
       </Card>
 
+      {/* Reviews List */}
       {loading ? (
         <div className="flex justify-center py-8">
           <Loader2 className="h-8 w-8 animate-spin" />
@@ -271,18 +258,11 @@ export function ReviewSection({ productId }: ReviewSectionProps) {
                   <div className="flex-1">
                     <div className="flex items-center justify-between mb-2">
                       <div>
-                        <div className="flex items-center gap-2">
-                          <span className="font-semibold">
-                            {review.profiles?.first_name || 'Anonymous'}{' '}
-                            {review.profiles?.last_name || ''}
-                          </span>
-                          {review.is_verified && (
-                            <Badge variant="secondary" className="text-xs">
-                              Verified Purchase
-                            </Badge>
-                          )}
+                        <div className="font-semibold">
+                          {review.profiles?.first_name || 'Anonymous'}{' '}
+                          {review.profiles?.last_name || ''}
                         </div>
-                        <div className="flex items-center gap-2 mt-1">
+                        <div className="flex items-center gap-2">
                           <div className="flex">
                             {[1, 2, 3, 4, 5].map((star) => (
                               <Star
@@ -295,25 +275,18 @@ export function ReviewSection({ productId }: ReviewSectionProps) {
                               />
                             ))}
                           </div>
+                          {review.is_verified && (
+                            <Badge variant="secondary" className="text-xs">
+                              Verified Purchase
+                            </Badge>
+                          )}
                         </div>
                       </div>
-                      <div className="flex items-center gap-2">
-                        <span className="text-sm text-muted-foreground">
-                          {new Date(review.created_at).toLocaleDateString()}
-                        </span>
-                        {isAdmin && (
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => handleDeleteReview(review.id)}
-                            className="text-destructive hover:text-destructive"
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
-                        )}
-                      </div>
+                      <span className="text-sm text-muted-foreground">
+                        {new Date(review.created_at).toLocaleDateString()}
+                      </span>
                     </div>
-                    <p className="text-muted-foreground mt-2">{review.comment}</p>
+                    <p className="text-muted-foreground">{review.comment}</p>
                   </div>
                 </div>
               </CardContent>
