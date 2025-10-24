@@ -6,9 +6,9 @@ import { Link } from 'react-router-dom';
 export default function About() {
   const teamMembers = [
     {
-      name: 'Afua Sebikaaka',
+      name: 'Afuah',
       role: 'Founder & CEO',
-      description: 'Passionate about bringing quality electronics to Kenyan families.',
+      description: 'Passionate about bringing quality electronics to Ugandan families.',
     },
     {
       name: 'Customer Service Team',
@@ -77,16 +77,16 @@ export default function About() {
               <div className="space-y-4 text-muted-foreground leading-relaxed">
                 <p>
                   Afuwah's Electronics was born from a simple vision: to make quality electronics accessible 
-                  to every Ugandan family. Founded by Afuwah Sebikaaka, our journey began with a commitment 
+                  to every Ugandan family. Founded by Afuwah , our journey began with a commitment 
                   to bridge the gap between cutting-edge technology and affordability.
                 </p>
                 <p>
-                  What started as a small electronics store has grown into a trusted name in Kenya's 
+                  What started as a small electronics store has grown into a trusted name in Uganda's 
                   electronics retail space. We've built our reputation on three core principles: 
                   quality products, competitive prices, and exceptional customer service.
                 </p>
                 <p>
-                  Today, we serve thousands of satisfied customers across Kenya, offering everything 
+                  Today, we serve thousands of satisfied customers across Uganda, offering everything 
                   from the latest TVs and sound systems to essential home appliances like refrigerators 
                   and washing machines. Every product in our catalog is carefully selected to ensure 
                   it meets our high standards for quality and value.
@@ -148,7 +148,7 @@ export default function About() {
             <h2 className="text-3xl font-bold mb-8">Our Mission</h2>
             <div className="max-w-4xl mx-auto">
               <blockquote className="text-xl text-muted-foreground italic leading-relaxed mb-8">
-                "To democratize access to quality electronics across Kenya by providing authentic products, 
+                "To democratize access to quality electronics across Uganda by providing authentic products, 
                 competitive pricing, exceptional customer service, and reliable delivery to every corner of our nation."
               </blockquote>
               <div className="grid md:grid-cols-3 gap-8 text-center">
@@ -167,7 +167,7 @@ export default function About() {
                 <div>
                   <h3 className="font-semibold text-lg mb-2">Nationwide Reach</h3>
                   <p className="text-sm text-muted-foreground">
-                    From Nairobi to Mombasa, Kisumu to Eldoret - we deliver quality electronics everywhere.
+                    From Kampala to Fort, Masak to Jinja - we deliver quality electronics everywhere.
                   </p>
                 </div>
               </div>
@@ -216,7 +216,7 @@ export default function About() {
               <CardContent className="pt-6">
                 <Phone className="h-8 w-8 text-primary mx-auto mb-4" />
                 <h3 className="font-semibold mb-2">Call Us</h3>
-                <p className="text-muted-foreground">0742083075</p>
+                <p className="text-muted-foreground">0745187279</p>
                 <p className="text-sm text-muted-foreground">Mon - Sat: 8AM - 8PM</p>
               </CardContent>
             </Card>
@@ -225,7 +225,7 @@ export default function About() {
               <CardContent className="pt-6">
                 <Mail className="h-8 w-8 text-primary mx-auto mb-4" />
                 <h3 className="font-semibold mb-2">Email Us</h3>
-                <p className="text-muted-foreground">munirsebikaaka@mail.com</p>
+                <p className="text-muted-foreground">nakaakawaafuwa@gmail.com</p>
                 <p className="text-sm text-muted-foreground">We reply within 24 hours</p>
               </CardContent>
             </Card>
@@ -234,8 +234,8 @@ export default function About() {
               <CardContent className="pt-6">
                 <MapPin className="h-8 w-8 text-primary mx-auto mb-4" />
                 <h3 className="font-semibold mb-2">Visit Us</h3>
-                <p className="text-muted-foreground">Kenya Wide Delivery</p>
-                <p className="text-sm text-muted-foreground">Free delivery over KSh 50,000</p>
+                <p className="text-muted-foreground">Uganda Wide Delivery</p>
+                <p className="text-sm text-muted-foreground">Free delivery over Ugx 500,000</p>
               </CardContent>
             </Card>
           </div>

@@ -43,6 +43,26 @@ export function OrderManagement() {
 
   useEffect(() => {
     fetchOrders();
+
+    // Subscribe to real-time order updates
+    const channel = supabase
+      .channel('orders-changes')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'orders'
+        },
+        () => {
+          fetchOrders();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, []);
 
   const fetchOrders = async () => {
@@ -148,7 +168,8 @@ export function OrderManagement() {
         <CardDescription>View and manage customer orders</CardDescription>
       </CardHeader>
 
-      <CardContent>
+      <CardContent className="overflow-x-auto">
+        <div className="min-w-[800px]">
         <Table>
           <TableHeader>
             <TableRow>
@@ -229,6 +250,7 @@ export function OrderManagement() {
             ))}
           </TableBody>
         </Table>
+        </div>
 
         {/* Order Details Dialog */}
         <Dialog open={isViewDialogOpen} onOpenChange={setIsViewDialogOpen}>

@@ -326,7 +326,7 @@ export function ChatComponent({ productId, sellerId, onClose }: ChatComponentPro
   };
 
   const openWhatsApp = () => {
-    const phoneNumber = '+256700000000'; // Replace with actual seller phone
+    const phoneNumber = '+256745187279';
     const message = `Hi! I'm interested in your product: ${product?.name}`;
     const encodedMessage = encodeURIComponent(message);
     const whatsappUrl = `https://wa.me/${phoneNumber.replace('+', '')}?text=${encodedMessage}`;

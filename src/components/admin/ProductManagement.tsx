@@ -12,7 +12,8 @@ import { Badge } from '@/components/ui/badge';
 import { Plus, Edit, Trash2, Eye, Loader2 } from 'lucide-react';
 import { formatUGX } from '@/utils/formatUGX';
 import { toast } from 'sonner';
-import { ImageUpload } from './ImageUpload';
+import { ImageUploadField } from './ImageUploadField';
+import { Switch } from '@/components/ui/switch';
 
 interface Product {
   id: string;
@@ -54,7 +55,11 @@ export function ProductManagement() {
     status: 'active',
     sku: '',
     slug: '',
-    image_url: ''
+    image_urls: [] as string[],
+    is_featured: false,
+    is_flash_sale: false,
+    flash_sale_start: '',
+    flash_sale_end: ''
   });
 
   useEffect(() => {
@@ -65,8 +70,8 @@ export function ProductManagement() {
     try {
       const [productsRes, categoriesRes, brandsRes] = await Promise.all([
         supabase.from('products').select('*').order('created_at', { ascending: false }),
-        supabase.from('categories').select('id, name'),
-        supabase.from('brands').select('id, name')
+        supabase.from('categories').select('id, name').eq('is_active', true),
+        supabase.from('brands').select('id, name').eq('is_active', true)
       ]);
 
       if (productsRes.data) setProducts(productsRes.data);
@@ -98,17 +103,35 @@ export function ProductManagement() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
+    // Validation
+    if (!formData.name.trim()) {
+      toast.error('Product name is required');
+      return;
+    }
+    if (!formData.category_id) {
+      toast.error('Please select a category');
+      return;
+    }
+    if (!formData.price_ugx || parseInt(formData.price_ugx) <= 0) {
+      toast.error('Please enter a valid price');
+      return;
+    }
+    
     try {
       const productData = {
-        name: formData.name,
-        description: formData.description,
+        name: formData.name.trim(),
+        description: formData.description?.trim() || '',
         price_ugx: parseInt(formData.price_ugx),
         category_id: formData.category_id,
-        brand_id: formData.brand_id,
-        stock_quantity: parseInt(formData.stock_quantity),
+        brand_id: formData.brand_id || null,
+        stock_quantity: parseInt(formData.stock_quantity) || 0,
         status: formData.status,
-        sku: formData.sku,
-        slug: formData.slug || formData.name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')
+        sku: formData.sku?.trim() || '',
+        slug: formData.slug?.trim() || formData.name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, ''),
+        is_featured: formData.is_featured,
+        is_flash_sale: formData.is_flash_sale,
+        flash_sale_start: formData.flash_sale_start || null,
+        flash_sale_end: formData.flash_sale_end || null
       };
 
       let productId = editingProduct?.id;
@@ -151,13 +174,14 @@ export function ProductManagement() {
         toast.success('Product created successfully - now visible on homepage!');
       }
 
-      // Save product image if uploaded
-      if (formData.image_url && productId) {
-        await supabase.from('product_images').insert([{
+      // Save product images if uploaded
+      if (formData.image_urls.length > 0 && productId) {
+        const imageInserts = formData.image_urls.map((url, index) => ({
           product_id: productId,
-          image_url: formData.image_url,
-          sort_order: 0
-        }]);
+          image_url: url,
+          sort_order: index
+        }));
+        await supabase.from('product_images').insert(imageInserts);
       }
 
       setIsDialogOpen(false);
@@ -181,7 +205,11 @@ export function ProductManagement() {
       status: product.status,
       sku: product.sku || '',
       slug: product.slug || '',
-      image_url: ''
+      image_urls: [],
+      is_featured: (product as any).is_featured || false,
+      is_flash_sale: (product as any).is_flash_sale || false,
+      flash_sale_start: (product as any).flash_sale_start || '',
+      flash_sale_end: (product as any).flash_sale_end || ''
     });
     setIsDialogOpen(true);
   };
@@ -226,7 +254,11 @@ export function ProductManagement() {
       status: 'active',
       sku: '',
       slug: '',
-      image_url: ''
+      image_urls: [],
+      is_featured: false,
+      is_flash_sale: false,
+      flash_sale_start: '',
+      flash_sale_end: ''
     });
     setEditingProduct(null);
   };
@@ -264,7 +296,7 @@ export function ProductManagement() {
                 Add Product
               </Button>
             </DialogTrigger>
-            <DialogContent className="max-w-2xl">
+            <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
               <DialogHeader>
                 <DialogTitle>
                   {editingProduct ? 'Edit Product' : 'Add New Product'}
@@ -274,16 +306,14 @@ export function ProductManagement() {
                 </DialogDescription>
               </DialogHeader>
               
-              <form onSubmit={handleSubmit} className="space-y-4">
-                <div className="space-y-2">
-                  <Label>Product Image</Label>
-                  <ImageUpload
-                    onImagesUploaded={(urls) => setFormData(prev => ({ ...prev, image_url: urls[0] || '' }))}
-                  />
-                  {formData.image_url && (
-                    <p className="text-sm text-muted-foreground">Image uploaded successfully</p>
-                  )}
-                </div>
+              <form onSubmit={handleSubmit} className="space-y-4 pb-4">
+                <ImageUploadField
+                  productId={editingProduct?.id}
+                  currentImageUrls={formData.image_urls}
+                  onImagesUploaded={(urls) => setFormData(prev => ({ ...prev, image_urls: urls }))}
+                  label="Product Images"
+                  multiple={true}
+                />
 
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
@@ -400,6 +430,73 @@ export function ProductManagement() {
                       onChange={handleInputChange}
                       placeholder="product-slug"
                     />
+                  </div>
+                </div>
+
+                <div className="space-y-4 border-t pt-4">
+                  <h3 className="font-semibold text-sm">Product Display Settings</h3>
+                  
+                  <div className="flex items-center justify-between">
+                    <div className="space-y-0.5">
+                      <Label htmlFor="is_featured" className="cursor-pointer">
+                        Featured Product
+                      </Label>
+                      <p className="text-sm text-muted-foreground">
+                        Show in featured products section
+                      </p>
+                    </div>
+                    <Switch
+                      id="is_featured"
+                      checked={formData.is_featured}
+                      onCheckedChange={(checked) => 
+                        setFormData(prev => ({ ...prev, is_featured: checked }))
+                      }
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between">
+                      <div className="space-y-0.5">
+                        <Label htmlFor="is_flash_sale" className="cursor-pointer">
+                          Flash Sale
+                        </Label>
+                        <p className="text-sm text-muted-foreground">
+                          Show in flash sale section with time limit
+                        </p>
+                      </div>
+                      <Switch
+                        id="is_flash_sale"
+                        checked={formData.is_flash_sale}
+                        onCheckedChange={(checked) => 
+                          setFormData(prev => ({ ...prev, is_flash_sale: checked }))
+                        }
+                      />
+                    </div>
+
+                    {formData.is_flash_sale && (
+                      <div className="grid grid-cols-2 gap-4 mt-2">
+                        <div className="space-y-2">
+                          <Label htmlFor="flash_sale_start">Start Date & Time</Label>
+                          <Input
+                            id="flash_sale_start"
+                            name="flash_sale_start"
+                            type="datetime-local"
+                            value={formData.flash_sale_start}
+                            onChange={handleInputChange}
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="flash_sale_end">End Date & Time</Label>
+                          <Input
+                            id="flash_sale_end"
+                            name="flash_sale_end"
+                            type="datetime-local"
+                            value={formData.flash_sale_end}
+                            onChange={handleInputChange}
+                          />
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </div>
 
