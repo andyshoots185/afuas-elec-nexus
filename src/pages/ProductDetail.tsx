@@ -25,6 +25,9 @@ import { useCart } from "@/contexts/CartContext";
 import { useWishlist } from "@/contexts/WishlistContext";
 import { useToast } from "@/hooks/use-toast";
 import { getProductById, products } from "@/data/products";
+import { ChatComponent } from "@/components/chat/ChatComponent";
+import { useAuth } from "@/contexts/AuthContext";
+import { ReviewSection } from "@/components/product/ReviewSection";
 
 export default function ProductDetail() {
   const { id } = useParams<{ id: string }>();
@@ -39,6 +42,7 @@ export default function ProductDetail() {
     isInWishlist,
   } = useWishlist();
   const { toast } = useToast();
+  const { user } = useAuth();
 
   if (!product) {
     return (
@@ -359,12 +363,13 @@ export default function ProductDetail() {
         {/* Product Details Tabs */}
         <div className="mt-16">
           <Tabs defaultValue="specifications" className="w-full">
-            <TabsList className="grid w-full grid-cols-3">
+            <TabsList className="grid w-full grid-cols-4">
               <TabsTrigger value="specifications">Specifications</TabsTrigger>
               <TabsTrigger value="features">Features</TabsTrigger>
               <TabsTrigger value="reviews">
                 Reviews ({product.reviewCount})
               </TabsTrigger>
+              <TabsTrigger value="contact">Contact Seller</TabsTrigger>
             </TabsList>
 
             <TabsContent value="specifications" className="mt-6">
@@ -410,100 +415,35 @@ export default function ProductDetail() {
             </TabsContent>
 
             <TabsContent value="reviews" className="mt-6">
-              <div className="grid lg:grid-cols-3 gap-8">
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Customer Reviews</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="text-center mb-6">
-                      <div className="text-4xl font-bold mb-2">
-                        {product.rating}
-                      </div>
-                      <div className="flex justify-center mb-2">
-                        {[1, 2, 3, 4, 5].map((star) => (
-                          <Star
-                            key={star}
-                            className={`h-5 w-5 ${
-                              star <= Math.floor(product.rating)
-                                ? "fill-rating text-rating"
-                                : "text-muted-foreground"
-                            }`}
-                          />
-                        ))}
-                      </div>
-                      <p className="text-muted-foreground">
-                        {product.reviewCount} reviews
+              <ReviewSection productId={product.id} />
+            </TabsContent>
+
+            <TabsContent value="contact" className="mt-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Contact Seller</CardTitle>
+                  <p className="text-sm text-muted-foreground">
+                    Have questions about this product? Chat directly with the seller.
+                  </p>
+                </CardHeader>
+                <CardContent>
+                  {user ? (
+                    <ChatComponent 
+                      productId={product.id}
+                      sellerId="admin" // Replace with actual seller ID from product
+                    />
+                  ) : (
+                    <div className="text-center py-8">
+                      <p className="text-muted-foreground mb-4">
+                        Please sign in to contact the seller
                       </p>
+                      <Button asChild>
+                        <Link to="/auth">Sign In</Link>
+                      </Button>
                     </div>
-
-                    <div className="space-y-3">
-                      {[5, 4, 3, 2, 1].map((rating) => (
-                        <div key={rating} className="flex items-center gap-2">
-                          <span className="text-sm">{rating}</span>
-                          <Star className="h-3 w-3 text-rating" />
-                          <Progress
-                            value={rating === 5 ? 70 : rating === 4 ? 25 : 5}
-                            className="flex-1"
-                          />
-                          <span className="text-xs text-muted-foreground w-8">
-                            {rating === 5 ? "70%" : rating === 4 ? "25%" : "5%"}
-                          </span>
-                        </div>
-                      ))}
-                    </div>
-                  </CardContent>
-                </Card>
-
-                <div className="lg:col-span-2 space-y-6">
-                  {reviews.map((review) => (
-                    <Card key={review.id}>
-                      <CardContent className="pt-6">
-                        <div className="flex items-start gap-4">
-                          <Avatar>
-                            <AvatarFallback>
-                              {review.name
-                                .split(" ")
-                                .map((n) => n[0])
-                                .join("")}
-                            </AvatarFallback>
-                          </Avatar>
-                          <div className="flex-1">
-                            <div className="flex items-center gap-2 mb-2">
-                              <span className="font-medium">{review.name}</span>
-                              {review.verified && (
-                                <Badge variant="secondary" className="text-xs">
-                                  Verified Purchase
-                                </Badge>
-                              )}
-                            </div>
-                            <div className="flex items-center gap-2 mb-3">
-                              <div className="flex">
-                                {[1, 2, 3, 4, 5].map((star) => (
-                                  <Star
-                                    key={star}
-                                    className={`h-4 w-4 ${
-                                      star <= review.rating
-                                        ? "fill-rating text-rating"
-                                        : "text-muted-foreground"
-                                    }`}
-                                  />
-                                ))}
-                              </div>
-                              <span className="text-sm text-muted-foreground">
-                                {review.date}
-                              </span>
-                            </div>
-                            <p className="text-muted-foreground">
-                              {review.comment}
-                            </p>
-                          </div>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  ))}
-                </div>
-              </div>
+                  )}
+                </CardContent>
+              </Card>
             </TabsContent>
           </Tabs>
         </div>

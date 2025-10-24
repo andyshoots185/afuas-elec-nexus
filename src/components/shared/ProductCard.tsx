@@ -1,10 +1,11 @@
-import { Link } from 'react-router-dom';
-import { Heart, ShoppingCart, Star, Eye } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
+import { Heart, ShoppingCart, Star, Eye, MessageCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import { useCart } from '@/contexts/CartContext';
 import { useWishlist } from '@/contexts/WishlistContext';
+import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 import { formatUGX } from '@/utils/formatUGX';
 import type { Product } from '@/data/products';
@@ -17,11 +18,23 @@ interface ProductCardProps {
 export function ProductCard({ product, className = '' }: ProductCardProps) {
   const { addItem } = useCart();
   const { addItem: addToWishlist, removeItem: removeFromWishlist, isInWishlist } = useWishlist();
+  const { user } = useAuth();
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
+    
+    if (!user) {
+      toast({
+        title: 'Login Required',
+        description: 'Please login to add items to your cart.',
+        variant: 'destructive',
+      });
+      navigate('/auth');
+      return;
+    }
     
     if (!product.inStock) {
       toast({
@@ -52,6 +65,16 @@ export function ProductCard({ product, className = '' }: ProductCardProps) {
     e.preventDefault();
     e.stopPropagation();
 
+    if (!user) {
+      toast({
+        title: 'Login Required',
+        description: 'Please login to manage your wishlist.',
+        variant: 'destructive',
+      });
+      navigate('/auth');
+      return;
+    }
+
     if (isInWishlist(product.id)) {
       removeFromWishlist(product.id);
       toast({
@@ -73,6 +96,23 @@ export function ProductCard({ product, className = '' }: ProductCardProps) {
         description: `${product.name} has been added to your wishlist.`,
       });
     }
+  };
+
+  const handleChatClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    if (!user) {
+      toast({
+        title: 'Login Required',
+        description: 'Please login to chat about products.',
+        variant: 'destructive',
+      });
+      navigate('/auth');
+      return;
+    }
+
+    navigate(`/messages?product=${product.id}`);
   };
 
   // Use centralized UGX formatter
@@ -127,6 +167,14 @@ export function ProductCard({ product, className = '' }: ProductCardProps) {
                 <Heart 
                   className={`h-3 w-3 ${isInWishlist(product.id) ? 'fill-current text-red-500' : ''}`} 
                 />
+              </Button>
+              <Button
+                variant="secondary"
+                size="icon"
+                className="h-6 w-6 rounded-full"
+                onClick={handleChatClick}
+              >
+                <MessageCircle className="h-3 w-3" />
               </Button>
               <Button
                 variant="secondary"

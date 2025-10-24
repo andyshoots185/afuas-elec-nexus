@@ -29,6 +29,9 @@ import {
 import { useCart } from "@/contexts/CartContext";
 import { useWishlist } from "@/contexts/WishlistContext";
 import { categories } from "@/data/products";
+import { useAuth } from "@/contexts/AuthContext";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 
 export function Header() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -36,12 +39,32 @@ export function Header() {
   const navigate = useNavigate();
   const { itemCount } = useCart();
   const { items: wishlistItems } = useWishlist();
+  const { user, isAdmin } = useAuth();
+  const { toast } = useToast();
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchQuery.trim()) {
       navigate(`/shop?search=${encodeURIComponent(searchQuery.trim())}`);
       setSearchQuery("");
+    }
+  };
+
+  const handleSignOut = async () => {
+    try {
+      await supabase.auth.signOut();
+      toast({
+        title: "Signed out",
+        description: "You have been successfully signed out.",
+      });
+      navigate("/");
+    } catch (error) {
+      console.error("Error signing out:", error);
+      toast({
+        title: "Error",
+        description: "Failed to sign out. Please try again.",
+        variant: "destructive",
+      });
     }
   };
 
@@ -74,10 +97,10 @@ export function Header() {
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-2">
             <div className="bg-primary text-primary-foreground px-3 py-2 rounded-lg font-bold text-xl">
-              Afua
+              Afuwah
             </div>
             <div className="hidden sm:block">
-              <div className="font-semibold text-lg">Electronics</div>
+              <div className="font-semibold text-lg">Afuwah's Electronics</div>
               <div className="text-xs text-muted-foreground">
                 Quality You Can Trust
               </div>
@@ -149,7 +172,7 @@ export function Header() {
             </Link>
 
             {/* Cart */}
-            {/* <Link to="/cart">
+            <Link to="/cart" className="hidden md:block">
               <Button variant="ghost" size="icon" className="relative">
                 <ShoppingCart className="h-5 w-5" />
                 {itemCount > 0 && (
@@ -158,7 +181,7 @@ export function Header() {
                   </Badge>
                 )}
               </Button>
-            </Link> */}
+            </Link>
 
             {/* User Account */}
             <DropdownMenu>
@@ -167,20 +190,50 @@ export function Header() {
                   <User className="h-5 w-5" />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-48">
-                <DropdownMenuItem asChild>
-                  <Link to="/account/login">Sign In</Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <Link to="/account/register">Create Account</Link>
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem asChild>
-                  <Link to="/account">My Account</Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <Link to="/account/orders">Orders</Link>
-                </DropdownMenuItem>
+              <DropdownMenuContent align="end" className="w-56">
+                {user ? (
+                  <>
+                    <div className="px-2 py-1.5 text-sm font-medium">
+                      {user.email}
+                    </div>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem asChild>
+                      <Link to="/profile">My Profile</Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <Link to="/orders">My Orders</Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <Link to="/wishlist">My Wishlist</Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <Link to="/messages">Messages</Link>
+                    </DropdownMenuItem>
+                    {isAdmin && (
+                      <>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem asChild>
+                          <Link to="/admin" className="text-primary font-medium">
+                            Admin Dashboard
+                          </Link>
+                        </DropdownMenuItem>
+                      </>
+                    )}
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem onClick={handleSignOut} className="text-destructive">
+                      Sign Out
+                    </DropdownMenuItem>
+                  </>
+                ) : (
+                  <>
+                    <DropdownMenuItem asChild>
+                      <Link to="/auth">Sign In</Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <Link to="/auth">Create Account</Link>
+                    </DropdownMenuItem>
+                  </>
+                )}
               </DropdownMenuContent>
             </DropdownMenu>
 

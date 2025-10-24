@@ -2,10 +2,12 @@ import { Link, useLocation } from "react-router-dom";
 import { Home, Grid3X3, MessageCircle, ShoppingCart, User } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useCart } from "@/contexts/CartContext";
+import { useAuth } from "@/contexts/AuthContext";
 
 export function BottomNavMobile() {
   const location = useLocation();
   const { itemCount } = useCart();
+  const { user } = useAuth();
 
   const navItems = [
     {
@@ -26,8 +28,8 @@ export function BottomNavMobile() {
       id: "messages",
       label: "Messages",
       icon: MessageCircle,
-      path: "/Massages",
-      isActive: location.pathname === "/Massages",
+      path: "/messages",
+      isActive: location.pathname === "/messages",
       badge: 0, // Placeholder for message count
     },
     {
@@ -42,10 +44,11 @@ export function BottomNavMobile() {
       id: "profile",
       label: "Profile",
       icon: User,
-      path: "/User Account",
+      path: user ? "/profile" : "/auth",
       isActive:
-        location.pathname === "/User Account" ||
-        location.pathname === "/wishlist",
+        location.pathname === "/profile" ||
+        location.pathname === "/wishlist" ||
+        location.pathname === "/auth",
     },
   ];
 

@@ -81,7 +81,7 @@ export function Footer() {
                 <li><Link to="/terms" className="hover:text-primary transition-colors">Terms & Conditions</Link></li>
                 <li><Link to="/privacy" className="hover:text-primary transition-colors">Privacy Policy</Link></li>
                 <li><Link to="/contact" className="hover:text-primary transition-colors">Contact Us</Link></li>
-                <li><Link to="/about" className="hover:text-primary transition-colors">About Afua's Electronics</Link></li>
+                <li><Link to="/about" className="hover:text-primary transition-colors">About Afuwah's Electronics</Link></li>
               </ul>
             </div>
 
@@ -130,7 +130,7 @@ export function Footer() {
         <div className="container mx-auto container-padding">
           <div className="flex flex-col md:flex-row justify-between items-center text-sm">
             <div className="mb-4 md:mb-0 opacity-80">
-              © {new Date().getFullYear()} Afua's Electronics. All rights reserved.
+              © {new Date().getFullYear()} Afuwah's Electronics. All rights reserved.
             </div>
             <div className="flex items-center space-x-6">
               <span className="opacity-80">We Accept:</span>
