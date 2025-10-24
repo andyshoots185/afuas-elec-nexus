@@ -3,13 +3,11 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { AuthProvider } from "@/contexts/AuthContext";
 import { CartProvider } from "@/contexts/CartContext";
 import { WishlistProvider } from "@/contexts/WishlistContext";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { BottomNavMobile } from "@/components/mobile/BottomNavMobile";
-import { useSessionPersistence } from "@/hooks/useSessionPersistence";
 
 // import AllCategories from "./pages/AllCategories";
 // import CategoryPage from "./pages/CategoryPage";
@@ -24,87 +22,44 @@ import Contact from "./pages/Contact";
 import Wishlist from "./pages/Wishlist";
 import Help from "./pages/Help";
 import NotFound from "./pages/NotFound";
-import Auth from "./pages/Auth";
-import Profile from "./pages/Profile";
-import AdminDashboard from "./pages/AdminDashboard";
-import Messages from "./pages/Messages";
-import MyOrders from "./pages/MyOrders";
-import { ProtectedRoute } from "./components/auth/ProtectedRoute";
-import { AdminRoute } from "./components/auth/AdminRoute";
 
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      staleTime: 1000 * 60 * 5, // 5 minutes
-      gcTime: 1000 * 60 * 30, // 30 minutes
-      refetchOnWindowFocus: false,
-      retry: 1,
-    },
-  },
-});
-
-function AppContent() {
-  useSessionPersistence();
-  
-  return (
-    <>
-      <Routes>
-        {/* Admin routes without header/footer */}
-        <Route path="/admin/*" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
-        
-        {/* Regular routes with header/footer */}
-        <Route path="/" element={<Home />} />
-        <Route path="/shop" element={<Shop />} />
-        <Route path="/product/:id" element={<ProductDetail />} />
-        <Route path="/cart" element={<ProtectedRoute><Cart /></ProtectedRoute>} />
-        <Route path="/checkout" element={<ProtectedRoute><Checkout /></ProtectedRoute>} />
-        <Route path="/wishlist" element={<ProtectedRoute><Wishlist /></ProtectedRoute>} />
-        <Route path="/about" element={<About />} />
-        <Route path="/contact" element={<Contact />} />
-        <Route path="/help" element={<Help />} />
-        <Route path="/auth" element={<Auth />} />
-        <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
-        <Route path="/my-orders" element={<ProtectedRoute><MyOrders /></ProtectedRoute>} />
-        <Route path="/messages" element={<ProtectedRoute><Messages /></ProtectedRoute>} />
-        <Route path="*" element={<NotFound />} />
-      </Routes>
-    </>
-  );
-}
-
-function Layout() {
-  return (
-    <div className="flex flex-col min-h-screen">
-      <Header />
-      <main className="flex-1 pb-16 md:pb-0">
-        <AppContent />
-      </main>
-      <Footer />
-      <BottomNavMobile />
-    </div>
-  );
-}
+const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
-      <AuthProvider>
-        <CartProvider>
-          <WishlistProvider>
-            <BrowserRouter>
-              <Routes>
-                {/* Admin routes without header/footer */}
-                <Route path="/admin/*" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
-                
-                {/* All other routes with header/footer layout */}
-                <Route path="*" element={<Layout />} />
-              </Routes>
-              <Toaster />
-              <Sonner />
-            </BrowserRouter>
-          </WishlistProvider>
-        </CartProvider>
-      </AuthProvider>
+      <CartProvider>
+        <WishlistProvider>
+          <BrowserRouter>
+            <div className="flex flex-col min-h-screen">
+              <Header />
+              <main className="flex-1 pb-16 md:pb-0">
+                <Routes>
+                  <Route path="/" element={<Home />} />
+                  <Route path="/shop" element={<Shop />} />
+                  <Route path="/product/:id" element={<ProductDetail />} />
+                  <Route path="/cart" element={<Cart />} />
+                  <Route path="/checkout" element={<Checkout />} />
+                  <Route path="/wishlist" element={<Wishlist />} />
+                  <Route path="/about" element={<About />} />
+                  <Route path="/contact" element={<Contact />} />
+                  <Route path="/help" element={<Help />} />
+                  {/* <Route path="/categories" element={<AllCategories />} />
+                  <Route path="/shop/:category" element={<CategoryPage />} /> */}
+                  {/* <Route path="/shop/:category" element={<CategoryPage />} /> */}
+
+                  {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+                  <Route path="*" element={<NotFound />} />
+                </Routes>
+              </main>
+              <Footer />
+              <BottomNavMobile />
+            </div>
+            <Toaster />
+            <Sonner />
+          </BrowserRouter>
+        </WishlistProvider>
+      </CartProvider>
     </TooltipProvider>
   </QueryClientProvider>
 );

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { ArrowLeft, CheckCircle, CreditCard, Smartphone } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -10,15 +10,10 @@ import { Separator } from "@/components/ui/separator";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useCart } from "@/contexts/CartContext";
 import { useToast } from "@/hooks/use-toast";
-import { useAuth } from "@/contexts/AuthContext";
-import { supabase } from "@/integrations/supabase/client";
-import { formatUGX } from "@/utils/formatUGX";
 
 export default function Checkout() {
   const { items, total, itemCount, clearCart } = useCart();
   const { toast } = useToast();
-  const { user } = useAuth();
-  const navigate = useNavigate();
   const [paymentMethod, setPaymentMethod] = useState("mpesa");
   const [isProcessing, setIsProcessing] = useState(false);
   const [orderComplete, setOrderComplete] = useState(false);
@@ -35,7 +30,7 @@ export default function Checkout() {
   });
 
   const subtotal = total;
-  const shipping = subtotal >= 500000 ? 0 : 20000;
+  const shipping = subtotal >= 50000 ? 0 : 2000;
   const finalTotal = subtotal + shipping;
 
   const handleInputChange = (field: string, value: string) => {
@@ -56,7 +51,7 @@ export default function Checkout() {
       "county",
     ];
     const missingFields = requiredFields.filter(
-      (field) => !shippingInfo[field as keyof typeof shippingInfo]
+      (field) => !shippingInfo[field]
     );
 
     if (missingFields.length > 0) {
@@ -68,130 +63,19 @@ export default function Checkout() {
       return;
     }
 
-    // Validate phone number for mobile money
-    let phoneE164 = shippingInfo.phone.replace(/\s/g, '');
-    
-    // Convert to E.164 format for Uganda
-    if (!/^\+/.test(phoneE164)) {
-      // Remove leading 0 if present
-      if (phoneE164.startsWith('0')) {
-        phoneE164 = phoneE164.substring(1);
-      }
-      // Add Uganda country code
-      phoneE164 = `+256${phoneE164}`;
-    }
-
-    // Validate E.164 format: +256 followed by 9 digits
-    if (!/^\+256[0-9]{9}$/.test(phoneE164)) {
-      toast({
-        title: "Invalid Phone Number",
-        description: "Please enter a valid Ugandan phone number (e.g., 0700000000).",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    if (!user) {
-      toast({
-        title: "Authentication Required",
-        description: "Please sign in to complete your order.",
-        variant: "destructive",
-      });
-      navigate('/auth');
-      return;
-    }
-
     setIsProcessing(true);
 
-    try {
-      // Create order in database with E.164 phone number
-      const { data: order, error: orderError } = await supabase
-        .from('orders')
-        .insert([{
-          user_id: user.id,
-          subtotal_ugx: subtotal,
-          shipping_cost_ugx: shipping,
-          total_amount_ugx: finalTotal,
-          payment_method: paymentMethod,
-          payment_status: 'pending',
-          status: 'pending',
-          shipping_address: {
-            first_name: shippingInfo.firstName,
-            last_name: shippingInfo.lastName,
-            phone: phoneE164,
-            address_line_1: shippingInfo.address,
-            city: shippingInfo.city,
-            country: shippingInfo.county,
-            postal_code: shippingInfo.postalCode
-          } as any,
-          billing_address: {
-            first_name: shippingInfo.firstName,
-            last_name: shippingInfo.lastName,
-            phone: phoneE164,
-            address_line_1: shippingInfo.address,
-            city: shippingInfo.city,
-            country: shippingInfo.county,
-            postal_code: shippingInfo.postalCode
-          } as any
-        } as any])
-        .select()
-        .single();
-
-      if (orderError) throw orderError;
-
-      // Create order items
-      const orderItems = items.map(item => ({
-        order_id: order.id,
-        product_id: item.id,
-        product_name: item.name,
-        product_sku: item.id,
-        quantity: item.quantity,
-        unit_price_ugx: item.price,
-        total_price_ugx: item.price * item.quantity
-      }));
-
-      const { error: itemsError } = await supabase
-        .from('order_items')
-        .insert(orderItems);
-
-      if (itemsError) throw itemsError;
-
-      // Initiate payment based on method
-      if (paymentMethod === "mpesa" || paymentMethod === "airtel") {
-        toast({
-          title: "Payment Initiated",
-          description: `Please check your phone for the ${paymentMethod === "mpesa" ? "M-Pesa" : "Airtel Money"} payment prompt.`,
-        });
-        
-        // In a real implementation, you would call Flutterwave/Paystack API here
-        // For now, simulate a successful payment after 3 seconds
-        setTimeout(() => {
-          setIsProcessing(false);
-          setOrderComplete(true);
-          clearCart();
-
-          toast({
-            title: "Order Placed Successfully!",
-            description: "You will receive a confirmation email shortly.",
-          });
-        }, 3000);
-      } else {
-        // For card payments, redirect to Stripe (to be implemented)
-        toast({
-          title: "Payment Method",
-          description: "Card payments coming soon!",
-        });
-        setIsProcessing(false);
-      }
-    } catch (error: any) {
-      console.error('Error creating order:', error);
-      toast({
-        title: "Order Failed",
-        description: error.message || "Failed to create order. Please try again.",
-        variant: "destructive",
-      });
+    // Simulate order processing
+    setTimeout(() => {
       setIsProcessing(false);
-    }
+      setOrderComplete(true);
+      clearCart();
+
+      toast({
+        title: "Order Placed Successfully!",
+        description: "You will receive a confirmation email shortly.",
+      });
+    }, 2000);
   };
 
   if (items.length === 0 && !orderComplete) {
@@ -228,7 +112,7 @@ export default function Checkout() {
                 <Link to="/shop">Continue Shopping</Link>
               </Button>
               <Button asChild variant="outline" className="w-full">
-                <Link to="/my-orders">View My Orders</Link>
+                <Link to="/account/orders">View My Orders</Link>
               </Button>
             </div>
           </div>
@@ -268,13 +152,13 @@ export default function Checkout() {
         <form onSubmit={handleSubmitOrder}>
           <div className="grid lg:grid-cols-3 gap-8">
             {/* Shipping Information */}
-          <div className="lg:col-span-2 space-y-6 max-w-2xl">
-            <Card>
-              <CardHeader>
-                <CardTitle>Shipping Information</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="lg:col-span-2 space-y-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Shipping Information</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="grid grid-cols-2 gap-4">
                     <div>
                       <Label htmlFor="firstName">First Name *</Label>
                       <Input
@@ -313,7 +197,7 @@ export default function Checkout() {
                   </div>
 
                   <div>
-                    <Label htmlFor="phone">Mobile Number * (for payment confirmation)</Label>
+                    <Label htmlFor="phone">Phone Number *</Label>
                     <Input
                       id="phone"
                       type="tel"
@@ -324,9 +208,6 @@ export default function Checkout() {
                       }
                       required
                     />
-                    <p className="text-xs text-muted-foreground mt-1">
-                      You'll receive a payment prompt on this number
-                    </p>
                   </div>
 
                   <div>
@@ -342,9 +223,9 @@ export default function Checkout() {
                     />
                   </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div>
-                    <Label htmlFor="city">City/Town *</Label>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <Label htmlFor="city">City/Town *</Label>
                       <Input
                         id="city"
                         value={shippingInfo.city}
@@ -389,24 +270,23 @@ export default function Checkout() {
                 <CardContent>
                   <RadioGroup
                     value={paymentMethod}
-                    onValueChange={setPaymentMethod}
-                    className="space-y-3">
-                    <div className="flex items-center space-x-2 p-3 sm:p-4 border border-border rounded-lg hover:bg-muted/50 transition-colors">
+                    onValueChange={setPaymentMethod}>
+                    <div className="flex items-center space-x-2 p-4 border border-border rounded-lg">
                       <RadioGroupItem value="mpesa" id="mpesa" />
                       <Label
                         htmlFor="mpesa"
                         className="flex items-center gap-3 cursor-pointer flex-1">
                         <Smartphone className="h-5 w-5 text-green-600" />
                         <div>
-                          <div className="font-medium">MTN Mobile Money</div>
+                          <div className="font-medium">M-Pesa</div>
                           <div className="text-sm text-muted-foreground">
-                            Instant STK push payment
+                            Pay with your M-Pesa mobile money
                           </div>
                         </div>
                       </Label>
                     </div>
 
-                    <div className="flex items-center space-x-2 p-4 border border-border rounded-lg hover:bg-muted/50 transition-colors">
+                    <div className="flex items-center space-x-2 p-4 border border-border rounded-lg">
                       <RadioGroupItem value="airtel" id="airtel" />
                       <Label
                         htmlFor="airtel"
@@ -415,7 +295,7 @@ export default function Checkout() {
                         <div>
                           <div className="font-medium">Airtel Money</div>
                           <div className="text-sm text-muted-foreground">
-                            Instant STK push payment
+                            Pay with Airtel Money
                           </div>
                         </div>
                       </Label>
@@ -428,9 +308,9 @@ export default function Checkout() {
                         className="flex items-center gap-3 cursor-not-allowed flex-1">
                         <CreditCard className="h-5 w-5" />
                         <div>
-                          <div className="font-medium">Credit/Debit Card (Stripe)</div>
+                          <div className="font-medium">Credit/Debit Card</div>
                           <div className="text-sm text-muted-foreground">
-                            Coming soon - International payments
+                            Coming soon
                           </div>
                         </div>
                       </Label>
@@ -440,13 +320,11 @@ export default function Checkout() {
                   {(paymentMethod === "mpesa" ||
                     paymentMethod === "airtel") && (
                     <div className="mt-4 p-4 bg-muted rounded-lg">
-                      <p className="text-sm font-medium mb-2">How it works:</p>
-                      <ol className="text-sm list-decimal list-inside space-y-1">
-                        <li>Click "Place Order" below</li>
-                        <li>You'll receive a payment prompt on your phone</li>
-                        <li>Enter your PIN to complete the payment</li>
-                        <li>Order confirmed automatically!</li>
-                      </ol>
+                      <p className="text-sm">
+                        After placing your order, you will receive a payment
+                        prompt on your phone. Complete the payment to confirm
+                        your order.
+                      </p>
                     </div>
                   )}
                 </CardContent>
@@ -476,7 +354,7 @@ export default function Checkout() {
                 </CardHeader>
                 <CardContent className="space-y-4">
                   {/* Order Items */}
-                  <div className="space-y-3 max-h-64 overflow-y-auto">
+                  <div className="space-y-3">
                     {items.map((item) => (
                       <div key={item.id} className="flex gap-3">
                         <div className="w-12 h-12 bg-muted rounded-md overflow-hidden flex-shrink-0">
@@ -491,11 +369,12 @@ export default function Checkout() {
                             {item.name}
                           </div>
                           <div className="text-sm text-muted-foreground">
-                            Qty: {item.quantity} × {formatUGX(item.price)}
+                            Qty: {item.quantity} × UGX{" "}
+                            {item.price.toLocaleString()}
                           </div>
                         </div>
                         <div className="text-sm font-medium">
-                          {formatUGX(item.price * item.quantity)}
+                          UGX {(item.price * item.quantity).toLocaleString()}
                         </div>
                       </div>
                     ))}
@@ -507,7 +386,7 @@ export default function Checkout() {
                   <div className="space-y-2">
                     <div className="flex justify-between">
                       <span>Subtotal ({itemCount} items)</span>
-                      <span>{formatUGX(subtotal)}</span>
+                      <span>UGX {subtotal.toLocaleString()}</span>
                     </div>
 
                     <div className="flex justify-between">
@@ -516,7 +395,7 @@ export default function Checkout() {
                         {shipping === 0 ? (
                           <span className="text-success">Free</span>
                         ) : (
-                          formatUGX(shipping)
+                          `KSh ${shipping.toLocaleString()}`
                         )}
                       </span>
                     </div>
@@ -525,7 +404,7 @@ export default function Checkout() {
 
                     <div className="flex justify-between font-semibold text-lg">
                       <span>Total</span>
-                      <span>{formatUGX(finalTotal)}</span>
+                      <span>UGX {finalTotal.toLocaleString()}</span>
                     </div>
                   </div>
 
@@ -536,12 +415,8 @@ export default function Checkout() {
                     disabled={isProcessing}>
                     {isProcessing
                       ? "Processing..."
-                      : `Place Order - ${formatUGX(finalTotal)}`}
+                      : `Place Order - UGX ${finalTotal.toLocaleString()}`}
                   </Button>
-
-                  <p className="text-xs text-center text-muted-foreground">
-                    Secure payment processing
-                  </p>
                 </CardContent>
               </Card>
             </div>

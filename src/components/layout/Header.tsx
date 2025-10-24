@@ -29,9 +29,6 @@ import {
 import { useCart } from "@/contexts/CartContext";
 import { useWishlist } from "@/contexts/WishlistContext";
 import { categories } from "@/data/products";
-import { useAuth } from "@/contexts/AuthContext";
-import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "@/hooks/use-toast";
 
 export function Header() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -39,31 +36,12 @@ export function Header() {
   const navigate = useNavigate();
   const { itemCount } = useCart();
   const { items: wishlistItems } = useWishlist();
-  const { user, isAdmin } = useAuth();
-  const { toast } = useToast();
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchQuery.trim()) {
       navigate(`/shop?search=${encodeURIComponent(searchQuery.trim())}`);
       setSearchQuery("");
-    }
-  };
-
-  const handleSignOut = async () => {
-    try {
-      setMobileMenuOpen(false);
-      await supabase.auth.signOut();
-      localStorage.clear();
-      sessionStorage.clear();
-      toast({
-        title: "Signed out",
-        description: "You've been signed out successfully",
-      });
-      window.location.href = "/";
-    } catch (error) {
-      console.error("Sign out error:", error);
-      window.location.href = "/";
     }
   };
 
@@ -76,7 +54,7 @@ export function Header() {
             <div className="flex items-center space-x-4">
               <div className="flex items-center space-x-1">
                 <Phone className="h-3 w-3" />
-                <span>0745187279</span>
+                <span>0742083075</span>
               </div>
               <div className="hidden sm:flex items-center space-x-1">
                 <MapPin className="h-3 w-3" />
@@ -84,7 +62,7 @@ export function Header() {
               </div>
             </div>
             <div className="hidden md:block">
-              <span>Free delivery on orders over UGX 500,000</span>
+              <span>Free delivery on orders over UGX 200,000</span>
             </div>
           </div>
         </div>
@@ -96,10 +74,10 @@ export function Header() {
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-2">
             <div className="bg-primary text-primary-foreground px-3 py-2 rounded-lg font-bold text-xl">
-              Afuwah
+              Afua
             </div>
             <div className="hidden sm:block">
-              <div className="font-semibold text-lg">Afuwah's Electronics</div>
+              <div className="font-semibold text-lg">Electronics</div>
               <div className="text-xs text-muted-foreground">
                 Quality You Can Trust
               </div>
@@ -171,7 +149,7 @@ export function Header() {
             </Link>
 
             {/* Cart */}
-            <Link to="/cart" className="hidden md:block">
+            {/* <Link to="/cart">
               <Button variant="ghost" size="icon" className="relative">
                 <ShoppingCart className="h-5 w-5" />
                 {itemCount > 0 && (
@@ -180,7 +158,7 @@ export function Header() {
                   </Badge>
                 )}
               </Button>
-            </Link>
+            </Link> */}
 
             {/* User Account */}
             <DropdownMenu>
@@ -189,50 +167,20 @@ export function Header() {
                   <User className="h-5 w-5" />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-56 bg-background border shadow-lg z-50">
-                {user ? (
-                  <>
-                    <div className="px-2 py-1.5 text-sm font-medium truncate">
-                      {user.email}
-                    </div>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem asChild>
-                      <Link to="/profile" className="cursor-pointer">My Profile</Link>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem asChild>
-                      <Link to="/my-orders" className="cursor-pointer">My Orders</Link>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem asChild>
-                      <Link to="/wishlist" className="cursor-pointer">My Wishlist</Link>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem asChild>
-                      <Link to="/messages" className="cursor-pointer">Messages</Link>
-                    </DropdownMenuItem>
-                    {isAdmin && (
-                      <>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem asChild className="bg-primary/10">
-                          <Link to="/admin" className="text-primary font-medium cursor-pointer">
-                            Admin Dashboard
-                          </Link>
-                        </DropdownMenuItem>
-                      </>
-                    )}
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem onClick={handleSignOut} className="text-destructive cursor-pointer">
-                      Sign Out
-                    </DropdownMenuItem>
-                  </>
-                ) : (
-                  <>
-                    <DropdownMenuItem asChild>
-                      <Link to="/auth" className="cursor-pointer">Sign In</Link>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem asChild>
-                      <Link to="/auth" className="cursor-pointer">Create Account</Link>
-                    </DropdownMenuItem>
-                  </>
-                )}
+              <DropdownMenuContent align="end" className="w-48">
+                <DropdownMenuItem asChild>
+                  <Link to="/account/login">Sign In</Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link to="/account/register">Create Account</Link>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem asChild>
+                  <Link to="/account">My Account</Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link to="/account/orders">Orders</Link>
+                </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
 

@@ -71,42 +71,6 @@ export type Database = {
         }
         Relationships: []
       }
-      admin_logs: {
-        Row: {
-          action: string
-          admin_id: string
-          created_at: string
-          details: Json | null
-          id: string
-          ip_address: unknown | null
-          resource_id: string | null
-          resource_type: string
-          user_agent: string | null
-        }
-        Insert: {
-          action: string
-          admin_id: string
-          created_at?: string
-          details?: Json | null
-          id?: string
-          ip_address?: unknown | null
-          resource_id?: string | null
-          resource_type: string
-          user_agent?: string | null
-        }
-        Update: {
-          action?: string
-          admin_id?: string
-          created_at?: string
-          details?: Json | null
-          id?: string
-          ip_address?: unknown | null
-          resource_id?: string | null
-          resource_type?: string
-          user_agent?: string | null
-        }
-        Relationships: []
-      }
       admin_roles: {
         Row: {
           created_at: string
@@ -219,8 +183,6 @@ export type Database = {
         Row: {
           created_at: string
           description: string | null
-          featured_category: boolean | null
-          flash_sale_category: boolean | null
           id: string
           image_url: string | null
           is_active: boolean | null
@@ -233,8 +195,6 @@ export type Database = {
         Insert: {
           created_at?: string
           description?: string | null
-          featured_category?: boolean | null
-          flash_sale_category?: boolean | null
           id?: string
           image_url?: string | null
           is_active?: boolean | null
@@ -247,8 +207,6 @@ export type Database = {
         Update: {
           created_at?: string
           description?: string | null
-          featured_category?: boolean | null
-          flash_sale_category?: boolean | null
           id?: string
           image_url?: string | null
           is_active?: boolean | null
@@ -267,119 +225,6 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
-      }
-      conversations: {
-        Row: {
-          buyer_id: string
-          created_at: string
-          id: string
-          product_id: string
-          seller_id: string | null
-          status: string | null
-          updated_at: string
-        }
-        Insert: {
-          buyer_id: string
-          created_at?: string
-          id?: string
-          product_id: string
-          seller_id?: string | null
-          status?: string | null
-          updated_at?: string
-        }
-        Update: {
-          buyer_id?: string
-          created_at?: string
-          id?: string
-          product_id?: string
-          seller_id?: string | null
-          status?: string | null
-          updated_at?: string
-        }
-        Relationships: []
-      }
-      messages: {
-        Row: {
-          content: string
-          conversation_id: string | null
-          created_at: string
-          id: string
-          is_read: boolean | null
-          message_type: string | null
-          product_id: string | null
-          read_at: string | null
-          receiver_id: string
-          sender_id: string
-          updated_at: string
-        }
-        Insert: {
-          content: string
-          conversation_id?: string | null
-          created_at?: string
-          id?: string
-          is_read?: boolean | null
-          message_type?: string | null
-          product_id?: string | null
-          read_at?: string | null
-          receiver_id: string
-          sender_id: string
-          updated_at?: string
-        }
-        Update: {
-          content?: string
-          conversation_id?: string | null
-          created_at?: string
-          id?: string
-          is_read?: boolean | null
-          message_type?: string | null
-          product_id?: string | null
-          read_at?: string | null
-          receiver_id?: string
-          sender_id?: string
-          updated_at?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "messages_product_id_fkey"
-            columns: ["product_id"]
-            isOneToOne: false
-            referencedRelation: "products"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      notifications: {
-        Row: {
-          admin_id: string | null
-          created_at: string | null
-          id: string
-          message: string
-          metadata: Json | null
-          read: boolean | null
-          type: string
-          updated_at: string | null
-        }
-        Insert: {
-          admin_id?: string | null
-          created_at?: string | null
-          id?: string
-          message: string
-          metadata?: Json | null
-          read?: boolean | null
-          type: string
-          updated_at?: string | null
-        }
-        Update: {
-          admin_id?: string | null
-          created_at?: string | null
-          id?: string
-          message?: string
-          metadata?: Json | null
-          read?: boolean | null
-          type?: string
-          updated_at?: string | null
-        }
-        Relationships: []
       }
       order_items: {
         Row: {
@@ -604,14 +449,10 @@ export type Database = {
           dimensions_height: number | null
           dimensions_length: number | null
           dimensions_width: number | null
-          flash_sale_end: string | null
-          flash_sale_start: string | null
           id: string
           is_featured: boolean | null
-          is_flash_sale: boolean | null
           meta_description: string | null
           meta_title: string | null
-          metadata: Json | null
           name: string
           price_ugx: number
           short_description: string | null
@@ -619,7 +460,6 @@ export type Database = {
           slug: string
           status: string | null
           stock_quantity: number | null
-          tags: string[] | null
           track_inventory: boolean | null
           updated_at: string
           weight: number | null
@@ -637,14 +477,10 @@ export type Database = {
           dimensions_height?: number | null
           dimensions_length?: number | null
           dimensions_width?: number | null
-          flash_sale_end?: string | null
-          flash_sale_start?: string | null
           id?: string
           is_featured?: boolean | null
-          is_flash_sale?: boolean | null
           meta_description?: string | null
           meta_title?: string | null
-          metadata?: Json | null
           name: string
           price_ugx: number
           short_description?: string | null
@@ -652,7 +488,6 @@ export type Database = {
           slug: string
           status?: string | null
           stock_quantity?: number | null
-          tags?: string[] | null
           track_inventory?: boolean | null
           updated_at?: string
           weight?: number | null
@@ -670,14 +505,10 @@ export type Database = {
           dimensions_height?: number | null
           dimensions_length?: number | null
           dimensions_width?: number | null
-          flash_sale_end?: string | null
-          flash_sale_start?: string | null
           id?: string
           is_featured?: boolean | null
-          is_flash_sale?: boolean | null
           meta_description?: string | null
           meta_title?: string | null
-          metadata?: Json | null
           name?: string
           price_ugx?: number
           short_description?: string | null
@@ -685,7 +516,6 @@ export type Database = {
           slug?: string
           status?: string | null
           stock_quantity?: number | null
-          tags?: string[] | null
           track_inventory?: boolean | null
           updated_at?: string
           weight?: number | null
@@ -715,10 +545,8 @@ export type Database = {
           first_name: string | null
           gender: string | null
           id: string
-          is_banned: boolean | null
           last_name: string | null
           phone: string | null
-          role: string | null
           updated_at: string
         }
         Insert: {
@@ -728,10 +556,8 @@ export type Database = {
           first_name?: string | null
           gender?: string | null
           id: string
-          is_banned?: boolean | null
           last_name?: string | null
           phone?: string | null
-          role?: string | null
           updated_at?: string
         }
         Update: {
@@ -741,10 +567,8 @@ export type Database = {
           first_name?: string | null
           gender?: string | null
           id?: string
-          is_banned?: boolean | null
           last_name?: string | null
           phone?: string | null
-          role?: string | null
           updated_at?: string
         }
         Relationships: []
@@ -866,30 +690,6 @@ export type Database = {
           },
         ]
       }
-      user_roles: {
-        Row: {
-          created_at: string
-          id: string
-          role: Database["public"]["Enums"]["app_role"]
-          updated_at: string
-          user_id: string
-        }
-        Insert: {
-          created_at?: string
-          id?: string
-          role?: Database["public"]["Enums"]["app_role"]
-          updated_at?: string
-          user_id: string
-        }
-        Update: {
-          created_at?: string
-          id?: string
-          role?: Database["public"]["Enums"]["app_role"]
-          updated_at?: string
-          user_id?: string
-        }
-        Relationships: []
-      }
       wishlist_items: {
         Row: {
           created_at: string
@@ -924,33 +724,13 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      add_admin_role_by_email: {
-        Args: { admin_email: string }
-        Returns: undefined
-      }
       generate_order_number: {
         Args: Record<PropertyKey, never>
         Returns: string
       }
-      has_role: {
-        Args: {
-          _role: Database["public"]["Enums"]["app_role"]
-          _user_id: string
-        }
-        Returns: boolean
-      }
-      log_admin_action: {
-        Args: {
-          p_action: string
-          p_details?: Json
-          p_resource_id?: string
-          p_resource_type: string
-        }
-        Returns: undefined
-      }
     }
     Enums: {
-      app_role: "admin" | "seller" | "customer"
+      [_ in never]: never
     }
     CompositeTypes: {
       [_ in never]: never
@@ -1077,8 +857,6 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {
-      app_role: ["admin", "seller", "customer"],
-    },
+    Enums: {},
   },
 } as const

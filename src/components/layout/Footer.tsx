@@ -81,7 +81,7 @@ export function Footer() {
                 <li><Link to="/terms" className="hover:text-primary transition-colors">Terms & Conditions</Link></li>
                 <li><Link to="/privacy" className="hover:text-primary transition-colors">Privacy Policy</Link></li>
                 <li><Link to="/contact" className="hover:text-primary transition-colors">Contact Us</Link></li>
-                <li><Link to="/about" className="hover:text-primary transition-colors">About Afuwah's Electronics</Link></li>
+                <li><Link to="/about" className="hover:text-primary transition-colors">About Afua's Electronics</Link></li>
               </ul>
             </div>
 
@@ -92,22 +92,22 @@ export function Footer() {
                 <div className="flex items-start space-x-3">
                   <Phone className="h-4 w-4 mt-0.5 text-primary" />
                   <div>
-                    <div>0745187279</div>
+                    <div>0742083075</div>
                     <div className="text-xs opacity-70">Customer Support</div>
                   </div>
                 </div>
                 <div className="flex items-start space-x-3">
                   <Mail className="h-4 w-4 mt-0.5 text-primary" />
                   <div>
-                    <div>nakaakawaafuwa@gmail.com</div>
+                    <div>munirsebikaaka@mail.com</div>
                     <div className="text-xs opacity-70">General Inquiries</div>
                   </div>
                 </div>
                 <div className="flex items-start space-x-3">
                   <MapPin className="h-4 w-4 mt-0.5 text-primary" />
                   <div>
-                    <div>Uganda Wide Delivery</div>
-                    <div className="text-xs opacity-70">Free delivery on orders over Ugx 500,000</div>
+                    <div>Kenya Wide Delivery</div>
+                    <div className="text-xs opacity-70">Free delivery on orders over KSh 50,000</div>
                   </div>
                 </div>
                 <div className="flex items-start space-x-3">
@@ -130,14 +130,14 @@ export function Footer() {
         <div className="container mx-auto container-padding">
           <div className="flex flex-col md:flex-row justify-between items-center text-sm">
             <div className="mb-4 md:mb-0 opacity-80">
-              © {new Date().getFullYear()} Afuwah's Electronics. All rights reserved.
+              © {new Date().getFullYear()} Afua's Electronics. All rights reserved.
             </div>
             <div className="flex items-center space-x-6">
               <span className="opacity-80">We Accept:</span>
               <div className="flex items-center space-x-3 text-xs">
                 <div className="px-2 py-1 bg-muted rounded">MTN Money</div>
                 <div className="px-2 py-1 bg-muted rounded">Airtel Money</div>
-                <div className="px-2 py-1 bg-muted rounded">Cash</div>
+                <div className="px-2 py-1 bg-muted rounded">Cards</div>
               </div>
             </div>
           </div>

@@ -90,7 +90,7 @@ export default function Contact() {
               <CardContent className="pt-6">
                 <Phone className="h-8 w-8 text-primary mx-auto mb-4" />
                 <h3 className="font-semibold mb-2">Phone Support</h3>
-                <p className="text-muted-foreground mb-2">0745187279</p>
+                <p className="text-muted-foreground mb-2">0742083075</p>
                 <div className="text-sm text-muted-foreground">
                   <div>Mon - Sat: 8AM - 8PM</div>
                   <div>Sunday: 10AM - 6PM</div>
@@ -102,7 +102,7 @@ export default function Contact() {
               <CardContent className="pt-6">
                 <Mail className="h-8 w-8 text-primary mx-auto mb-4" />
                 <h3 className="font-semibold mb-2">Email Support</h3>
-                <p className="text-muted-foreground mb-2">nakaakawaafuwa@gmail.com</p>
+                <p className="text-muted-foreground mb-2">munirsebikaaka@mail.com</p>
                 <div className="text-sm text-muted-foreground">
                   <div>Response within 24 hours</div>
                   <div>General inquiries welcome</div>
@@ -114,10 +114,10 @@ export default function Contact() {
               <CardContent className="pt-6">
                 <MapPin className="h-8 w-8 text-primary mx-auto mb-4" />
                 <h3 className="font-semibold mb-2">Delivery Coverage</h3>
-                <p className="text-muted-foreground mb-2">Uganda Wide</p>
+                <p className="text-muted-foreground mb-2">Kenya Wide</p>
                 <div className="text-sm text-muted-foreground">
                   <div>All 47 counties served</div>
-                  <div>Free delivery over Ugx 500,000</div>
+                  <div>Free delivery over KSh 50,000</div>
                 </div>
               </CardContent>
             </Card>
@@ -247,9 +247,9 @@ export default function Contact() {
               <CardContent>
                 <div className="bg-muted rounded-lg p-8 text-center">
                   <MapPin className="h-12 w-12 text-primary mx-auto mb-4" />
-                  <h3 className="font-semibold mb-2">Uganda Wide Coverage</h3>
+                  <h3 className="font-semibold mb-2">Kenya Wide Coverage</h3>
                   <p className="text-muted-foreground text-sm mb-4">
-                    We deliver to all 47 counties across Uganda
+                    We deliver to all 47 counties across Kenya
                   </p>
                   <div className="text-sm text-muted-foreground space-y-1">
                     <div>🏙️ Major Cities: Same day delivery available</div>
@@ -326,8 +326,8 @@ export default function Contact() {
             <div>
               <h3 className="font-semibold mb-2">What are your delivery charges?</h3>
               <p className="text-sm text-muted-foreground mb-4">
-                We offer free delivery for orders over Ugx 500,000. For orders below this amount, 
-                delivery charges are Ugx 20,000 within major cities.
+                We offer free delivery for orders over KSh 50,000. For orders below this amount, 
+                delivery charges are KSh 2,000 within major cities.
               </p>
             </div>
             
@@ -350,7 +350,7 @@ export default function Contact() {
             <div>
               <h3 className="font-semibold mb-2">What payment methods do you accept?</h3>
               <p className="text-sm text-muted-foreground mb-4">
-                We accept Cash, Airtel Money, and bank transfers. Credit/debit card payments 
+                We accept M-Pesa, Airtel Money, and bank transfers. Credit/debit card payments 
                 are coming soon to provide more payment options.
               </p>
             </div>
