@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Link } from "react-router-dom";
-import { ArrowRight, Star, TrendingUp, Loader2 } from "lucide-react";
+import { ArrowRight, Star, TrendingUp, Loader2, Flame } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -15,6 +15,61 @@ import { formatUGX } from "@/utils/formatUGX";
 import { products } from "../data/products";
 import { categories, getProductsByCategory } from "@/data/products";
 import heroBanner from "@/assets/hero-banner.jpg";
+
+// Countdown Timer Component
+function CountdownTimer({ endDate }: { endDate: Date }) {
+  const [timeLeft, setTimeLeft] = useState({
+    days: 0,
+    hours: 0,
+    minutes: 0,
+    seconds: 0
+  });
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      const now = new Date().getTime();
+      const distance = endDate.getTime() - now;
+
+      if (distance < 0) {
+        clearInterval(timer);
+        return;
+      }
+
+      setTimeLeft({
+        days: Math.floor(distance / (1000 * 60 * 60 * 24)),
+        hours: Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)),
+        minutes: Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60)),
+        seconds: Math.floor((distance % (1000 * 60)) / 1000)
+      });
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [endDate]);
+
+  return (
+    <div className="flex items-center gap-2">
+      <div className="flex items-center gap-1 bg-red-600 text-white px-2 py-1 rounded">
+        <span className="text-sm font-bold">{String(timeLeft.days).padStart(2, '0')}</span>
+        <span className="text-xs">d</span>
+      </div>
+      <span className="text-red-600 font-bold">:</span>
+      <div className="flex items-center gap-1 bg-red-600 text-white px-2 py-1 rounded">
+        <span className="text-sm font-bold">{String(timeLeft.hours).padStart(2, '0')}</span>
+        <span className="text-xs">h</span>
+      </div>
+      <span className="text-red-600 font-bold">:</span>
+      <div className="flex items-center gap-1 bg-red-600 text-white px-2 py-1 rounded">
+        <span className="text-sm font-bold">{String(timeLeft.minutes).padStart(2, '0')}</span>
+        <span className="text-xs">m</span>
+      </div>
+      <span className="text-red-600 font-bold">:</span>
+      <div className="flex items-center gap-1 bg-red-600 text-white px-2 py-1 rounded">
+        <span className="text-sm font-bold">{String(timeLeft.seconds).padStart(2, '0')}</span>
+        <span className="text-xs">s</span>
+      </div>
+    </div>
+  );
+}
 
 interface Product {
   id: string;
@@ -54,6 +109,21 @@ export default function Home() {
 
   const tvs = getProductsByCategory("tvs").slice(0, 4);
   const appliances = getProductsByCategory("refrigerators").slice(0, 4);
+  
+  // Flash sale end date (7 days from now)
+  const flashSaleEndDate = new Date();
+  flashSaleEndDate.setDate(flashSaleEndDate.getDate() + 7);
+  
+  // Hot categories with products
+  const hotCategories = [
+    { id: "tvs", name: "TVs & Entertainment", products: getProductsByCategory("tvs").slice(0, 4) },
+    { id: "refrigerators", name: "Refrigerators", products: getProductsByCategory("refrigerators").slice(0, 4) },
+    { id: "washing-machines", name: "Washing Machines", products: getProductsByCategory("washing-machines").slice(0, 4) },
+    { id: "sound-systems", name: "Sound Systems", products: getProductsByCategory("sound-systems").slice(0, 4) }
+  ];
+  
+  // You may like products
+  const youMayLikeProducts = products.slice(0, 8);
   
   return (
     <div className="min-h-screen">
@@ -109,18 +179,25 @@ export default function Home() {
       {/* Flash Sale Section - Mobile Priority */}
       <section className="section-spacing bg-red-50">
         <div className="container mx-auto px-4">
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-2">
+          <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-4 gap-3">
+            <div className="flex items-center gap-3">
               <div className="w-3 h-3 bg-red-500 rounded-full animate-pulse"></div>
-              <h2 className="text-lg md:text-2xl font-bold text-red-600">
+              <h2 className="text-lg md:text-2xl font-bold text-red-600 flex items-center gap-2">
+                <Flame className="h-5 w-5 md:h-6 md:w-6" />
                 Flash Sale
               </h2>
             </div>
-            <Button asChild variant="outline" size="sm" className="border-red-200 text-red-600 hover:bg-red-50">
-              <Link to="/shop?sale=flash">
-                View All <ArrowRight className="ml-1 h-3 w-3" />
-              </Link>
-            </Button>
+            <div className="flex items-center gap-3 flex-wrap">
+              <div className="flex items-center gap-2">
+                <span className="text-xs md:text-sm text-muted-foreground">Ends in:</span>
+                <CountdownTimer endDate={flashSaleEndDate} />
+              </div>
+              <Button asChild variant="outline" size="sm" className="border-red-200 text-red-600 hover:bg-red-50">
+                <Link to="/shop?sale=flash">
+                  View All <ArrowRight className="ml-1 h-3 w-3" />
+                </Link>
+              </Button>
+            </div>
           </div>
 
           {/* Mobile: 2-column grid, Desktop: 4-column */}
@@ -320,6 +397,53 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Hot Categories Section */}
+      <section className="section-spacing bg-background">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-8">
+            <h2 className="text-2xl md:text-3xl font-bold mb-2 flex items-center justify-center gap-2">
+              <Flame className="h-6 w-6 text-red-500" />
+              Hot Categories
+            </h2>
+            <p className="text-muted-foreground">
+              Trending products across popular categories
+            </p>
+          </div>
+
+          <div className="space-y-12">
+            {hotCategories.map((category) => (
+              <div key={category.id}>
+                <div className="flex items-center justify-between mb-6">
+                  <h3 className="text-xl md:text-2xl font-bold">{category.name}</h3>
+                  <Button asChild variant="outline" size="sm">
+                    <Link to={`/shop?category=${category.id}`}>
+                      View All <ArrowRight className="ml-1 h-3 w-3" />
+                    </Link>
+                  </Button>
+                </div>
+                
+                {/* Mobile: Horizontal scroll, Desktop: Grid */}
+                <div className="md:hidden">
+                  <div className="flex gap-3 overflow-x-auto scrollbar-hide pb-4">
+                    {category.products.map(product => (
+                      <div key={product.id} className="flex-shrink-0 w-40">
+                        <ProductCard product={product} />
+                      </div>
+                    ))}
+                  </div>
+                </div>
+                
+                <div className="hidden md:grid md:grid-cols-4 gap-6">
+                  {category.products.map(product => (
+                    <ProductCard key={product.id} product={product} />
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* Featured Products */}
       <section className="section-spacing bg-muted/30">
         <div className="container mx-auto container-padding">
@@ -349,6 +473,32 @@ export default function Home() {
                 No products yet
               </div>
             )}
+          </div>
+        </div>
+      </section>
+
+      {/* You May Like Section */}
+      <section className="section-spacing bg-background">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-8">
+            <h2 className="text-2xl md:text-3xl font-bold mb-2">You May Like</h2>
+            <p className="text-muted-foreground">
+              Recommended products just for you
+            </p>
+          </div>
+
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-6">
+            {youMayLikeProducts.map(product => (
+              <ProductCard key={product.id} product={product} />
+            ))}
+          </div>
+
+          <div className="text-center mt-8">
+            <Button asChild variant="outline" size="lg">
+              <Link to="/shop">
+                Explore More <ArrowRight className="ml-2 h-4 w-4" />
+              </Link>
+            </Button>
           </div>
         </div>
       </section>
