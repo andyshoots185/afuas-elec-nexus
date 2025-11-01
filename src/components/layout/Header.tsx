@@ -208,16 +208,6 @@ export function Header() {
                     <DropdownMenuItem asChild>
                       <Link to="/messages" className="cursor-pointer">Messages</Link>
                     </DropdownMenuItem>
-                    {isAdmin && (
-                      <>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem asChild className="bg-primary/10">
-                          <Link to="/admin" className="text-primary font-medium cursor-pointer">
-                            Admin Dashboard
-                          </Link>
-                        </DropdownMenuItem>
-                      </>
-                    )}
                     <DropdownMenuSeparator />
                     <DropdownMenuItem onClick={handleSignOut} className="text-destructive cursor-pointer">
                       Sign Out

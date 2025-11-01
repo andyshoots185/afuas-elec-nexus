@@ -34,146 +34,22 @@ export default function Home() {
   const [flashLoading, setFlashLoading] = useState(true);
 
   useEffect(() => {
-    // Fetch featured products from database (product-level OR category-level)
-    const fetchFeaturedProducts = async () => {
-      try {
-        const { data, error } = await supabase
-          .from('products')
-          .select(`
-            *,
-            product_images (image_url, sort_order),
-            categories!inner (featured_category)
-          `)
-          .eq('status', 'active')
-          .or('is_featured.eq.true,categories.featured_category.eq.true')
-          .order('created_at', { ascending: false })
-          .limit(8);
-
-        // if (error) throw error;
-        
-        // // Transform data to match expected format
-        // const transformedProducts = data?.map(product => ({
-        //   id: product.id,
-        //   name: product.name,
-        //   price: product.price_ugx,
-        //   image: product.product_images?.[0]?.image_url || '/placeholder.svg',
-        //   rating: 4.5,
-        //   reviewCount: 0,
-        //   inStock: product.stock_quantity > 0,
-        //   category: product.category_id,
-        //   brand: product.brand_id,
-        // })) || [];
-
-        // setFeaturedProducts(transformedProducts);
-        if (error) throw error;
-
-const transformedProducts = (data && data.length > 0
-  ? data
-  : products // fallback to static data
-).map(product => ({
-  id: product.id,
-  name: product.name,
-  price: product.price_ugx || product.price,
-  image: product.image_url || product.image || '/placeholder.svg',
-  rating: product.rating || 4.5,
-  reviewCount: product.reviewCount || 0,
-  inStock: product.stock_quantity > 0 || true,
-  category: product.category_id || product.category,
-  brand: product.brand_id || product.brand,
-}));
-
-setFeaturedProducts(transformedProducts);
-
-      } catch (error) {
-        console.error('Error fetching featured products:', error);
-      } finally {
-        setLoading(false);
-      }
+    // Use static frontend data for products
+    const loadFeaturedProducts = () => {
+      const featured = products.filter(p => p.isFeatured).slice(0, 8);
+      setFeaturedProducts(featured);
+      setLoading(false);
     };
 
-    // Fetch flash sale products (product-level OR category-level)
-    const fetchFlashSaleProducts = async () => {
-      try {
-        const now = new Date().toISOString();
-        const { data, error } = await supabase
-          .from('products')
-          .select(`
-            *,
-            product_images (image_url, sort_order),
-            categories!inner (flash_sale_category)
-          `)
-          .eq('status', 'active')
-          .order('created_at', { ascending: false })
-          .limit(8) as any;
-
-        if (error) throw error;
-        
-        // Filter: product-level flash sale OR category-level flash sale
-        const flashData = data?.filter((p: any) => {
-          const isProductFlashSale = p.is_flash_sale === true &&
-            p.flash_sale_start &&
-            p.flash_sale_end &&
-            new Date(p.flash_sale_start) <= new Date(now) &&
-            new Date(p.flash_sale_end) >= new Date(now);
-          
-          const isCategoryFlashSale = p.categories?.flash_sale_category === true;
-          
-          return isProductFlashSale || isCategoryFlashSale;
-        });
-        
-        // const transformedProducts = (flashData || data)?.map((product: any) => ({
-        //   id: product.id,
-        //   name: product.name,
-        //   price: product.price_ugx,
-        //   image: product.product_images?.[0]?.image_url || '/placeholder.svg',
-        //   rating: 4.5,
-        //   reviewCount: 0,
-        //   inStock: product.stock_quantity > 0,
-        //   category: product.category_id,
-        //   brand: product.brand_id,
-        // })) || [];
-
-        const source = flashData && flashData.length > 0 ? flashData : (data && data.length > 0 ? data : products);
-
-const transformedProducts = source.map((product: any) => ({
-  id: product.id,
-  name: product.name,
-  price: product.price_ugx || product.price,
-  image: product.image_url || product.product_images?.[0]?.image_url || product.image || '/placeholder.svg',
-  rating: product.rating || 4.5,
-  reviewCount: product.reviewCount || 0,
-  inStock: product.stock_quantity > 0 || true,
-  category: product.category_id || product.category,
-  brand: product.brand_id || product.brand,
-}));
-
-        setFlashSaleProducts(transformedProducts);
-      } catch (error) {
-        console.error('Error fetching flash sale products:', error);
-      } finally {
-        setFlashLoading(false);
-      }
+    // Use static frontend data for flash sale products
+    const loadFlashSaleProducts = () => {
+      const flashSale = products.filter(p => p.discount && p.discount > 0).slice(0, 8);
+      setFlashSaleProducts(flashSale);
+      setFlashLoading(false);
     };
 
-    fetchFeaturedProducts();
-    fetchFlashSaleProducts();
-
-    // Set up real-time subscription for both featured and flash sale
-    const productsChannel = supabase
-      .channel('products-homepage-changes')
-      .on(
-        'postgres_changes',
-        { event: '*', schema: 'public', table: 'products' },
-        () => {
-          fetchFeaturedProducts();
-          fetchFlashSaleProducts();
-        }
-      )
-      .subscribe();
-
-    return () => {
-      supabase.removeChannel(productsChannel);
-    };
+    loadFeaturedProducts();
+    loadFlashSaleProducts();
   }, []);
 
   const tvs = getProductsByCategory("tvs").slice(0, 4);

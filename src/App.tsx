@@ -11,9 +11,6 @@ import { Footer } from "@/components/layout/Footer";
 import { BottomNavMobile } from "@/components/mobile/BottomNavMobile";
 import { useSessionPersistence } from "@/hooks/useSessionPersistence";
 
-// import AllCategories from "./pages/AllCategories";
-// import CategoryPage from "./pages/CategoryPage";
-
 import Home from "./pages/Home";
 import Shop from "./pages/Shop";
 import ProductDetail from "./pages/ProductDetail";
@@ -26,11 +23,9 @@ import Help from "./pages/Help";
 import NotFound from "./pages/NotFound";
 import Auth from "./pages/Auth";
 import Profile from "./pages/Profile";
-import AdminDashboard from "./pages/AdminDashboard";
 import Messages from "./pages/Messages";
 import MyOrders from "./pages/MyOrders";
 import { ProtectedRoute } from "./components/auth/ProtectedRoute";
-import { AdminRoute } from "./components/auth/AdminRoute";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -49,10 +44,6 @@ function AppContent() {
   return (
     <>
       <Routes>
-        {/* Admin routes without header/footer */}
-        <Route path="/admin/*" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
-        
-        {/* Regular routes with header/footer */}
         <Route path="/" element={<Home />} />
         <Route path="/shop" element={<Shop />} />
         <Route path="/product/:id" element={<ProductDetail />} />
@@ -92,13 +83,7 @@ const App = () => (
         <CartProvider>
           <WishlistProvider>
             <BrowserRouter>
-              <Routes>
-                {/* Admin routes without header/footer */}
-                <Route path="/admin/*" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
-                
-                {/* All other routes with header/footer layout */}
-                <Route path="*" element={<Layout />} />
-              </Routes>
+              <Layout />
               <Toaster />
               <Sonner />
             </BrowserRouter>
