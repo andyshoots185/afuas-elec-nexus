@@ -244,7 +244,7 @@ export default function Auth() {
             </Tabs>
 
             {/* Admin Access */}
-            <div className="mt-6 pt-4 border-t border-border">
+            {/* <div className="mt-6 pt-4 border-t border-border">
               <Button
                 variant="outline"
                 size="sm"
@@ -258,7 +258,7 @@ export default function Auth() {
               <p className="text-xs text-muted-foreground text-center mt-2">
                 Admin access required
               </p>
-            </div>
+            </div> */}
           </CardContent>
         </Card>
       </div>
