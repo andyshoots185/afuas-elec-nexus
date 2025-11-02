@@ -8,7 +8,6 @@ import { useWishlist } from '@/contexts/WishlistContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 import { formatUGX } from '@/utils/formatUGX';
-import { getOptimizedImageUrl } from '@/utils/imageOptimization';
 import type { Product } from '@/data/products';
 
 interface ProductCardProps {
@@ -130,7 +129,7 @@ export function ProductCard({ product, className = '' }: ProductCardProps) {
           {/* Mobile-optimized image container */}
           <div className="aspect-square bg-muted overflow-hidden rounded-t-lg">
             <img
-              src={getOptimizedImageUrl(product.image, 400)}
+              src={product.image}
               alt={product.name}
               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
               loading="lazy"
