@@ -16,12 +16,13 @@ import {
   ShoppingBag, 
   Settings, 
   LogOut, 
-  ArrowLeft
+  ArrowLeft,
+  Shield
 } from 'lucide-react';
 import { Loader2 } from 'lucide-react';
 
 export default function Profile() {
-  const { user, profile, signOut, updateProfile } = useAuth();
+  const { user, profile, signOut, updateProfile, isAdmin } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
   const [isEditing, setIsEditing] = useState(false);
@@ -118,6 +119,9 @@ export default function Profile() {
                   <CardTitle className="text-xl">
                     {profile?.first_name} {profile?.last_name}
                   </CardTitle>
+                  {isAdmin && (
+                    <Shield className="h-4 w-4 text-primary" />
+                  )}
                 </div>
                 <p className="text-muted-foreground flex items-center gap-2">
                   <Mail className="h-4 w-4" />
@@ -247,6 +251,21 @@ export default function Profile() {
             </CardContent>
           </Card>
 
+          {isAdmin && (
+            <Card className="hover:shadow-md transition-shadow cursor-pointer border-primary/20">
+              <CardContent className="p-4">
+                <Link to="/admin" className="flex items-center gap-4">
+                  <div className="p-2 bg-primary/10 rounded-lg">
+                    <Shield className="h-5 w-5 text-primary" />
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="font-semibold text-primary">Admin Dashboard</h3>
+                    <p className="text-sm text-muted-foreground">Manage products and orders</p>
+                  </div>
+                </Link>
+              </CardContent>
+            </Card>
+          )}
         </div>
 
         {/* Sign Out */}

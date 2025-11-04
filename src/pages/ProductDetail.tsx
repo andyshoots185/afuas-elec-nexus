@@ -24,16 +24,14 @@ import { ProductCard } from "@/components/shared/ProductCard";
 import { useCart } from "@/contexts/CartContext";
 import { useWishlist } from "@/contexts/WishlistContext";
 import { useToast } from "@/hooks/use-toast";
-import { useProductById, useProducts } from "@/hooks/useProducts";
+import { getProductById, products } from "@/data/products";
 import { ChatComponent } from "@/components/chat/ChatComponent";
 import { useAuth } from "@/contexts/AuthContext";
 import { ReviewSection } from "@/components/product/ReviewSection";
-import { LoadingSpinner } from "@/components/shared/LoadingSpinner";
 
 export default function ProductDetail() {
   const { id } = useParams<{ id: string }>();
-  const { product, loading: productLoading } = useProductById(id!);
-  const { products } = useProducts();
+  const product = id ? getProductById(id) : null;
   const [quantity, setQuantity] = useState(1);
   const [selectedImage, setSelectedImage] = useState(0);
 
@@ -45,14 +43,6 @@ export default function ProductDetail() {
   } = useWishlist();
   const { toast } = useToast();
   const { user } = useAuth();
-
-  if (productLoading) {
-    return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <LoadingSpinner />
-      </div>
-    );
-  }
 
   if (!product) {
     return (

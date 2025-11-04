@@ -1,24 +1,12 @@
 import React from "react";
 import { useParams, Link } from "react-router-dom";
-import { categories } from "../data/products";
+import { products, categories } from "../data/products";
 import { ProductCard } from "../components/shared/ProductCard";
-import { useProductsByCategory } from "../hooks/useProducts";
-import { LoadingSpinner } from "../components/shared/LoadingSpinner";
 
 export default function CategoryPage() {
   const { categoryId } = useParams();
-  const { products: categoryProducts, loading } = useProductsByCategory(categoryId || 'all');
-  
+
   const category = categories.find((c) => c.id === categoryId);
-
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <LoadingSpinner />
-      </div>
-    );
-  }
-
   if (!category) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
@@ -31,6 +19,8 @@ export default function CategoryPage() {
       </div>
     );
   }
+
+  const filteredProducts = products.filter((p) => p.category === categoryId);
 
   return (
     <div className="min-h-screen bg-background">
@@ -52,15 +42,15 @@ export default function CategoryPage() {
         <div className="mb-8">
           <h1 className="text-3xl font-bold mb-2">{category.name}</h1>
           <p className="text-muted-foreground">
-            {categoryProducts.length} product
-            {categoryProducts.length !== 1 ? "s" : ""} found
+            {filteredProducts.length} product
+            {filteredProducts.length !== 1 ? "s" : ""} found
           </p>
         </div>
 
         {/* Products Grid */}
-        {categoryProducts.length > 0 ? (
+        {filteredProducts.length > 0 ? (
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 md:gap-6">
-            {categoryProducts.map((product) => (
+            {filteredProducts.map((product) => (
               <ProductCard key={product.id} product={product} />
             ))}
           </div>
