@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { ArrowRight, Star, TrendingUp, Loader2, Flame } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -12,8 +12,11 @@ import { TopSearchBar } from "@/components/mobile/TopSearchBar";
 import { CategoryScroller } from "@/components/mobile/CategoryScroller";
 import { PromoCarousel } from "@/components/mobile/PromoCarousel";
 import { formatUGX } from "@/utils/formatUGX";
-import { products } from "../data/products";
-import { categories, getProductsByCategory } from "@/data/products";
+import { categories } from "@/data/products";
+import { useProducts } from "@/hooks/useProducts";
+import { useCart } from "@/contexts/CartContext";
+import { useWishlist } from "@/contexts/WishlistContext";
+import { useToast } from "@/hooks/use-toast";
 import heroBanner from "@/assets/hero-banner.jpg";
 
 // Countdown Timer Component
@@ -83,29 +86,20 @@ interface Product {
 }
 
 export default function Home() {
-  const [featuredProducts, setFeaturedProducts] = useState<any[]>([]);
-  const [flashSaleProducts, setFlashSaleProducts] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [flashLoading, setFlashLoading] = useState(true);
+  const navigate = useNavigate();
+  const { addItem: addToCart } = useCart();
+  const { addItem: addToWishlist } = useWishlist();
+  const { toast } = useToast();
+  const { products, loading: productsLoading } = useProducts();
 
-  useEffect(() => {
-    // Use static frontend data for products
-    const loadFeaturedProducts = () => {
-      const featured = products.filter(p => p.isFeatured).slice(0, 8);
-      setFeaturedProducts(featured);
-      setLoading(false);
-    };
-
-    // Use static frontend data for flash sale products
-    const loadFlashSaleProducts = () => {
-      const flashSale = products.filter(p => p.discount && p.discount > 0).slice(0, 8);
-      setFlashSaleProducts(flashSale);
-      setFlashLoading(false);
-    };
-
-    loadFeaturedProducts();
-    loadFlashSaleProducts();
-  }, []);
+  // Filter products for flash sale
+  const flashSaleProducts = products.filter((p) => p.discount && p.discount > 15);
+  const featuredProducts = products.filter((p) => p.isFeatured);
+  const newProducts = products.filter((p) => p.isNew);
+  
+  const getProductsByCategory = (categorySlug: string) => {
+    return products.filter((p) => p.category === categorySlug);
+  };
 
   const tvs = getProductsByCategory("tvs").slice(0, 4);
   const appliances = getProductsByCategory("refrigerators").slice(0, 4);
@@ -202,7 +196,7 @@ export default function Home() {
 
           {/* Mobile: 2-column grid, Desktop: 4-column */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-6">
-            {flashLoading ? (
+            {productsLoading ? (
               <>
                 {[1, 2, 3, 4].map(i => <ProductCardSkeleton key={i} />)}
               </>
@@ -462,7 +456,7 @@ export default function Home() {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {loading ? (
+            {productsLoading ? (
               <>
                 {[1, 2, 3, 4, 5, 6, 7, 8].map(i => <ProductCardSkeleton key={i} />)}
               </>
