@@ -10,12 +10,12 @@ import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { BottomNavMobile } from "@/components/mobile/BottomNavMobile";
 import { useSessionPersistence } from "@/hooks/useSessionPersistence";
+import WhatsAppButton from "@/components/shared/WhatsAppButton";
 
 import Home from "./pages/Home";
 import Shop from "./pages/Shop";
 import ProductDetail from "./pages/ProductDetail";
 import Cart from "./pages/Cart";
-import Checkout from "./pages/Checkout";
 import About from "./pages/About";
 import Contact from "./pages/Contact";
 import Wishlist from "./pages/Wishlist";
@@ -23,8 +23,6 @@ import Help from "./pages/Help";
 import NotFound from "./pages/NotFound";
 import Auth from "./pages/Auth";
 import Profile from "./pages/Profile";
-import Messages from "./pages/Messages";
-import MyOrders from "./pages/MyOrders";
 import { ProtectedRoute } from "./components/auth/ProtectedRoute";
 
 const queryClient = new QueryClient({
@@ -48,15 +46,12 @@ function AppContent() {
         <Route path="/shop" element={<Shop />} />
         <Route path="/product/:id" element={<ProductDetail />} />
         <Route path="/cart" element={<ProtectedRoute><Cart /></ProtectedRoute>} />
-        <Route path="/checkout" element={<ProtectedRoute><Checkout /></ProtectedRoute>} />
         <Route path="/wishlist" element={<ProtectedRoute><Wishlist /></ProtectedRoute>} />
         <Route path="/about" element={<About />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/help" element={<Help />} />
         <Route path="/auth" element={<Auth />} />
         <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
-        <Route path="/my-orders" element={<ProtectedRoute><MyOrders /></ProtectedRoute>} />
-        <Route path="/messages" element={<ProtectedRoute><Messages /></ProtectedRoute>} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </>
@@ -72,6 +67,7 @@ function Layout() {
       </main>
       <Footer />
       <BottomNavMobile />
+      <WhatsAppButton />
     </div>
   );
 }

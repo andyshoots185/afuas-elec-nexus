@@ -24,9 +24,7 @@ import { ProductCard } from "@/components/shared/ProductCard";
 import { useCart } from "@/contexts/CartContext";
 import { useWishlist } from "@/contexts/WishlistContext";
 import { useToast } from "@/hooks/use-toast";
-import { ChatComponent } from "@/components/chat/ChatComponent";
 import { useAuth } from "@/contexts/AuthContext";
-import { ReviewSection } from "@/components/product/ReviewSection";
 import { useAllProducts } from "@/hooks/useAllProducts";
 
 export default function ProductDetail() {
@@ -419,7 +417,9 @@ export default function ProductDetail() {
             </TabsContent>
 
             <TabsContent value="reviews" className="mt-6">
-              <ReviewSection productId={product.id} />
+              <div className="text-center py-12">
+                <p className="text-muted-foreground">Reviews coming soon</p>
+              </div>
             </TabsContent>
 
             <TabsContent value="contact" className="mt-6">
@@ -427,25 +427,15 @@ export default function ProductDetail() {
                 <CardHeader>
                   <CardTitle>Contact Seller</CardTitle>
                   <p className="text-sm text-muted-foreground">
-                    Have questions about this product? Chat directly with the seller.
+                    Have questions about this product? Use WhatsApp to chat with us.
                   </p>
                 </CardHeader>
                 <CardContent>
-                  {user ? (
-                    <ChatComponent 
-                      productId={product.id}
-                      sellerId="admin" // Replace with actual seller ID from product
-                    />
-                  ) : (
-                    <div className="text-center py-8">
-                      <p className="text-muted-foreground mb-4">
-                        Please sign in to contact the seller
-                      </p>
-                      <Button asChild>
-                        <Link to="/auth">Sign In</Link>
-                      </Button>
-                    </div>
-                  )}
+                  <Button asChild className="w-full">
+                    <a href="https://wa.me/256745187279" target="_blank" rel="noopener noreferrer">
+                      Chat on WhatsApp
+                    </a>
+                  </Button>
                 </CardContent>
               </Card>
             </TabsContent>
