@@ -22,12 +22,16 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { ProductCard } from "@/components/shared/ProductCard";
-import { products, categories } from "@/data/products";
+import { categories } from "@/data/products";
+import { useAllProducts } from "@/hooks/useAllProducts";
 
 type ViewMode = "grid" | "list";
 type SortOption = "newest" | "price-low" | "price-high" | "rating" | "popular";
 
 export default function Shop() {
+  // Fetch merged products (local + Supabase)
+  const { products } = useAllProducts();
+  
   const [searchParams, setSearchParams] = useSearchParams();
   const [viewMode, setViewMode] = useState<ViewMode>("grid");
   const [filtersOpen, setFiltersOpen] = useState(false);

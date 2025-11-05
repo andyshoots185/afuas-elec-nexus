@@ -12,8 +12,8 @@ import { TopSearchBar } from "@/components/mobile/TopSearchBar";
 import { CategoryScroller } from "@/components/mobile/CategoryScroller";
 import { PromoCarousel } from "@/components/mobile/PromoCarousel";
 import { formatUGX } from "@/utils/formatUGX";
-import { products } from "../data/products";
-import { categories, getProductsByCategory } from "@/data/products";
+import { products as localProducts, categories, getProductsByCategory } from "@/data/products";
+import { useAllProducts } from "@/hooks/useAllProducts";
 import heroBanner from "@/assets/hero-banner.jpg";
 
 // Countdown Timer Component
@@ -83,47 +83,50 @@ interface Product {
 }
 
 export default function Home() {
+  // Hook that merges local products + Supabase products
+  const { products: allProducts, loading: productsLoading } = useAllProducts();
+  
   const [featuredProducts, setFeaturedProducts] = useState<any[]>([]);
   const [flashSaleProducts, setFlashSaleProducts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [flashLoading, setFlashLoading] = useState(true);
 
   useEffect(() => {
-    // Use static frontend data for products
-    const loadFeaturedProducts = () => {
-      const featured = products.filter(p => p.isFeatured).slice(0, 8);
+    if (!productsLoading) {
+      // Load featured products from merged data (local + Supabase)
+      const featured = allProducts.filter(p => p.isFeatured).slice(0, 8);
       setFeaturedProducts(featured);
       setLoading(false);
-    };
 
-    // Use static frontend data for flash sale products
-    const loadFlashSaleProducts = () => {
-      const flashSale = products.filter(p => p.discount && p.discount > 0).slice(0, 8);
+      // Load flash sale products from merged data
+      const flashSale = allProducts.filter(p => p.discount && p.discount > 0).slice(0, 8);
       setFlashSaleProducts(flashSale);
       setFlashLoading(false);
-    };
+    }
+  }, [allProducts, productsLoading]);
 
-    loadFeaturedProducts();
-    loadFlashSaleProducts();
-  }, []);
+  // Helper function to get products by category from merged data
+  const getProductsByCategoryFromAll = (category: string) => {
+    return allProducts.filter(p => p.category === category);
+  };
 
-  const tvs = getProductsByCategory("tvs").slice(0, 4);
-  const appliances = getProductsByCategory("refrigerators").slice(0, 4);
+  const tvs = getProductsByCategoryFromAll("tvs").slice(0, 4);
+  const appliances = getProductsByCategoryFromAll("refrigerators").slice(0, 4);
   
   // Flash sale end date (7 days from now)
   const flashSaleEndDate = new Date();
   flashSaleEndDate.setDate(flashSaleEndDate.getDate() + 7);
   
-  // Hot categories with products
+  // Hot categories with products (using merged data)
   const hotCategories = [
-    { id: "tvs", name: "TVs & Entertainment", products: getProductsByCategory("tvs").slice(0, 4) },
-    { id: "refrigerators", name: "Refrigerators", products: getProductsByCategory("refrigerators").slice(0, 4) },
-    { id: "washing-machines", name: "Washing Machines", products: getProductsByCategory("washing-machines").slice(0, 4) },
-    { id: "sound-systems", name: "Sound Systems", products: getProductsByCategory("sound-systems").slice(0, 4) }
+    { id: "tvs", name: "TVs & Entertainment", products: getProductsByCategoryFromAll("tvs").slice(0, 4) },
+    { id: "refrigerators", name: "Refrigerators", products: getProductsByCategoryFromAll("refrigerators").slice(0, 4) },
+    { id: "washing-machines", name: "Washing Machines", products: getProductsByCategoryFromAll("washing-machines").slice(0, 4) },
+    { id: "sound-systems", name: "Sound Systems", products: getProductsByCategoryFromAll("sound-systems").slice(0, 4) }
   ];
   
-  // You may like products
-  const youMayLikeProducts = products.slice(0, 8);
+  // You may like products (using merged data)
+  const youMayLikeProducts = allProducts.slice(0, 8);
   
   return (
     <div className="min-h-screen">

@@ -1,10 +1,13 @@
 import React from "react";
 import { useParams, Link } from "react-router-dom";
-import { products, categories } from "../data/products";
+import { categories } from "../data/products";
 import { ProductCard } from "../components/shared/ProductCard";
+import { useAllProducts } from "../hooks/useAllProducts";
 
 export default function CategoryPage() {
   const { categoryId } = useParams();
+  // Fetch merged products (local + Supabase)
+  const { products } = useAllProducts();
 
   const category = categories.find((c) => c.id === categoryId);
   if (!category) {

@@ -24,14 +24,18 @@ import { ProductCard } from "@/components/shared/ProductCard";
 import { useCart } from "@/contexts/CartContext";
 import { useWishlist } from "@/contexts/WishlistContext";
 import { useToast } from "@/hooks/use-toast";
-import { getProductById, products } from "@/data/products";
 import { ChatComponent } from "@/components/chat/ChatComponent";
 import { useAuth } from "@/contexts/AuthContext";
 import { ReviewSection } from "@/components/product/ReviewSection";
+import { useAllProducts } from "@/hooks/useAllProducts";
 
 export default function ProductDetail() {
   const { id } = useParams<{ id: string }>();
-  const product = id ? getProductById(id) : null;
+  // Fetch merged products (local + Supabase)
+  const { products: allProducts } = useAllProducts();
+  
+  // Find product by ID from merged data
+  const product = id ? allProducts.find(p => p.id === id) : null;
   const [quantity, setQuantity] = useState(1);
   const [selectedImage, setSelectedImage] = useState(0);
 
@@ -61,7 +65,7 @@ export default function ProductDetail() {
   }
 
   // Mock related products (same category, different products)
-  const relatedProducts = products
+  const relatedProducts = allProducts
     .filter((p) => p.category === product.category && p.id !== product.id)
     .slice(0, 4);
 
