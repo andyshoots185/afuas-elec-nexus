@@ -8,7 +8,7 @@ import { CartProvider } from "@/contexts/CartContext";
 import { WishlistProvider } from "@/contexts/WishlistContext";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
-import { BottomNavMobile } from "@/components/mobile/BottomNavMobile";
+import BottomNavMobile from "@/components/mobile/BottomNavMobile";
 import { useSessionPersistence } from "@/hooks/useSessionPersistence";
 import WhatsAppButton from "@/components/shared/WhatsAppButton";
 
@@ -67,7 +67,6 @@ function Layout() {
       </main>
       <Footer />
       <BottomNavMobile />
-      <WhatsAppButton />
     </div>
   );
 }
@@ -82,6 +81,7 @@ const App = () => (
               <Layout />
               <Toaster />
               <Sonner />
+              <WhatsAppButton />
             </BrowserRouter>
           </WishlistProvider>
         </CartProvider>
